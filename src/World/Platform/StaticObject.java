@@ -11,7 +11,18 @@ public class StaticObject extends WorldObject {
         this.collisionBox = collisionBox;
     }
 
+    public StaticObject(AABB collisionBox, int id, boolean semiSolid) {
+        this(collisionBox, id);
+        this.semiSolid = semiSolid;
+    }
+
     public void render(DepthScreen screen, int xOffset, int yOffset) {
+        if(semiSolid) {
+            for (int i = 0; i <= collisionBox.w - 1; i++) {
+                screen.setCharacterWithDepth((int)collisionBox.x + i, (int)collisionBox.y, xOffset, yOffset, 0, new TextCharacter('¯', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
+            }
+            return;
+        }
         for (int i = 0; i <= collisionBox.w - 1; i++) {
             for (int j = 0; j <= collisionBox.h - 1; j++) {
                 char filler = ' ';

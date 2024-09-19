@@ -26,6 +26,11 @@ public class MovingObject extends StaticObject {
         this.speed = speed;
     }
 
+    public MovingObject(AABB collisionBox, int id, int xSteps, int ySteps, double speed, boolean semiSolid) {
+        this(collisionBox, id, xSteps, ySteps, speed);
+        this.semiSolid = semiSolid;
+    }
+
     boolean movesThisFrame = false;
     boolean movedThisFrame = false;
     @Override

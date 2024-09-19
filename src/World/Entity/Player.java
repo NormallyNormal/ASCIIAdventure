@@ -44,6 +44,12 @@ public class Player extends Entity{
             if (input.getKeyState(KeyEvent.VK_RIGHT)) {
                 velocity.x += 20;
             }
+            if (input.getKeyState(KeyEvent.VK_DOWN)) {
+                standsOnSemisolid = false;
+            }
+            else {
+                standsOnSemisolid = true;
+            }
         }
         else {
             timeDead += timeDelta;

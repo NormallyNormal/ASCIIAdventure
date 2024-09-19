@@ -35,7 +35,9 @@ public class Level {
         worldObjects.add(new StaticObject(new AABB(35, 17, 5, 3), currentId++));
         worldObjects.add(new StaticObject(new AABB(20, 10, 20, 1), currentId++));
         worldObjects.add(new StaticObject(new AABB(35, 5, 2, 5), currentId++));
-        worldObjects.add(new StaticObject(new AABB(20, 15, 10, 1), currentId++));
+        worldObjects.add(new StaticObject(new AABB(20, 15, 10, 1), currentId++, true));
+        worldObjects.add(new StaticObject(new AABB(5, 30, 30, 1), currentId++, true));
+        worldObjects.add(new StaticObject(new AABB(20, 35, 10, 1), currentId++, true));
         worldObjects.add(new StaticHazardObject(new AABB(20, 19, 5, 1), currentId++));
         worldObjects.add(new MovingObject(new AABB(20, 5, 5, 5), currentId++, 10, 0, 0.4));
         worldObjects.add(new StaticObject(new AABB(28, 2, 5, 3), currentId++));
@@ -63,7 +65,7 @@ public class Level {
 
     private void checkInsidePlatform(Entity entity) {
         for (WorldObject worldObject : worldObjects) {
-            if(worldObject.isSolid() && worldObject.getCollisionBox().overlaps(entity.getCollisionBox())) {
+            if(worldObject.isSolid() && !worldObject.isSemiSolid() && worldObject.getCollisionBox().overlaps(entity.getCollisionBox())) {
                 double area = entity.getCollisionBox().overlapArea(worldObject.getCollisionBox());
                 if (area > entity.getCollisionBox().area() * 0.7) {
                     entity.kill();
@@ -83,7 +85,9 @@ public class Level {
                 Vector2 entryTime = entity.getEntryTime(worldObject.getCollisionBox());
                 Vector2 exitTime = entity.getExitTime(worldObject.getCollisionBox());
                 if (entity.collides(entryTime, exitTime)) {
-                    if(worldObject.isSolid()) {
+                    boolean solid = worldObject.isSolid() && !worldObject.isSemiSolid() ;
+                    boolean passSemisolid = (worldObject.isSemiSolid() && entity.getPosition().y > worldObject.getCollisionBox().y) || !entity.standsOnSemisolid();
+                    if(solid || !passSemisolid) {
                         if (soonestEntryTime.x > entryTime.x) {
                             soonestEntryTime.x = entryTime.x;
                             equalCollisionsX.clear();

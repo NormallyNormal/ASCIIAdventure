@@ -15,6 +15,7 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
     Vector2 movementStep = new Vector2(0,0);
     Vector2 gravity;
     AABB collisionBox;
+    boolean standsOnSemisolid = true;
     boolean dead;
     double timeSinceOnGround = Double.POSITIVE_INFINITY;
     Vector2 enqueuedMovement = new Vector2(0,0);
@@ -137,6 +138,10 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
 
     public Vector2 getAcceleration() {
         return gravity;
+    }
+
+    public boolean standsOnSemisolid() {
+        return standsOnSemisolid;
     }
 
     public void enqueueMovement(Vector2 movement) {

@@ -10,6 +10,7 @@ public abstract class WorldObject implements CollisionObject, RenderObject, Iden
     AABB collisionBox;
     boolean solid = true;
     int id;
+    boolean semiSolid = false;
     public AABB getCollisionBox() {
         return collisionBox;
     }
@@ -28,5 +29,9 @@ public abstract class WorldObject implements CollisionObject, RenderObject, Iden
 
     public int getId() {
         return id;
+    }
+
+    public boolean isSemiSolid() {
+        return semiSolid;
     }
 }
