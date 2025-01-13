@@ -15,6 +15,7 @@ import Constants.ScreenConstants;
 public class Level {
     private final List<WorldObject> worldObjects;
     private final List<Entity> entities;
+    private final Deque<Entity> entitiesToRemove;
     private final Player player;
 
     public final Map<Direction, Level> connectedLevels = new EnumMap<>(Direction.class);
@@ -24,6 +25,7 @@ public class Level {
         player = new Player();
         worldObjects = new ArrayList<>();
         entities = new ArrayList<>();
+        entitiesToRemove = new ArrayDeque<>();
         int currentId = 0;
         worldObjects.add(new MovingObject(new AABB(65, 19, 5, 1), currentId++, 0, 10, 0.25));
         worldObjects.add(new MovingObject(new AABB(75, 19, 5, 1), currentId++, 0, 10, 0.2));
@@ -49,6 +51,12 @@ public class Level {
 
     public void process(double timeDeltaSeconds, Input input) {
         player.process(timeDeltaSeconds, input);
+        for (Entity entity : entities) {
+            entity.process(timeDeltaSeconds, input);
+        }
+        while (!entitiesToRemove.isEmpty()) {
+            entities.remove(entitiesToRemove.pop());
+        }
         checkInsidePlatform(player);
         for (WorldObject worldObject : worldObjects) {
             worldObject.process(timeDeltaSeconds, this);
@@ -61,6 +69,9 @@ public class Level {
             worldObject.render(screen, xOffset, yOffset);
         }
         player.render(screen, xOffset, yOffset);
+        for (Entity entity : entities) {
+            entity.render(screen, xOffset, yOffset);
+        }
     }
 
     private void checkInsidePlatform(Entity entity) {
@@ -147,5 +158,14 @@ public class Level {
             case LEFT -> player.getPosition().x += ScreenConstants.PLAY_SCREEN_WIDTH;
             case RIGHT -> player.getPosition().x -= ScreenConstants.PLAY_SCREEN_WIDTH;
         }
+    }
+
+     public void addEntity(Entity entity) {
+        if (!entities.contains(entity))
+            entities.add(entity);
+     }
+
+    public void removeEntity(Entity entity) {
+        entitiesToRemove.add(entity);
     }
 }

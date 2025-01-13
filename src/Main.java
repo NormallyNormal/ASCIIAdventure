@@ -1,5 +1,6 @@
 import Constants.ScreenConstants;
 import Input.Input;
+import World.Game;
 import World.Level;
 import Render.DepthScreen;
 import Math.Direction;
@@ -32,8 +33,8 @@ public class Main {
         screen.setCursorPosition(null);
         screen.startScreen();
 
-        Level level1 = new Level();
-        Level level2 = null;
+        Game.currentLevel = new Level();
+        Level transitionLevel = null;
         long currentTime = System.nanoTime();
         long lastTime = System.nanoTime();
         double timeDeltaSeconds;
@@ -55,15 +56,15 @@ public class Main {
             timeSinceLastFrame += timeDeltaSeconds;
             timeSinceLastTransitionMovement += timeDeltaSeconds;
 
-            Direction outOfBoundsDirection = level1.playerOutOfBounds();
+            Direction outOfBoundsDirection = Game.currentLevel.playerOutOfBounds();
             if(outOfBoundsDirection == Direction.NONE) {
-                level1.process(timeDeltaSeconds, input);
+                Game.currentLevel.process(timeDeltaSeconds, input);
                 timeSinceLastTransitionMovement = 0;
             }
             else{
-                level2 = level1.connectedLevels.get(outOfBoundsDirection);
+                transitionLevel = Game.currentLevel.connectedLevels.get(outOfBoundsDirection);
                 double transitionFrequency = 1/(outOfBoundsDirection.isVertical() ? ScreenConstants.TRANSITION_SPEED_VERTICAL : ScreenConstants.TRANSITION_SPEED_HORIZONTAL);
-                if(level2 != null && timeSinceLastTransitionMovement > transitionFrequency) {
+                if(transitionLevel != null && timeSinceLastTransitionMovement > transitionFrequency) {
                     switch(outOfBoundsDirection) {
                         case UP, DOWN:
                             renderYOffset -= outOfBoundsDirection.toMovement();
@@ -74,28 +75,28 @@ public class Main {
                     }
                     timeSinceLastTransitionMovement -= transitionFrequency;
                     if(Math.abs(renderYOffset) >= ScreenConstants.PLAY_SCREEN_HEIGHT || Math.abs(renderXOffset) >= ScreenConstants.PLAY_SCREEN_WIDTH) {
-                        level1 = level2;
-                        level1.loopPlayer();
+                        Game.currentLevel = transitionLevel;
+                        Game.currentLevel.loopPlayer();
                         renderYOffset = 0;
                         renderXOffset = 0;
                     }
                 }
             }
             if(timeSinceLastFrame >= 1/ScreenConstants.TARGET_FPS) {
-                level1.render(screen,renderXOffset,renderYOffset);
-                if(outOfBoundsDirection != Direction.NONE && level2 != null) {
+                Game.currentLevel.render(screen,renderXOffset,renderYOffset);
+                if(outOfBoundsDirection != Direction.NONE && transitionLevel != null) {
                     switch (outOfBoundsDirection) {
                         case UP:
-                            level2.render(screen, renderXOffset, renderYOffset - ScreenConstants.PLAY_SCREEN_HEIGHT);
+                            transitionLevel.render(screen, renderXOffset, renderYOffset - ScreenConstants.PLAY_SCREEN_HEIGHT);
                             break;
                         case DOWN:
-                            level2.render(screen, renderXOffset, renderYOffset + ScreenConstants.PLAY_SCREEN_HEIGHT);
+                            transitionLevel.render(screen, renderXOffset, renderYOffset + ScreenConstants.PLAY_SCREEN_HEIGHT);
                             break;
                         case LEFT:
-                            level2.render(screen, renderXOffset - ScreenConstants.PLAY_SCREEN_WIDTH, renderYOffset);
+                            transitionLevel.render(screen, renderXOffset - ScreenConstants.PLAY_SCREEN_WIDTH, renderYOffset);
                             break;
                         case RIGHT:
-                            level2.render(screen, renderXOffset + ScreenConstants.PLAY_SCREEN_WIDTH, renderYOffset);
+                            transitionLevel.render(screen, renderXOffset + ScreenConstants.PLAY_SCREEN_WIDTH, renderYOffset);
                             break;
                     }
                 }

@@ -2,16 +2,32 @@ package World.Entity;
 
 import Input.Input;
 import Render.DepthScreen;
+import World.Game;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 import Math.Vector2;
 import Math.AABB;
+import Math.Direction;
 
 import java.awt.event.KeyEvent;
 
 public class Player extends Entity{
     double timeDead;
     double jumpBuffer = 0;
+    boolean onGroundRecently = false;
+    boolean hitWallRecently = false;
+
+    Direction lastHorizontalDirection = Direction.NONE;
+
+    boolean hasDashCharge = true;
+    boolean canDashCharge = true;
+    double dashTime = 0;
+    Direction dashDirection = Direction.NONE;
+    double maxDashTime = 0.2;
+    double dashCooldown = 0.4;
+    double dashMovement = 0;
+    double dashSpeed = 60;
+
     public Player() {
         timeDead = 0;
         velocity = new Vector2(0,0);
@@ -24,25 +40,35 @@ public class Player extends Entity{
     @Override
     public void process(double timeDelta, Input input) {
         if (!dead) {
-            if (jumpBuffer > 0) {
-                jumpBuffer -= timeDelta;
-            }
+            onGroundRecently = timeSinceOnGround < 0.1;
+            hitWallRecently = timeSinceWallHit < 0.05;
             if (input.getKeyState(KeyEvent.VK_UP)) {
                 jumpBuffer = 0.2;
             }
-            else if (velocity.y < 0) {
+            if (jumpBuffer > 0) {
+                jumpBuffer -= timeDelta;
+            }
+            if (!input.getKeyState(KeyEvent.VK_UP) && velocity.y < 0) {
                 velocity.y = 0;
             }
-            if (jumpBuffer > 0 && timeSinceOnGround < 0.1) {
+            //Wall slide
+            if (timeSinceWallHit < 0.05) {
+                if (velocity.y > 5) {
+                    velocity.y = 5;
+                }
+            }
+            if (jumpBuffer > 0 && onGroundRecently) {
                 velocity.y = -30;
                 timeSinceOnGround = Double.POSITIVE_INFINITY;
             }
             velocity.x = 0;
             if (input.getKeyState(KeyEvent.VK_LEFT)) {
                 velocity.x -= 20;
+                lastHorizontalDirection = Direction.LEFT;
             }
             if (input.getKeyState(KeyEvent.VK_RIGHT)) {
                 velocity.x += 20;
+                lastHorizontalDirection = Direction.RIGHT;
             }
             if (input.getKeyState(KeyEvent.VK_DOWN)) {
                 standsOnSemisolid = false;
@@ -50,6 +76,51 @@ public class Player extends Entity{
             else {
                 standsOnSemisolid = true;
             }
+
+            if (input.getKeyState(KeyEvent.VK_SHIFT) && hasDashCharge && !hitWallRecently) {
+                boolean madeDash = false;
+                if (lastHorizontalDirection == Direction.LEFT && !input.getKeyState(KeyEvent.VK_RIGHT)) {
+                    dashDirection = Direction.LEFT;
+                    madeDash = true;
+                }
+                if (lastHorizontalDirection == Direction.RIGHT && !input.getKeyState(KeyEvent.VK_LEFT)) {
+                    dashDirection = Direction.RIGHT;
+                    madeDash = true;
+                }
+                if (madeDash) {
+                    hasDashCharge = false;
+                    canDashCharge = false;
+                    dashTime = maxDashTime;
+                    dashMovement = 0;
+                }
+            }
+            //Hit wall, stop dashing
+            if (hitWallRecently) {
+                dashTime = 0;
+            }
+            if (dashTime > 0) {
+                if (dashDirection == Direction.LEFT) {
+                    velocity.x = -dashSpeed;
+                    velocity.y = 0;
+                }
+                if (dashDirection == Direction.RIGHT) {
+                    velocity.x = dashSpeed;
+                    velocity.y = 0;
+                }
+                dashMovement += dashSpeed * timeDelta;
+                if (dashMovement >= 1) {
+                    dashMovement -= 1;
+                    Game.currentLevel.addEntity(new DashParticle(new Vector2(this.position.x, this.position.y+ 0.5)));
+                }
+                standsOnSemisolid = false;
+            }
+            else if (!hasDashCharge && (onGroundRecently || hitWallRecently)) {
+                canDashCharge = true;
+            }
+            if (dashTime < -dashCooldown && canDashCharge) {
+                hasDashCharge = true;
+            }
+            dashTime -= timeDelta;
         }
         else {
             timeDead += timeDelta;
@@ -102,6 +173,8 @@ public class Player extends Entity{
 
     @Override
     public void kill() {
+        dashTime = 0;
+        hasDashCharge = true;
         super.kill();
     }
 }

@@ -55,7 +55,7 @@ public class DepthScreen extends TerminalScreen {
             for (int y = 0; y < written[0].length; y++) {
                 if (written[x][y]) {
                     super.setCharacter(x, y, blank);
-                    zBuffer[x][y] = 0;
+                    zBuffer[x][y] = Integer.MIN_VALUE;
                 }
                 written[x][y] = false;
             }

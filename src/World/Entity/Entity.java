@@ -19,6 +19,7 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
     boolean dead;
     double timeSinceOnGround = Double.POSITIVE_INFINITY;
     Vector2 enqueuedMovement = new Vector2(0,0);
+    double timeSinceWallHit = Double.POSITIVE_INFINITY;
     public void process(double timeDelta, Input input) {
         position.add(movementStep);
         velocity.add(Vector2.multiply(gravity, timeDelta));
@@ -32,6 +33,7 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
         collisionBox.x = position.x;
         collisionBox.y = position.y;
         timeSinceOnGround += timeDelta;
+        timeSinceWallHit += timeDelta;
     }
 
     public void render(DepthScreen screen) {
@@ -107,6 +109,7 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
     public void applyCollision(Vector2 entryTime) {
         if (entryTime.x < 1) {
             velocity.x = 0;
+            timeSinceWallHit = 0;
         }
         if (entryTime.y < 1) {
             velocity.y = 0;
