@@ -14,8 +14,6 @@ import java.awt.event.KeyEvent;
 public class Player extends Entity{
     double timeDead;
     double jumpBuffer = 0;
-    boolean onGroundRecently = false;
-    boolean hitWallRecently = false;
 
     Direction lastHorizontalDirection = Direction.NONE;
 
@@ -28,6 +26,9 @@ public class Player extends Entity{
     double dashMovement = 0;
     double dashSpeed = 60;
 
+    Direction wallJumpDirection = Direction.NONE;
+    double wallJumpFixedDirectionTime = 0;
+
     public Player() {
         timeDead = 0;
         velocity = new Vector2(0,0);
@@ -35,15 +36,17 @@ public class Player extends Entity{
         depth = 10;
         gravity = new Vector2(0, 60);
         collisionBox = new AABB(position.x - 0.49, position.y - 0.49, 0.98, 0.98);
+        noGravity = false;
     }
 
     @Override
     public void process(double timeDelta, Input input) {
         if (!dead) {
-            onGroundRecently = timeSinceOnGround < 0.1;
-            hitWallRecently = timeSinceWallHit < 0.05;
+            boolean onGroundRecently = timeSinceOnGround < 0.1;
+            boolean hitWallRecently = timeSinceWallHit < 0.05;
+            boolean hitWallSomewhatRecently = timeSinceWallHit < 0.2;
             if (input.getKeyState(KeyEvent.VK_UP)) {
-                jumpBuffer = 0.2;
+                jumpBuffer = 0.05;
             }
             if (jumpBuffer > 0) {
                 jumpBuffer -= timeDelta;
@@ -57,19 +60,42 @@ public class Player extends Entity{
                     velocity.y = 5;
                 }
             }
-            if (jumpBuffer > 0 && onGroundRecently) {
-                velocity.y = -30;
-                timeSinceOnGround = Double.POSITIVE_INFINITY;
+
+            if (jumpBuffer > 0) {
+                boolean rightKey = input.getKeyState(KeyEvent.VK_RIGHT);
+                boolean leftKey = input.getKeyState(KeyEvent.VK_LEFT);
+                Direction possibleWallJumpDirection = rightKey & !leftKey ? Direction.RIGHT : Direction.NONE;
+                possibleWallJumpDirection = leftKey & !rightKey ? Direction.LEFT : possibleWallJumpDirection;
+                if (onGroundRecently) {
+                    velocity.y = -30;
+                    timeSinceOnGround = Double.POSITIVE_INFINITY;
+                }
+                else if (hitWallSomewhatRecently && possibleWallJumpDirection == lastCollisionDirection.opposite()) {
+                    velocity.y = -15;
+                    wallJumpFixedDirectionTime = 0.2;
+                    if (lastCollisionDirection == Direction.RIGHT) {
+                        wallJumpDirection = Direction.LEFT;
+                    }
+                    else if (lastCollisionDirection == Direction.LEFT) {
+                        wallJumpDirection = Direction.RIGHT;
+                    }
+                }
             }
+
             velocity.x = 0;
-            if (input.getKeyState(KeyEvent.VK_LEFT)) {
-                velocity.x -= 20;
+            boolean isWallJumping = wallJumpFixedDirectionTime > 0;
+            boolean wallJumpingLeft = (isWallJumping && wallJumpDirection == Direction.LEFT);
+            boolean wallJumpingRight = (isWallJumping && wallJumpDirection == Direction.RIGHT);
+            if ((input.getKeyState(KeyEvent.VK_LEFT) & ! wallJumpingRight) || wallJumpingLeft) {
+                velocity.x -= isWallJumping ? 30 : 20;
                 lastHorizontalDirection = Direction.LEFT;
             }
-            if (input.getKeyState(KeyEvent.VK_RIGHT)) {
-                velocity.x += 20;
+            if ((input.getKeyState(KeyEvent.VK_RIGHT) & !wallJumpingLeft) || wallJumpingRight) {
+                velocity.x += isWallJumping ? 30 : 20;
                 lastHorizontalDirection = Direction.RIGHT;
             }
+            wallJumpFixedDirectionTime -= timeDelta;
+
             if (input.getKeyState(KeyEvent.VK_DOWN)) {
                 standsOnSemisolid = false;
             }
@@ -92,11 +118,18 @@ public class Player extends Entity{
                     canDashCharge = false;
                     dashTime = maxDashTime;
                     dashMovement = 0;
+                    noGravity = true;
                 }
             }
             //Hit wall, stop dashing
             if (hitWallRecently) {
                 dashTime = 0;
+            }
+            if (dashTime > 0) {
+                noGravity = true;
+            }
+            else {
+                noGravity = false;
             }
             if (dashTime > 0) {
                 if (dashDirection == Direction.LEFT) {

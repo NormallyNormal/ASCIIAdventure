@@ -7,6 +7,7 @@ import World.RenderObject;
 import Render.DepthScreen;
 import Math.Vector2;
 import Math.AABB;
+import Math.Direction;
 
 public abstract class Entity implements CollisionObject, PhysicsObject, RenderObject {
     Vector2 position;
@@ -14,15 +15,19 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
     Vector2 velocity;
     Vector2 movementStep = new Vector2(0,0);
     Vector2 gravity;
+    boolean noGravity = true;
     AABB collisionBox;
     boolean standsOnSemisolid = true;
     boolean dead;
     double timeSinceOnGround = Double.POSITIVE_INFINITY;
     Vector2 enqueuedMovement = new Vector2(0,0);
     double timeSinceWallHit = Double.POSITIVE_INFINITY;
+    Direction lastCollisionDirection = Direction.NONE;
     public void process(double timeDelta, Input input) {
         position.add(movementStep);
-        velocity.add(Vector2.multiply(gravity, timeDelta));
+        if (!noGravity) {
+            velocity.add(Vector2.multiply(gravity, timeDelta));
+        }
         if(enqueuedMovement.isZero()) {
             movementStep = Vector2.multiply(velocity, timeDelta);
         }
@@ -110,11 +115,21 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
         if (entryTime.x < 1) {
             velocity.x = 0;
             timeSinceWallHit = 0;
+            if (movementStep.x > 0) {
+                lastCollisionDirection = Direction.RIGHT;
+            }
+            else {
+                lastCollisionDirection = Direction.LEFT;
+            }
         }
         if (entryTime.y < 1) {
             velocity.y = 0;
             if (movementStep.y > 0) {
                 timeSinceOnGround = 0;
+                lastCollisionDirection = Direction.DOWN;
+            }
+            else {
+                lastCollisionDirection = Direction.UP;
             }
         }
         if(entryTime.x < 1)
