@@ -35,7 +35,6 @@ public class Main {
         screen.startScreen();
 
         Game.currentLevel = new Level();
-        Level transitionLevel = null;
         long currentTime = System.nanoTime();
         long lastTime = System.nanoTime();
         double timeDeltaSeconds;
@@ -49,23 +48,25 @@ public class Main {
 
         boolean running = true;
 
-        int renderXOffset = 0;
-        int renderYOffset = 0;
+        int levelFrameX = 30;
+        int levelFrameY = 30;
+
+        int renderXOffset = -levelFrameX * ScreenConstants.PLAY_SCREEN_WIDTH;
+        int renderYOffset = -levelFrameY * ScreenConstants.PLAY_SCREEN_HEIGHT;
 
         while(running) {
             timeDeltaSeconds = (currentTime - lastTime) * 1.0e-9;
             timeSinceLastFrame += timeDeltaSeconds;
             timeSinceLastTransitionMovement += timeDeltaSeconds;
 
-            Direction outOfBoundsDirection = Game.currentLevel.playerOutOfBounds();
+            Direction outOfBoundsDirection = Game.currentLevel.playerOffScreen(levelFrameX * ScreenConstants.PLAY_SCREEN_WIDTH, levelFrameY * ScreenConstants.PLAY_SCREEN_HEIGHT);
             if(outOfBoundsDirection == Direction.NONE) {
                 Game.currentLevel.process(timeDeltaSeconds, input);
                 timeSinceLastTransitionMovement = 0;
             }
             else{
-                transitionLevel = Game.currentLevel.connectedLevels.get(outOfBoundsDirection);
                 double transitionFrequency = 1/(outOfBoundsDirection.isVertical() ? ScreenConstants.TRANSITION_SPEED_VERTICAL : ScreenConstants.TRANSITION_SPEED_HORIZONTAL);
-                if(transitionLevel != null && timeSinceLastTransitionMovement > transitionFrequency) {
+                if(timeSinceLastTransitionMovement > transitionFrequency) {
                     switch(outOfBoundsDirection) {
                         case UP, DOWN:
                             renderYOffset -= outOfBoundsDirection.toMovement();
@@ -74,43 +75,29 @@ public class Main {
                             renderXOffset -= outOfBoundsDirection.toMovement();
                             break;
                     }
-                    timeSinceLastTransitionMovement -= transitionFrequency;
-                    if(Math.abs(renderYOffset) >= ScreenConstants.PLAY_SCREEN_HEIGHT || Math.abs(renderXOffset) >= ScreenConstants.PLAY_SCREEN_WIDTH) {
-                        Game.currentLevel = transitionLevel;
-                        Game.currentLevel.loopPlayer();
-                        renderYOffset = 0;
-                        renderXOffset = 0;
+                    if (renderXOffset % ScreenConstants.PLAY_SCREEN_WIDTH == 0 && renderYOffset % ScreenConstants.PLAY_SCREEN_HEIGHT == 0) {
+                        switch(outOfBoundsDirection) {
+                            case UP:
+                                levelFrameY--;
+                                break;
+                            case DOWN:
+                                levelFrameY++;
+                                break;
+                            case LEFT:
+                                levelFrameX--;
+                                break;
+                            case RIGHT:
+                                levelFrameX++;
+                                break;
+                        }
                     }
+                    timeSinceLastTransitionMovement -= transitionFrequency;
                 }
             }
             if(timeSinceLastFrame >= 1/ScreenConstants.TARGET_FPS) {
-                Game.currentLevel.render(screen,renderXOffset,renderYOffset);
-                if(outOfBoundsDirection != Direction.NONE && transitionLevel != null) {
-                    switch (outOfBoundsDirection) {
-                        case UP:
-                            transitionLevel.render(screen, renderXOffset, renderYOffset - ScreenConstants.PLAY_SCREEN_HEIGHT);
-                            break;
-                        case DOWN:
-                            transitionLevel.render(screen, renderXOffset, renderYOffset + ScreenConstants.PLAY_SCREEN_HEIGHT);
-                            break;
-                        case LEFT:
-                            transitionLevel.render(screen, renderXOffset - ScreenConstants.PLAY_SCREEN_WIDTH, renderYOffset);
-                            break;
-                        case RIGHT:
-                            transitionLevel.render(screen, renderXOffset + ScreenConstants.PLAY_SCREEN_WIDTH, renderYOffset);
-                            break;
-                    }
-                }
-
-                Game.currentLevel.calcPostShaders();
-                if (transitionLevel != null) {
-                    transitionLevel.calcPostShaders();
-                }
+                Game.currentLevel.render(screen, renderXOffset, renderYOffset);
 
                 Game.currentLevel.applyPostShaders(screen);
-                if (transitionLevel != null) {
-                    transitionLevel.applyPostShaders(screen);
-                }
 
                 screen.drawText(0, 0, 0, 0, 50, "FPS: " + df.format(fps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
                 screen.drawText(0, 1, 0, 0, 50, "TPS: " + df.format(tps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);

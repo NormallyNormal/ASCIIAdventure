@@ -10,13 +10,13 @@ import Math.AABB;
 import Math.Direction;
 
 public abstract class Entity implements CollisionObject, PhysicsObject, RenderObject {
-    Vector2 position;
+    Vector2 position = new Vector2(0, 0);
     int depth;
-    Vector2 velocity;
+    Vector2 velocity = new Vector2(0, 0);;
     Vector2 movementStep = new Vector2(0,0);
-    Vector2 gravity;
+    Vector2 gravity = new Vector2(0, 0);
     boolean noGravity = true;
-    AABB collisionBox;
+    AABB collisionBox = new AABB(0,0, 0 ,0);
     boolean standsOnSemisolid = true;
     boolean dead;
     double timeSinceOnGround = Double.POSITIVE_INFINITY;

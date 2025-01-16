@@ -8,7 +8,5 @@ import World.Platform.WorldObject;
 import java.util.List;
 
 public interface PostShader {
-    public void apply(DepthScreen depthScreen);
-
-    public void calculate(int xOffset, int yOffset, List<Entity> entityList, List<WorldObject> worldObjects, Player player);
+    public void apply(DepthScreen depthScreen, int xOffset, int yOffset, List<Entity> entityList, List<WorldObject> worldObjects, Player player);
 }
