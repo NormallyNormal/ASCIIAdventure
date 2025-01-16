@@ -1,5 +1,6 @@
 import Constants.ScreenConstants;
 import Input.Input;
+import Render.Shader.PostShader;
 import World.Game;
 import World.Level;
 import Render.DepthScreen;
@@ -100,6 +101,17 @@ public class Main {
                             break;
                     }
                 }
+
+                Game.currentLevel.calcPostShaders();
+                if (transitionLevel != null) {
+                    transitionLevel.calcPostShaders();
+                }
+
+                Game.currentLevel.applyPostShaders(screen);
+                if (transitionLevel != null) {
+                    transitionLevel.applyPostShaders(screen);
+                }
+
                 screen.drawText(0, 0, 0, 0, 50, "FPS: " + df.format(fps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
                 screen.drawText(0, 1, 0, 0, 50, "TPS: " + df.format(tps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
 

@@ -41,6 +41,15 @@ public class DepthScreen extends TerminalScreen {
         }
     }
 
+    public synchronized TextCharacter getCharacterInBuffer(int column, int row, int xOffset, int yOffset) {
+        column += xOffset;
+        row += yOffset;
+        if(column < 0 || column >= zBuffer.length || row < 0 || row >= zBuffer[0].length) {
+            return new TextCharacter(' ', TextColor.ANSI.BLACK, TextColor.ANSI.BLACK);
+        }
+        return getBackCharacter(column, row);
+    }
+
     public synchronized void drawText(int column, int row, int xOffset, int yOffset, int depth, String string, TextColor foregroundColor, TextColor backgroundColor) {
         for (int i = 0; i < string.length(); i++) {
             setCharacterWithDepth(column + i, row, xOffset, yOffset, depth, new TextCharacter(string.charAt(i), foregroundColor, backgroundColor));
@@ -60,5 +69,13 @@ public class DepthScreen extends TerminalScreen {
                 written[x][y] = false;
             }
         }
+    }
+
+    public int getDepth(int x, int y) {
+        return zBuffer[x][y];
+    }
+
+    public boolean isWritten(int x, int y) {
+        return written[x][y];
     }
 }

@@ -2,6 +2,8 @@ package World;
 
 import java.util.*;
 
+import Render.Shader.PostShader;
+import Render.Shader.TorchlightPostShader;
 import World.Entity.Entity;
 import World.Entity.Player;
 import Input.Input;
@@ -18,10 +20,15 @@ public class Level {
     private final Deque<Entity> entitiesToRemove;
     private final Player player;
 
+    private final List<PostShader> postShaders;
+
     public final Map<Direction, Level> connectedLevels = new EnumMap<>(Direction.class);
 
     @SuppressWarnings("UnusedAssignment")
     public Level() {
+        postShaders = new ArrayList<PostShader>();
+        addPostShader(new TorchlightPostShader(), 0);
+
         player = new Player();
         worldObjects = new ArrayList<>();
         entities = new ArrayList<>();
@@ -64,13 +71,29 @@ public class Level {
         runPlatformCollisions(player);
     }
 
+    private int lastRenderOffsetX = 0;
+    private int lastRenderOffsetY = 0;
     public void render(DepthScreen screen, int xOffset, int yOffset) {
+        lastRenderOffsetX = xOffset;
+        lastRenderOffsetY = yOffset;
         for (WorldObject worldObject : worldObjects) {
             worldObject.render(screen, xOffset, yOffset);
         }
         player.render(screen, xOffset, yOffset);
         for (Entity entity : entities) {
             entity.render(screen, xOffset, yOffset);
+        }
+    }
+
+    public void calcPostShaders() {
+        for (PostShader shader : postShaders) {
+            shader.calculate(lastRenderOffsetX, lastRenderOffsetY, entities, worldObjects, player);
+        }
+    }
+
+    public void applyPostShaders(DepthScreen screen) {
+        for (PostShader shader : postShaders) {
+            shader.apply(screen);
         }
     }
 
@@ -167,5 +190,9 @@ public class Level {
 
     public void removeEntity(Entity entity) {
         entitiesToRemove.add(entity);
+    }
+
+    public void addPostShader(PostShader shader, int order) {
+        postShaders.add(order, shader);
     }
 }

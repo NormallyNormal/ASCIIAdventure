@@ -11,7 +11,7 @@ import Math.Direction;
 
 import java.awt.event.KeyEvent;
 
-public class Player extends Entity{
+public class Player extends Entity implements GlowingEntity {
     double timeDead;
     double jumpBuffer = 0;
 
@@ -209,5 +209,9 @@ public class Player extends Entity{
         dashTime = 0;
         hasDashCharge = true;
         super.kill();
+    }
+
+    public int glowRadius() {
+        return 10;
     }
 }
