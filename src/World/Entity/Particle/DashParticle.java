@@ -1,7 +1,9 @@
-package World.Entity;
+package World.Entity.Particle;
 
 import Input.Input;
 import Render.DepthScreen;
+import Render.TransparentColor;
+import World.Entity.Entity;
 import World.Game;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
@@ -32,10 +34,10 @@ public class DashParticle extends Entity {
 //        System.out.println("upper:" + upperHalf);
         TextColor renderColor = fadeTime < 0.09 ? TextColor.ANSI.BLUE : TextColor.ANSI.BLUE_BRIGHT;
         if (half_y) {
-            screen.setCharacterWithDepth((int) position.x, upperHalf ? (int) position.y: (int) position.y - 1, xOffset, yOffset, depth, new TextCharacter('ˍ', renderColor, TextColor.ANSI.BLACK));
+            screen.setCharacterWithDepth((int) position.x, upperHalf ? (int) position.y: (int) position.y - 1, xOffset, yOffset, depth, new TextCharacter('ˍ', renderColor, TransparentColor.TRANSPARENT));
         }
         else {
-            screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('-', renderColor, TextColor.ANSI.BLACK));
+            screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('-', renderColor, TransparentColor.TRANSPARENT));
         }
     }
 }

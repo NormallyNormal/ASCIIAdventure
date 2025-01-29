@@ -7,7 +7,7 @@ import Render.Shader.TorchlightPostShader;
 import World.Entity.Entity;
 import World.Entity.Player;
 import Input.Input;
-import World.Entity.Torch;
+import World.Entity.Decoration.Torch;
 import World.Platform.*;
 import Render.DepthScreen;
 import Math.AABB;
@@ -28,12 +28,13 @@ public class Level {
         int startingLocationX = 3600;
         int startingLocationY = 1200;
 
-        postShaders = new ArrayList<PostShader>();
+        postShaders = new ArrayList<>();
         addPostShader(new TorchlightPostShader(), 0);
 
         player = new Player();
         player.getPosition().x = 5 + startingLocationX;
         player.getPosition().y = 34 + startingLocationY;
+        player.setSpawnPosition(new Vector2(5 + startingLocationX, 34 + startingLocationY));
         worldObjects = new ArrayList<>();
         entities = new ArrayList<>();
         entitiesToRemove = new ArrayDeque<>();
@@ -70,6 +71,10 @@ public class Level {
         worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + -5, 5, 1), currentId++, true));
         worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + -10, 5, 1), currentId++, true));
         worldObjects.add(new StaticObject(new AABB(startingLocationX + 0, startingLocationY + -15, 120, 1), currentId++, true));
+
+        worldObjects.add(new StaticHazardObject(new AABB(startingLocationX + 125, startingLocationY + 34, 110, 1), currentId++));
+
+        worldObjects.add(new MovingObject(new AABB(startingLocationX + 125, startingLocationY + 32, 10, 2), currentId++, 105, 0, 0.2));
 
         entities.add(new Torch(startingLocationX + 30, startingLocationY + 30));
     }

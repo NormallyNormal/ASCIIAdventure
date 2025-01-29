@@ -10,19 +10,19 @@ import Math.AABB;
 import Math.Direction;
 
 public abstract class Entity implements CollisionObject, PhysicsObject, RenderObject {
-    Vector2 position = new Vector2(0, 0);
-    int depth;
-    Vector2 velocity = new Vector2(0, 0);;
-    Vector2 movementStep = new Vector2(0,0);
-    Vector2 gravity = new Vector2(0, 0);
-    boolean noGravity = true;
-    AABB collisionBox = new AABB(0,0, 0 ,0);
-    boolean standsOnSemisolid = true;
-    boolean dead;
-    double timeSinceOnGround = Double.POSITIVE_INFINITY;
-    Vector2 enqueuedMovement = new Vector2(0,0);
-    double timeSinceWallHit = Double.POSITIVE_INFINITY;
-    Direction lastCollisionDirection = Direction.NONE;
+    protected Vector2 position = new Vector2(0, 0);
+    protected int depth;
+    protected Vector2 velocity = new Vector2(0, 0);;
+    protected Vector2 movementStep = new Vector2(0,0);
+    protected Vector2 gravity = new Vector2(0, 0);
+    protected boolean noGravity = true;
+    protected AABB collisionBox = new AABB(0,0, 0 ,0);
+    protected boolean standsOnSemisolid = true;
+    protected boolean dead;
+    protected double timeSinceOnGround = Double.POSITIVE_INFINITY;
+    protected Vector2 enqueuedMovement = new Vector2(0,0);
+    protected double timeSinceWallHit = Double.POSITIVE_INFINITY;
+    protected Direction lastCollisionDirection = Direction.NONE;
     public void process(double timeDelta, Input input) {
         position.add(movementStep);
         if (!noGravity) {

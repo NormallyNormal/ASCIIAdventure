@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         // Setup terminal and screen layers
         SwingTerminalFrame terminal = new DefaultTerminalFactory().setInitialTerminalSize(new TerminalSize(ScreenConstants.PLAY_SCREEN_WIDTH,ScreenConstants.PLAY_SCREEN_HEIGHT)).createSwingTerminal();
 
@@ -55,7 +55,12 @@ public class Main {
         int renderYOffset = -levelFrameY * ScreenConstants.PLAY_SCREEN_HEIGHT;
 
         while(running) {
+            input.newFrame();
             timeDeltaSeconds = (currentTime - lastTime) * 1.0e-9;
+            if (timeDeltaSeconds > 0.1) {
+                lastTime = currentTime;
+                continue;
+            }
             timeSinceLastFrame += timeDeltaSeconds;
             timeSinceLastTransitionMovement += timeDeltaSeconds;
 
@@ -95,29 +100,37 @@ public class Main {
                 }
             }
             if(timeSinceLastFrame >= 1/ScreenConstants.TARGET_FPS) {
+                screen.clear();
                 Game.currentLevel.render(screen, renderXOffset, renderYOffset);
 
                 Game.currentLevel.applyPostShaders(screen);
 
-                screen.drawText(0, 0, 0, 0, 50, "FPS: " + df.format(fps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
-                screen.drawText(0, 1, 0, 0, 50, "TPS: " + df.format(tps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
+                screen.drawText(0, 0, 0, 0, Integer.MAX_VALUE, "FPS: " + df.format(fps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
+                screen.drawText(0, 1, 0, 0, Integer.MAX_VALUE, "TPS: " + df.format(tps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
+
 
                 screen.refresh();
-                screen.clear();
 
                 fps = fps * 0.9 + 0.1 * (1/timeSinceLastFrame);
                 timeSinceLastFrame -= 1/ScreenConstants.TARGET_FPS;
             }
             terminal.requestFocusInWindow();
-            lastTime = currentTime;
-            currentTime = System.nanoTime();
 
             //Complementary filter
             tps = tps * 0.9 + 0.1 * (1/timeDeltaSeconds);
+            if (Double.isInfinite(tps)) {
+                tps = 0;
+            }
 
             if (input.getKeyState(KeyEvent.VK_ESCAPE)) {
                 running = false;
             }
+
+//            Thread.sleep(0, 0);
+
+
+            lastTime = currentTime;
+            currentTime = System.nanoTime();
         }
         terminal.close();
     }

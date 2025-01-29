@@ -2,14 +2,15 @@ package World.Entity;
 
 import Input.Input;
 import Render.DepthScreen;
+import Render.TransparentColor;
+import World.Entity.Particle.DashParticle;
 import World.Game;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 import Math.Vector2;
 import Math.AABB;
 import Math.Direction;
-
-import java.awt.event.KeyEvent;
+import Settings.Keybinds;
 
 public class Player extends Entity implements GlowingEntity {
     double timeDead;
@@ -23,11 +24,13 @@ public class Player extends Entity implements GlowingEntity {
     Direction dashDirection = Direction.NONE;
     double maxDashTime = 0.2;
     double dashCooldown = 0.4;
-    double dashMovement = 0;
+    int lastDashXPos = Integer.MIN_VALUE;
     double dashSpeed = 60;
 
     Direction wallJumpDirection = Direction.NONE;
     double wallJumpFixedDirectionTime = 0;
+
+    Vector2 spawnPosition = new Vector2(0, 0);
 
     public Player() {
         timeDead = 0;
@@ -45,13 +48,13 @@ public class Player extends Entity implements GlowingEntity {
             boolean onGroundRecently = timeSinceOnGround < 0.1;
             boolean hitWallRecently = timeSinceWallHit < 0.05;
             boolean hitWallSomewhatRecently = timeSinceWallHit < 0.2;
-            if (input.getKeyState(KeyEvent.VK_UP)) {
+            if (input.getKeyState(Keybinds.player_jump)) {
                 jumpBuffer = 0.05;
             }
             if (jumpBuffer > 0) {
                 jumpBuffer -= timeDelta;
             }
-            if (!input.getKeyState(KeyEvent.VK_UP) && velocity.y < 0) {
+            if (!input.getKeyState(Keybinds.player_jump) && velocity.y < 0) {
                 velocity.y = 0;
             }
             //Wall slide
@@ -62,8 +65,8 @@ public class Player extends Entity implements GlowingEntity {
             }
 
             if (jumpBuffer > 0) {
-                boolean rightKey = input.getKeyState(KeyEvent.VK_RIGHT);
-                boolean leftKey = input.getKeyState(KeyEvent.VK_LEFT);
+                boolean rightKey = input.getKeyState(Keybinds.player_right);
+                boolean leftKey = input.getKeyState(Keybinds.player_left);
                 Direction possibleWallJumpDirection = rightKey & !leftKey ? Direction.RIGHT : Direction.NONE;
                 possibleWallJumpDirection = leftKey & !rightKey ? Direction.LEFT : possibleWallJumpDirection;
                 if (onGroundRecently) {
@@ -86,30 +89,30 @@ public class Player extends Entity implements GlowingEntity {
             boolean isWallJumping = wallJumpFixedDirectionTime > 0;
             boolean wallJumpingLeft = (isWallJumping && wallJumpDirection == Direction.LEFT);
             boolean wallJumpingRight = (isWallJumping && wallJumpDirection == Direction.RIGHT);
-            if ((input.getKeyState(KeyEvent.VK_LEFT) & ! wallJumpingRight) || wallJumpingLeft) {
+            if ((input.getKeyState(Keybinds.player_left) & ! wallJumpingRight) || wallJumpingLeft) {
                 velocity.x -= isWallJumping ? 30 : 20;
                 lastHorizontalDirection = Direction.LEFT;
             }
-            if ((input.getKeyState(KeyEvent.VK_RIGHT) & !wallJumpingLeft) || wallJumpingRight) {
+            if ((input.getKeyState(Keybinds.player_right) & !wallJumpingLeft) || wallJumpingRight) {
                 velocity.x += isWallJumping ? 30 : 20;
                 lastHorizontalDirection = Direction.RIGHT;
             }
             wallJumpFixedDirectionTime -= timeDelta;
 
-            if (input.getKeyState(KeyEvent.VK_DOWN)) {
+            if (input.getKeyState(Keybinds.player_down)) {
                 standsOnSemisolid = false;
             }
             else {
                 standsOnSemisolid = true;
             }
 
-            if (input.getKeyState(KeyEvent.VK_SHIFT) && hasDashCharge && !hitWallRecently) {
+            if (input.getKeyState(Keybinds.player_dash) && hasDashCharge && !hitWallRecently) {
                 boolean madeDash = false;
-                if (lastHorizontalDirection == Direction.LEFT && !input.getKeyState(KeyEvent.VK_RIGHT)) {
+                if (lastHorizontalDirection == Direction.LEFT && !input.getKeyState(Keybinds.player_right)) {
                     dashDirection = Direction.LEFT;
                     madeDash = true;
                 }
-                if (lastHorizontalDirection == Direction.RIGHT && !input.getKeyState(KeyEvent.VK_LEFT)) {
+                if (lastHorizontalDirection == Direction.RIGHT && !input.getKeyState(Keybinds.player_left)) {
                     dashDirection = Direction.RIGHT;
                     madeDash = true;
                 }
@@ -117,7 +120,7 @@ public class Player extends Entity implements GlowingEntity {
                     hasDashCharge = false;
                     canDashCharge = false;
                     dashTime = maxDashTime;
-                    dashMovement = 0;
+                    lastDashXPos = Integer.MIN_VALUE;
                     noGravity = true;
                 }
             }
@@ -140,10 +143,9 @@ public class Player extends Entity implements GlowingEntity {
                     velocity.x = dashSpeed;
                     velocity.y = 0;
                 }
-                dashMovement += dashSpeed * timeDelta;
-                if (dashMovement >= 1) {
-                    dashMovement -= 1;
-                    Game.currentLevel.addEntity(new DashParticle(new Vector2(this.position.x, this.position.y+ 0.5)));
+                if (lastDashXPos != Math.floor(position.x)) {
+                    lastDashXPos = (int)Math.floor(position.x);
+                    Game.currentLevel.addEntity(new DashParticle(new Vector2(this.position.x, this.position.y + 0.5)));
                 }
                 standsOnSemisolid = false;
             }
@@ -159,7 +161,7 @@ public class Player extends Entity implements GlowingEntity {
             timeDead += timeDelta;
             if(timeDead > 1) {
                 dead = false;
-                position = new Vector2(5.5,5.5);
+                position = new Vector2(spawnPosition.x,spawnPosition.y);
                 gravity = new Vector2(0, 60);
                 timeDead = 0;
             }
@@ -178,28 +180,28 @@ public class Player extends Entity implements GlowingEntity {
 
         if (dead) {
             if (timeDead < 0.15)
-                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('█', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
+                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('█', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
             else if (timeDead < 0.3)
-                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('▓', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
+                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('▓', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
             else if (timeDead < 0.45)
-                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('▒', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
+                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('▒', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
             else if (timeDead < 0.6)
-                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('░', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
+                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('░', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
         }
         else {
             if (!half_x && !half_y) {
-                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('█', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
+                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('█', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
             } else if (half_x && !half_y) {
-                screen.setCharacterWithDepth((int) round_x - 1, (int) position.y, xOffset, yOffset, depth, new TextCharacter('▐', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
-                screen.setCharacterWithDepth((int) round_x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('▌', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
+                screen.setCharacterWithDepth((int) round_x - 1, (int) position.y, xOffset, yOffset, depth, new TextCharacter('▐', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
+                screen.setCharacterWithDepth((int) round_x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('▌', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
             } else if (!half_x) {
-                screen.setCharacterWithDepth((int) position.x, (int) round_y - 1, xOffset, yOffset, depth, new TextCharacter('▄', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
-                screen.setCharacterWithDepth((int) position.x, (int) round_y, xOffset, yOffset, depth, new TextCharacter('▀', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
+                screen.setCharacterWithDepth((int) position.x, (int) round_y - 1, xOffset, yOffset, depth, new TextCharacter('▄', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
+                screen.setCharacterWithDepth((int) position.x, (int) round_y, xOffset, yOffset, depth, new TextCharacter('▀', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
             } else {
-                screen.setCharacterWithDepth((int) round_x - 1, (int) round_y - 1, xOffset, yOffset, depth, new TextCharacter('▗', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
-                screen.setCharacterWithDepth((int) round_x, (int) round_y - 1, xOffset, yOffset, depth, new TextCharacter('▖', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
-                screen.setCharacterWithDepth((int) round_x - 1, (int) round_y, xOffset, yOffset, depth, new TextCharacter('▝', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
-                screen.setCharacterWithDepth((int) round_x, (int) round_y, xOffset, yOffset, depth, new TextCharacter('▘', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
+                screen.setCharacterWithDepth((int) round_x - 1, (int) round_y - 1, xOffset, yOffset, depth, new TextCharacter('▗', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
+                screen.setCharacterWithDepth((int) round_x, (int) round_y - 1, xOffset, yOffset, depth, new TextCharacter('▖', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
+                screen.setCharacterWithDepth((int) round_x - 1, (int) round_y, xOffset, yOffset, depth, new TextCharacter('▝', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
+                screen.setCharacterWithDepth((int) round_x, (int) round_y, xOffset, yOffset, depth, new TextCharacter('▘', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
             }
         }
     }
@@ -211,7 +213,11 @@ public class Player extends Entity implements GlowingEntity {
         super.kill();
     }
 
-    public int glowRadius() {
-        return 10;
+    public double glowRadius() {
+        return 9 * (1-timeDead) + 1;
+    }
+
+    public void setSpawnPosition(Vector2 spawnPosition) {
+        this.spawnPosition = spawnPosition;
     }
 }
