@@ -20,7 +20,7 @@ public class Input implements KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
-        // Not used in this example
+        // Unused!
     }
 
     @Override
@@ -38,9 +38,5 @@ public class Input implements KeyListener {
 
     public boolean getKeyState(int keyCode) {
         return keyState.get(keyCode) != null ? keyState.get(keyCode) : false;
-    }
-
-    public boolean getKeyPressed(int keycode) {
-        return keyPressed.contains(keycode);
     }
 }

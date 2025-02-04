@@ -20,7 +20,9 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
     protected boolean standsOnSemisolid = true;
     protected boolean dead;
     protected double timeSinceOnGround = Double.POSITIVE_INFINITY;
+
     protected Vector2 enqueuedMovement = new Vector2(0,0);
+
     protected double timeSinceWallHit = Double.POSITIVE_INFINITY;
     protected Direction lastCollisionDirection = Direction.NONE;
     public void process(double timeDelta, Input input) {
@@ -34,7 +36,7 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
         else {
             movementStep.add(enqueuedMovement);
         }
-        enqueuedMovement = new Vector2(0,0);
+        enqueuedMovement.zero();
         collisionBox.x = position.x;
         collisionBox.y = position.y;
         timeSinceOnGround += timeDelta;
@@ -94,16 +96,16 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
     public Vector2 getEntryTime(AABB platform) {
         Vector2 entryDistance = getEntryDistance(platform);
         Vector2 entryTime = new Vector2(0,0);
-        entryTime.x = Math.abs(entryDistance.x/ movementStep.x);
-        entryTime.y = Math.abs(entryDistance.y/ movementStep.y);
+        entryTime.x = Math.nextDown(Math.abs(entryDistance.x/ movementStep.x));
+        entryTime.y = Math.nextDown(Math.abs(entryDistance.y/ movementStep.y));
         return entryTime;
     }
 
     public Vector2 getExitTime(AABB platform) {
         Vector2 exitDistance = getExitDistance(platform);
         Vector2 exitTime = new Vector2(0,0);
-        exitTime.x = Math.abs(exitDistance.x/ movementStep.x);
-        exitTime.y = Math.abs(exitDistance.y/ movementStep.y);
+        exitTime.x = Math.nextUp(Math.abs(exitDistance.x/ movementStep.x));
+        exitTime.y = Math.nextUp(Math.abs(exitDistance.y/ movementStep.y));
         return exitTime;
     }
 
@@ -133,9 +135,9 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
             }
         }
         if(entryTime.x < 1)
-            movementStep.x *= entryTime.x - 0.05;
+            movementStep.x *= entryTime.x;
         if(entryTime.y < 1)
-            movementStep.y *= entryTime.y - 0.05;
+            movementStep.y *= entryTime.y;
     }
 
     public AABB getCollisionBox() {
@@ -164,5 +166,34 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
 
     public void enqueueMovement(Vector2 movement) {
         enqueuedMovement.add(movement);
+    }
+
+    public void simulateEnqueueMovement() {
+
+    }
+
+    public boolean hasEnqueuedMovement() {
+        return !enqueuedMovement.isZero();
+    }
+
+    public void clearMovementStep() {
+        movementStep.zero();
+    }
+
+    public void clearMovementStep(Direction direction) {
+        switch (direction) {
+            case LEFT:
+                movementStep.x = Math.min(movementStep.x, 0);
+                break;
+            case RIGHT:
+                movementStep.x = Math.max(movementStep.x, 0);
+                break;
+            case UP:
+                movementStep.y = Math.min(movementStep.y, 0);
+                break;
+            case DOWN:
+                movementStep.y = Math.max(movementStep.y, 0);
+                break;
+        }
     }
 }

@@ -5,6 +5,7 @@ import java.util.*;
 import Render.Shader.PostShader;
 import Render.Shader.TorchlightPostShader;
 import World.Entity.Entity;
+import World.Entity.NPC;
 import World.Entity.Player;
 import Input.Input;
 import World.Entity.Decoration.Torch;
@@ -29,7 +30,7 @@ public class Level {
         int startingLocationY = 1200;
 
         postShaders = new ArrayList<>();
-        addPostShader(new TorchlightPostShader(), 0);
+        //addPostShader(new TorchlightPostShader(), 0);
 
         player = new Player();
         player.getPosition().x = 5 + startingLocationX;
@@ -74,9 +75,19 @@ public class Level {
 
         worldObjects.add(new StaticHazardObject(new AABB(startingLocationX + 125, startingLocationY + 34, 110, 1), currentId++));
 
-        worldObjects.add(new MovingObject(new AABB(startingLocationX + 125, startingLocationY + 32, 10, 2), currentId++, 105, 0, 0.2));
+        worldObjects.add(new MovingObject(new AABB(startingLocationX + 70, startingLocationY + 33, 10, 2), currentId++, 25, 0, 0.2));
+
+        worldObjects.add(new MovingObject(new AABB(startingLocationX + 125, startingLocationY + 32, 10, 2), currentId++, 25, 0, 0.2));
+        worldObjects.add(new MovingObject(new AABB(startingLocationX + 125 + 25, startingLocationY + 32, 10, 2), currentId++, 25, 0, 0.2));
+        worldObjects.add(new MovingObject(new AABB(startingLocationX + 125 + 50, startingLocationY + 32, 10, 2), currentId++, 25, 0, 0.2));
+        worldObjects.add(new MovingObject(new AABB(startingLocationX + 125 + 75, startingLocationY + 32, 10, 2), currentId++, 25, 0, 0.2));
+        worldObjects.add(new MovingObject(new AABB(startingLocationX + 125 + 70, startingLocationY + 30, 10, 2), currentId++, 25, 0, 0.2));
+
+        worldObjects.add(new MovingObject(new AABB(startingLocationX + -50, startingLocationY + 33, 10, 2), currentId++, 0, 10, 0.2));
 
         entities.add(new Torch(startingLocationX + 30, startingLocationY + 30));
+
+        entities.add(new NPC(startingLocationX + 60, startingLocationY + 34));
     }
 
     public void process(double timeDeltaSeconds, Input input) {
@@ -87,11 +98,11 @@ public class Level {
         while (!entitiesToRemove.isEmpty()) {
             entities.remove(entitiesToRemove.pop());
         }
-        checkInsidePlatform(player);
         for (WorldObject worldObject : worldObjects) {
             worldObject.process(timeDeltaSeconds, this);
         }
         runPlatformCollisions(player);
+//        checkInsidePlatform(player);
     }
 
     private int lastRenderOffsetX = 0;
@@ -118,7 +129,7 @@ public class Level {
         for (WorldObject worldObject : worldObjects) {
             if(worldObject.isSolid() && !worldObject.isSemiSolid() && worldObject.getCollisionBox().overlaps(entity.getCollisionBox())) {
                 double area = entity.getCollisionBox().overlapArea(worldObject.getCollisionBox());
-                if (area > entity.getCollisionBox().area() * 0.7) {
+                if (area > entity.getCollisionBox().area() * 0.7 && !entity.hasEnqueuedMovement()) {
                     entity.kill();
                 }
             }
@@ -201,5 +212,9 @@ public class Level {
 
     public void addPostShader(PostShader shader, int order) {
         postShaders.add(order, shader);
+    }
+
+    public boolean playerNear(Vector2 position, double radius) {
+        return Vector2.subtract(position, player.getPosition()).magnitudeSquared() < radius * radius;
     }
 }

@@ -15,6 +15,16 @@ public enum Direction {
         };
     }
 
+    public Vector2 toMovementVector() {
+        return switch (this) {
+            case UP -> new Vector2(0,-1);
+            case DOWN -> new Vector2(0,1);
+            case LEFT -> new Vector2(-1,0);
+            case RIGHT -> new Vector2(1,0);
+            default -> new Vector2(0,0);
+        };
+    }
+
     public Direction opposite() {
         return switch (this) {
             case UP -> DOWN;

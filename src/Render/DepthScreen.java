@@ -1,5 +1,6 @@
 package Render;
 
+import UI.ColorfulText;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
@@ -7,6 +8,7 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class DepthScreen extends TerminalScreen {
     int[][] zBuffer;
@@ -61,7 +63,8 @@ public class DepthScreen extends TerminalScreen {
         if(column < 0 || column >= zBuffer.length || row < 0 || row >= zBuffer[0].length) {
             return new TextCharacter(' ', TextColor.ANSI.BLACK, TextColor.ANSI.BLACK);
         }
-        return getBackCharacter(column, row);
+        TextCharacter character = getBackCharacter(column, row);
+        return Objects.requireNonNullElseGet(character, () -> new TextCharacter(' ', TextColor.ANSI.BLACK, TextColor.ANSI.BLACK));
     }
 
     public synchronized void drawText(int column, int row, int xOffset, int yOffset, int depth, String string, TextColor foregroundColor, TextColor backgroundColor) {
@@ -70,9 +73,9 @@ public class DepthScreen extends TerminalScreen {
         }
     }
 
-    public synchronized void drawTextAdvanced(int column, int row, int xOffset, int yOffset, int depth, String string, TextColor foregroundColor, TextColor backgroundColor, int rowLength, int maxChars) {
-        for (int i = 0; i < string.length() && i < maxChars; i++) {
-            setCharacterWithDepth(column + i, row + (i / rowLength), xOffset, yOffset, depth, new TextCharacter(string.charAt(i), foregroundColor, backgroundColor));
+    public synchronized void drawTextAdvanced(int column, int row, int xOffset, int yOffset, int depth, ColorfulText text, TextColor foregroundColor, TextColor backgroundColor, int rowLength, int maxChars) {
+        for (int i = 0; i < text.length() && i < maxChars; i++) {
+            setCharacterWithDepth((column + i % (rowLength)), row + (i / rowLength), xOffset, yOffset, depth, new TextCharacter(text.charAt(i), text.colorAt(i), backgroundColor));
         }
     }
 

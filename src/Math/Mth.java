@@ -10,6 +10,15 @@ public class Mth {
     }
 
     public static double screenDistance(double x, double y) {
-        return Math.sqrt(Math.pow(x, 2) + Math.pow(2 * y, 2));
+        return Math.sqrt(x * x + 4 * y * y);
+    }
+
+    public static double towardsZeroBy(double a, double b) {
+        if (a > 0) {
+            return Math.max(0, a - b);
+        } else if (a < 0) {
+            return Math.min(0, a - b);
+        }
+        return 0;
     }
 }

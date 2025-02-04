@@ -56,6 +56,16 @@ public class Vector2 {
         this.y /= scalar;
     }
 
+    public void moveTowardsZeroBy(Vector2 vector2) {
+        this.x = Mth.towardsZeroBy(this.x, vector2.x);
+        this.y = Mth.towardsZeroBy(this.y, vector2.y);
+    }
+
+    public void zero() {
+        this.x = 0;
+        this.y = 0;
+    }
+
     public double magnitude() {
         return Math.sqrt(x * x + y * y);
     }

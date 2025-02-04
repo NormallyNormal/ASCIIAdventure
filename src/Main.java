@@ -1,6 +1,5 @@
 import Constants.ScreenConstants;
 import Input.Input;
-import Render.Shader.PostShader;
 import World.Game;
 import World.Level;
 import Render.DepthScreen;

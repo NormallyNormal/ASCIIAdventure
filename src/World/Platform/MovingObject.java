@@ -69,31 +69,41 @@ public class MovingObject extends StaticObject {
                 switch (xDirection) {
                     case LEFT:
                         entity.enqueueMovement(new Vector2(-1, 0));
+                        entity.getPosition().y = Math.nextDown(collisionBox.y - entity.getCollisionBox().h);
                         break;
                     case RIGHT:
                         entity.enqueueMovement(new Vector2(1, 0));
+                        entity.getPosition().y = Math.nextDown(collisionBox.y - entity.getCollisionBox().h);
                         break;
                 }
             }
         }
-        else if (xSteps > 0 && movedThisFrame && entity.getPosition().y + entity.getCollisionBox().h > collisionBox.y && entity.getPosition().y < collisionBox.y + collisionBox.h)
+        else if (xSteps > 0 && movedThisFrame && entity.getPosition().y + entity.getCollisionBox().h > collisionBox.y && entity.getPosition().y < collisionBox.y + collisionBox.h) {
             switch (xDirection) {
                 case LEFT:
-                    entity.getPosition().x = collisionBox.x - entity.getCollisionBox().w - 0.1;
+                    if (entity.getPosition().x < collisionBox.x + collisionBox.w)
+                        entity.getPosition().x = Math.nextDown(collisionBox.x - entity.getCollisionBox().w);
                     break;
                 case RIGHT:
-                    entity.getPosition().x = collisionBox.x + collisionBox.w + 0.1;
+                    if (entity.getPosition().x > collisionBox.x)
+                        entity.getPosition().x = Math.nextUp(collisionBox.x + collisionBox.w);
                     break;
             }
-        if(ySteps > 0 && movedThisFrame && entity.getPosition().x + entity.getCollisionBox().w > collisionBox.x && entity.getPosition().x < collisionBox.x + collisionBox.w)
+            entity.clearMovementStep();
+        }
+        if(ySteps > 0 && movedThisFrame && entity.getPosition().x + entity.getCollisionBox().w > collisionBox.x && entity.getPosition().x < collisionBox.x + collisionBox.w) {
             switch (yDirection) {
                 case UP:
-                    entity.getPosition().y = collisionBox.y - entity.getCollisionBox().h - 0.1;
+                    if (entity.getPosition().y < collisionBox.y + collisionBox.h)
+                        entity.getPosition().y = Math.nextDown(collisionBox.y - entity.getCollisionBox().h);
                     break;
                 case DOWN:
-                    entity.getPosition().y = collisionBox.y + collisionBox.h + 0.1;
+                    if (entity.getPosition().y > collisionBox.y)
+                        entity.getPosition().y = Math.nextUp(collisionBox.y + collisionBox.h);
                     break;
             }
+            entity.clearMovementStep();
+        }
         super.collisionEffect(entity, level);
     }
 }
