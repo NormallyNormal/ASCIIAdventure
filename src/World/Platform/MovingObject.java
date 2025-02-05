@@ -81,15 +81,19 @@ public class MovingObject extends StaticObject {
         else if (xSteps > 0 && movedThisFrame && entity.getPosition().y + entity.getCollisionBox().h > collisionBox.y && entity.getPosition().y < collisionBox.y + collisionBox.h) {
             switch (xDirection) {
                 case LEFT:
-                    if (entity.getPosition().x < collisionBox.x + collisionBox.w)
+                    if (entity.getPosition().x < collisionBox.x + collisionBox.w) {
                         entity.getPosition().x = Math.nextDown(collisionBox.x - entity.getCollisionBox().w);
+                        entity.clearMovementStep();
+                    }
                     break;
                 case RIGHT:
-                    if (entity.getPosition().x > collisionBox.x)
+                    if (entity.getPosition().x > collisionBox.x) {
                         entity.getPosition().x = Math.nextUp(collisionBox.x + collisionBox.w);
+                        entity.clearMovementStep();
+                    }
                     break;
             }
-            entity.clearMovementStep();
+
         }
         if(ySteps > 0 && movedThisFrame && entity.getPosition().x + entity.getCollisionBox().w > collisionBox.x && entity.getPosition().x < collisionBox.x + collisionBox.w) {
             switch (yDirection) {

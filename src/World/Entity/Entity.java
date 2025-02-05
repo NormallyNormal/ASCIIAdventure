@@ -135,9 +135,9 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
             }
         }
         if(entryTime.x < 1)
-            movementStep.x *= entryTime.x;
+            movementStep.x *= Math.min(0, entryTime.x - 0.01);
         if(entryTime.y < 1)
-            movementStep.y *= entryTime.y;
+            movementStep.y *= Math.min(0, entryTime.y - 0.01);
     }
 
     public AABB getCollisionBox() {
