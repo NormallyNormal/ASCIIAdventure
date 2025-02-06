@@ -75,7 +75,7 @@ public class Level {
 
         worldObjects.add(new StaticHazardObject(new AABB(startingLocationX + 125, startingLocationY + 34, 110, 1), currentId++));
 
-        worldObjects.add(new MovingObject(new AABB(startingLocationX + 70, startingLocationY + 33, 10, 2), currentId++, 25, 0, 0.2));
+        worldObjects.add(new MovingObject(new AABB(startingLocationX + 70, startingLocationY + 33, 10, 2), currentId++, 30, 0, 0.2));
         worldObjects.add(new StaticObject(new AABB(startingLocationX + 106, startingLocationY + 30, 2, 5), currentId++));
         worldObjects.add(new StaticObject(new AABB(startingLocationX + 106, startingLocationY + 28, 2, 2), currentId++));
         //worldObjects.add(new MovingObject(new AABB(startingLocationX + 45, startingLocationY + 33, 15, 2), currentId++, 1, 0, 0.001));

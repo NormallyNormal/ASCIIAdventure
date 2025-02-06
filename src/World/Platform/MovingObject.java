@@ -31,14 +31,14 @@ public class MovingObject extends StaticObject {
         this.semiSolid = semiSolid;
     }
 
-    boolean movesThisFrame = false;
+    boolean movesNextFrame = false;
     boolean movedThisFrame = false;
     @Override
     public void process(double timeDeltaSeconds, Level level) {
         timeSinceLastMovement += timeDeltaSeconds;
         movedThisFrame = false;
-        if(movesThisFrame) {
-            movesThisFrame = false;
+        if(movesNextFrame) {
+            movesNextFrame = false;
             movedThisFrame = true;
             if(xSteps > 0) {
                 collisionBox.x += xDirection.toMovement();
@@ -50,7 +50,7 @@ public class MovingObject extends StaticObject {
             }
         }
         if(timeSinceLastMovement >= speed) {
-            movesThisFrame = true;
+            movesNextFrame = true;
             timeSinceLastMovement -= speed;
             if((xStepsMade >= xSteps && xDirection == Direction.RIGHT) || (xStepsMade <= 0 && xDirection == Direction.LEFT)) {
                 xDirection = xDirection.opposite();
@@ -64,8 +64,9 @@ public class MovingObject extends StaticObject {
 
     @Override
     public void collisionEffect(Entity entity, Level level) {
-        if(entity.getCollisionBox().y + entity.getCollisionBox().h <= collisionBox.y) {
-            if (xSteps > 0 && movesThisFrame) {
+        if(entity.getCollisionBox().y + entity.getCollisionBox().h <= collisionBox.y + 0.1) {
+            if (xSteps > 0 && movesNextFrame) {
+                entity.setMinInvincibleTicks(2);
                 switch (xDirection) {
                     case LEFT:
                         entity.enqueueMovement(new Vector2(-1, 0));
