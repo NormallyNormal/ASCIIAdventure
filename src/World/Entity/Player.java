@@ -4,6 +4,7 @@ import Input.Input;
 import Render.DepthScreen;
 import Render.TransparentColor;
 import World.Entity.Particle.DashParticle;
+import World.Entity.Particle.ExtraJumpParticle;
 import World.Game;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
@@ -26,6 +27,11 @@ public class Player extends Entity implements GlowingEntity {
     double dashCooldown = 0.4;
     int lastDashXPos = Integer.MIN_VALUE;
     double dashSpeed = 60;
+
+    int extraJumps = 0;
+    int maxExtraJumps = 1;
+    boolean jumpKeyReleasedInAir = false;
+    boolean stopVerticalVelocityAllowed = true;
 
     Direction wallJumpDirection = Direction.NONE;
     double wallJumpFixedDirectionTime = 0;
@@ -51,11 +57,9 @@ public class Player extends Entity implements GlowingEntity {
             if (input.getKeyState(Keybinds.player_jump)) {
                 jumpBuffer = 0.05;
             }
-            if (jumpBuffer > 0) {
-                jumpBuffer -= timeDelta;
-            }
-            if (!input.getKeyState(Keybinds.player_jump) && velocity.y < 0) {
+            if (!input.getKeyState(Keybinds.player_jump) && velocity.y < 0 && stopVerticalVelocityAllowed) {
                 velocity.y = 0;
+                jumpKeyReleasedInAir = true;
             }
             //Wall slide
             if (timeSinceWallHit < 0.05) {
@@ -63,8 +67,8 @@ public class Player extends Entity implements GlowingEntity {
                     velocity.y = 5;
                 }
             }
-
             if (jumpBuffer > 0) {
+                jumpBuffer -= timeDelta;
                 boolean rightKey = input.getKeyState(Keybinds.player_right);
                 boolean leftKey = input.getKeyState(Keybinds.player_left);
                 Direction possibleWallJumpDirection = rightKey & !leftKey ? Direction.RIGHT : Direction.NONE;
@@ -84,6 +88,19 @@ public class Player extends Entity implements GlowingEntity {
                     }
                 }
             }
+            if (extraJumps > 0 && velocity.y >= 0 && input.getKeyState(Keybinds.player_jump) && !hitWallSomewhatRecently && jumpKeyReleasedInAir && dashTime <= 0) {
+                extraJumps--;
+                velocity.y = -20;
+                stopVerticalVelocityAllowed = false;
+                Game.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x, this.position.y + 0.5), Direction.LEFT));
+                Game.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x, this.position.y + 0.5), Direction.RIGHT));
+            }
+
+            if (onGroundRecently) {
+                extraJumps = maxExtraJumps;
+                stopVerticalVelocityAllowed = true;
+                jumpKeyReleasedInAir = false;
+            }
 
             velocity.x = 0;
             boolean isWallJumping = wallJumpFixedDirectionTime > 0;
@@ -99,12 +116,7 @@ public class Player extends Entity implements GlowingEntity {
             }
             wallJumpFixedDirectionTime -= timeDelta;
 
-            if (input.getKeyState(Keybinds.player_down)) {
-                standsOnSemisolid = false;
-            }
-            else {
-                standsOnSemisolid = true;
-            }
+            standsOnSemisolid = !input.getKeyState(Keybinds.player_down);
 
             if (input.getKeyState(Keybinds.player_dash) && hasDashCharge && !hitWallRecently) {
                 boolean madeDash = false;
@@ -121,7 +133,6 @@ public class Player extends Entity implements GlowingEntity {
                     canDashCharge = false;
                     dashTime = maxDashTime;
                     lastDashXPos = Integer.MIN_VALUE;
-                    noGravity = true;
                 }
             }
             //Hit wall, stop dashing

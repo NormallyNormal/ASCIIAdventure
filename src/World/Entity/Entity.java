@@ -187,6 +187,10 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
         movementStep.zero();
     }
 
+    public void clearMovementStep(Vector2 vector) {
+        movementStep.moveTowardsZeroBy(vector);
+    }
+
     public void clearMovementStep(Direction direction) {
         switch (direction) {
             case LEFT:

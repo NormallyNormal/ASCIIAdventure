@@ -20,6 +20,7 @@ public class DepthScreen extends TerminalScreen {
         zBuffer = new int[terminalSize.getColumns()][terminalSize.getRows()];
         written = new boolean[terminalSize.getColumns()][terminalSize.getRows()];
         backgroundAlpha = new boolean[terminalSize.getColumns()][terminalSize.getRows()];
+        fullClear();
     }
 
     @Override
@@ -29,6 +30,7 @@ public class DepthScreen extends TerminalScreen {
             zBuffer = new int[newSize.getColumns()][newSize.getRows()];
             written = new boolean[newSize.getColumns()][newSize.getRows()];
             backgroundAlpha = new boolean[newSize.getColumns()][newSize.getRows()];
+            fullClear();
         }
         return newSize;
     }
@@ -89,6 +91,17 @@ public class DepthScreen extends TerminalScreen {
                     super.setCharacter(x, y, blank);
                     zBuffer[x][y] = Integer.MIN_VALUE;
                 }
+                written[x][y] = false;
+                backgroundAlpha[x][y] = true;
+            }
+        }
+    }
+
+    public synchronized void fullClear() {
+        for (int x = 0; x < written.length; x++) {
+            for (int y = 0; y < written[0].length; y++) {
+                super.setCharacter(x, y, blank);
+                zBuffer[x][y] = Integer.MIN_VALUE;
                 written[x][y] = false;
                 backgroundAlpha[x][y] = true;
             }

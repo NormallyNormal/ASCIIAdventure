@@ -80,21 +80,31 @@ public class MovingObject extends StaticObject {
             }
         }
         else if (xSteps > 0 && movedThisFrame && entity.getPosition().y + entity.getCollisionBox().h > collisionBox.y && entity.getPosition().y < collisionBox.y + collisionBox.h) {
+            double newPos = entity.getPosition().x;
+            boolean apply = false;
             switch (xDirection) {
                 case LEFT:
                     if (entity.getPosition().x < collisionBox.x + collisionBox.w) {
-                        entity.getPosition().x = Math.nextDown(collisionBox.x - entity.getCollisionBox().w);
-                        entity.clearMovementStep();
+                        newPos = Math.nextDown(collisionBox.x - entity.getCollisionBox().w);
+                        apply = true;
                     }
                     break;
                 case RIGHT:
                     if (entity.getPosition().x > collisionBox.x) {
-                        entity.getPosition().x = Math.nextUp(collisionBox.x + collisionBox.w);
-                        entity.clearMovementStep();
+                        newPos = Math.nextUp(collisionBox.x + collisionBox.w);
+                        apply = true;
                     }
                     break;
             }
-
+            if (apply) {
+                if (entity.getMovementStep().magnitudeSquared() < 0.9) {
+                    entity.clearMovementStep();
+                }
+                else {
+                    entity.clearMovementStep(new Vector2(newPos - entity.getPosition().x, 0));
+                }
+                entity.getPosition().x = newPos;
+            }
         }
         if(ySteps > 0 && movedThisFrame && entity.getPosition().x + entity.getCollisionBox().w > collisionBox.x && entity.getPosition().x < collisionBox.x + collisionBox.w) {
             switch (yDirection) {
