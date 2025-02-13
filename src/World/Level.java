@@ -5,8 +5,10 @@ import java.util.*;
 import Render.Shader.PostShader;
 import Render.Shader.TorchlightPostShader;
 import World.Entity.Entity;
+import World.Entity.NPC;
 import World.Entity.Player;
 import Input.Input;
+import World.Entity.Decoration.Torch;
 import World.Platform.*;
 import Render.DepthScreen;
 import Math.AABB;
@@ -22,49 +24,84 @@ public class Level {
 
     private final List<PostShader> postShaders;
 
-    public final Map<Direction, Level> connectedLevels = new EnumMap<>(Direction.class);
-
     @SuppressWarnings("UnusedAssignment")
     public Level() {
-        postShaders = new ArrayList<PostShader>();
-        addPostShader(new TorchlightPostShader(), 0);
+        int startingLocationX = 3600;
+        int startingLocationY = 1200;
+
+        postShaders = new ArrayList<>();
+        //addPostShader(new TorchlightPostShader(), 0);
 
         player = new Player();
+        player.getPosition().x = 5 + startingLocationX;
+        player.getPosition().y = 34 + startingLocationY;
+        player.setSpawnPosition(new Vector2(5 + startingLocationX, 34 + startingLocationY));
         worldObjects = new ArrayList<>();
         entities = new ArrayList<>();
         entitiesToRemove = new ArrayDeque<>();
         int currentId = 0;
-        worldObjects.add(new MovingObject(new AABB(65, 19, 5, 1), currentId++, 0, 10, 0.25));
-        worldObjects.add(new MovingObject(new AABB(75, 19, 5, 1), currentId++, 0, 10, 0.2));
-        worldObjects.add(new StaticObject(new AABB(10, 5, 5, 5), currentId++));
-        worldObjects.add(new StaticObject(new AABB(55, 20, 50, 5), currentId++));
-        worldObjects.add(new StaticObject(new AABB(5, 20, 50, 5), currentId++));
-        worldObjects.add(new StaticObject(new AABB(70, 15, 5, 5), currentId++));
-        worldObjects.add(new StaticObject(new AABB(70, 10, 5, 5), currentId++));
-        worldObjects.add(new StaticObject(new AABB(35, 17, 5, 3), currentId++));
-        worldObjects.add(new StaticObject(new AABB(20, 10, 20, 1), currentId++));
-        worldObjects.add(new StaticObject(new AABB(35, 5, 2, 5), currentId++));
-        worldObjects.add(new StaticObject(new AABB(20, 15, 10, 1), currentId++, true));
-        worldObjects.add(new StaticObject(new AABB(5, 30, 30, 1), currentId++, true));
-        worldObjects.add(new StaticObject(new AABB(20, 35, 10, 1), currentId++, true));
-        worldObjects.add(new StaticHazardObject(new AABB(20, 19, 5, 1), currentId++));
-        worldObjects.add(new MovingObject(new AABB(20, 5, 5, 5), currentId++, 10, 0, 0.4));
-        worldObjects.add(new StaticObject(new AABB(28, 2, 5, 3), currentId++));
-        connectedLevels.put(Direction.DOWN, this);
-        connectedLevels.put(Direction.LEFT, this);
-        connectedLevels.put(Direction.RIGHT, this);
-        connectedLevels.put(Direction.UP, this);
+//        worldObjects.add(new MovingObject(new AABB(65, 19, 5, 1), currentId++, 0, 10, 0.25));
+//        worldObjects.add(new MovingObject(new AABB(75, 19, 5, 1), currentId++, 0, 10, 0.2));
+//        worldObjects.add(new StaticObject(new AABB(10, 5, 5, 5), currentId++));
+//        worldObjects.add(new StaticObject(new AABB(55, 20, 50, 5), currentId++));
+//        worldObjects.add(new StaticObject(new AABB(5, 20, 50, 5), currentId++));
+//        worldObjects.add(new StaticObject(new AABB(70, 15, 5, 5), currentId++));
+//        worldObjects.add(new StaticObject(new AABB(70, 10, 5, 5), currentId++));
+//        worldObjects.add(new StaticObject(new AABB(35, 17, 5, 3), currentId++));
+//        worldObjects.add(new StaticObject(new AABB(20, 10, 20, 1), currentId++));
+//        worldObjects.add(new StaticObject(new AABB(35, 5, 2, 5), currentId++));
+//        worldObjects.add(new StaticObject(new AABB(20, 15, 10, 1), currentId++, true));
+//        worldObjects.add(new StaticObject(new AABB(5, 30, 30, 1), currentId++, true));
+//        worldObjects.add(new StaticObject(new AABB(20, 35, 10, 1), currentId++, true));
+//        worldObjects.add(new StaticHazardObject(new AABB(20, 19, 5, 1), currentId++));
+//        worldObjects.add(new MovingObject(new AABB(20, 5, 5, 5), currentId++, 10, 0, 0.4));
+//        worldObjects.add(new StaticObject(new AABB(28, 2, 5, 3), currentId++));
+
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + -120, startingLocationY + 35, 360, 5), currentId++));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + -120, startingLocationY + -40, 360, 5), currentId++));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + -120, startingLocationY + -35, 5, 70), currentId++));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 235, startingLocationY + -35, 5, 70), currentId++));
+
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 30, 5, 1), currentId++, true));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 25, 5, 1), currentId++, true));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 20, 5, 1), currentId++, true));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 15, 5, 1), currentId++, true));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 10, 5, 1), currentId++, true));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 5, 5, 1), currentId++, true));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 0, 5, 1), currentId++, true));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + -5, 5, 1), currentId++, true));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + -10, 5, 1), currentId++, true));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 0, startingLocationY + -15, 120, 1), currentId++, true));
+
+        worldObjects.add(new StaticHazardObject(new AABB(startingLocationX + 125, startingLocationY + 34, 110, 1), currentId++));
+
+        worldObjects.add(new MovingObject(new AABB(startingLocationX + 70, startingLocationY + 33, 10, 2), currentId++, 30, 0, 0.2));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 106, startingLocationY + 30, 2, 5), currentId++));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 106, startingLocationY + 28, 2, 2), currentId++));
+        //worldObjects.add(new MovingObject(new AABB(startingLocationX + 45, startingLocationY + 33, 15, 2), currentId++, 1, 0, 0.001));
+
+        worldObjects.add(new MovingObject(new AABB(startingLocationX + 125, startingLocationY + 32, 10, 2), currentId++, 25, 0, 0.2));
+        worldObjects.add(new MovingObject(new AABB(startingLocationX + 125 + 25, startingLocationY + 32, 10, 2), currentId++, 25, 0, 0.2));
+        worldObjects.add(new MovingObject(new AABB(startingLocationX + 125 + 50, startingLocationY + 32, 10, 2), currentId++, 25, 0, 0.2));
+        worldObjects.add(new MovingObject(new AABB(startingLocationX + 125 + 75, startingLocationY + 32, 10, 2), currentId++, 25, 0, 0.2));
+        worldObjects.add(new MovingObject(new AABB(startingLocationX + 125 + 70, startingLocationY + 30, 10, 2), currentId++, 25, 0, 0.2));
+
+        worldObjects.add(new MovingObject(new AABB(startingLocationX + -50, startingLocationY + 33, 10, 2), currentId++, 0, 10, 0.2));
+
+        entities.add(new Torch(startingLocationX + 30, startingLocationY + 30));
+
+        entities.add(new NPC(startingLocationX + 60, startingLocationY + 34));
     }
 
     public void process(double timeDeltaSeconds, Input input) {
         player.process(timeDeltaSeconds, input);
+        checkInsidePlatform(player);
         for (Entity entity : entities) {
             entity.process(timeDeltaSeconds, input);
         }
         while (!entitiesToRemove.isEmpty()) {
             entities.remove(entitiesToRemove.pop());
         }
-        checkInsidePlatform(player);
         for (WorldObject worldObject : worldObjects) {
             worldObject.process(timeDeltaSeconds, this);
         }
@@ -85,15 +122,9 @@ public class Level {
         }
     }
 
-    public void calcPostShaders() {
-        for (PostShader shader : postShaders) {
-            shader.calculate(lastRenderOffsetX, lastRenderOffsetY, entities, worldObjects, player);
-        }
-    }
-
     public void applyPostShaders(DepthScreen screen) {
         for (PostShader shader : postShaders) {
-            shader.apply(screen);
+            shader.apply(screen, lastRenderOffsetX, lastRenderOffsetY, entities, worldObjects, player);
         }
     }
 
@@ -101,7 +132,7 @@ public class Level {
         for (WorldObject worldObject : worldObjects) {
             if(worldObject.isSolid() && !worldObject.isSemiSolid() && worldObject.getCollisionBox().overlaps(entity.getCollisionBox())) {
                 double area = entity.getCollisionBox().overlapArea(worldObject.getCollisionBox());
-                if (area > entity.getCollisionBox().area() * 0.7) {
+                if (area > entity.getCollisionBox().area() * 0.7 && !entity.hasEnqueuedMovement()) {
                     entity.kill();
                 }
             }
@@ -156,31 +187,21 @@ public class Level {
         worldObjects.add(worldObject);
     }
 
-    public Direction playerOutOfBounds() {
-        if (player.getPosition().y < 0 - 0.5) {
+    public Direction playerOffScreen(int xOffset, int yOffset) {
+        if (player.getPosition().y - yOffset < 0 - 0.5) {
             return Direction.UP;
         }
-        else if (player.getPosition().y > ScreenConstants.PLAY_SCREEN_HEIGHT - 0.5) {
+        else if (player.getPosition().y - yOffset> ScreenConstants.PLAY_SCREEN_HEIGHT - 0.5) {
             return Direction.DOWN;
         }
 
-        if (player.getPosition().x < 0 - 0.5) {
+        if (player.getPosition().x - xOffset < 0 - 0.5) {
             return Direction.LEFT;
         }
-        else if (player.getPosition().x > ScreenConstants.PLAY_SCREEN_WIDTH - 0.5) {
+        else if (player.getPosition().x - xOffset > ScreenConstants.PLAY_SCREEN_WIDTH - 0.5) {
             return Direction.RIGHT;
         }
         return Direction.NONE;
-    }
-
-    public void loopPlayer() {
-        Direction playerOutOfBoundsDirection = playerOutOfBounds();
-        switch (playerOutOfBoundsDirection) {
-            case UP -> player.getPosition().y += ScreenConstants.PLAY_SCREEN_HEIGHT;
-            case DOWN -> player.getPosition().y -= ScreenConstants.PLAY_SCREEN_HEIGHT;
-            case LEFT -> player.getPosition().x += ScreenConstants.PLAY_SCREEN_WIDTH;
-            case RIGHT -> player.getPosition().x -= ScreenConstants.PLAY_SCREEN_WIDTH;
-        }
     }
 
      public void addEntity(Entity entity) {
@@ -194,5 +215,9 @@ public class Level {
 
     public void addPostShader(PostShader shader, int order) {
         postShaders.add(order, shader);
+    }
+
+    public boolean playerNear(Vector2 position, double radius) {
+        return Vector2.subtract(position, player.getPosition()).magnitudeSquared() < radius * radius;
     }
 }

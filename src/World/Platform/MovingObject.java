@@ -31,14 +31,14 @@ public class MovingObject extends StaticObject {
         this.semiSolid = semiSolid;
     }
 
-    boolean movesThisFrame = false;
+    boolean movesNextFrame = false;
     boolean movedThisFrame = false;
     @Override
     public void process(double timeDeltaSeconds, Level level) {
         timeSinceLastMovement += timeDeltaSeconds;
         movedThisFrame = false;
-        if(movesThisFrame) {
-            movesThisFrame = false;
+        if(movesNextFrame) {
+            movesNextFrame = false;
             movedThisFrame = true;
             if(xSteps > 0) {
                 collisionBox.x += xDirection.toMovement();
@@ -50,7 +50,7 @@ public class MovingObject extends StaticObject {
             }
         }
         if(timeSinceLastMovement >= speed) {
-            movesThisFrame = true;
+            movesNextFrame = true;
             timeSinceLastMovement -= speed;
             if((xStepsMade >= xSteps && xDirection == Direction.RIGHT) || (xStepsMade <= 0 && xDirection == Direction.LEFT)) {
                 xDirection = xDirection.opposite();
@@ -64,36 +64,61 @@ public class MovingObject extends StaticObject {
 
     @Override
     public void collisionEffect(Entity entity, Level level) {
-        if(entity.getCollisionBox().y + entity.getCollisionBox().h <= collisionBox.y) {
-            if (xSteps > 0 && movesThisFrame) {
+        if(entity.getCollisionBox().y + entity.getCollisionBox().h <= collisionBox.y + 0.1) {
+            if (xSteps > 0 && movesNextFrame) {
+                entity.setMinInvincibleTicks(2);
                 switch (xDirection) {
                     case LEFT:
                         entity.enqueueMovement(new Vector2(-1, 0));
+                        entity.getPosition().y = Math.nextDown(collisionBox.y - entity.getCollisionBox().h);
                         break;
                     case RIGHT:
                         entity.enqueueMovement(new Vector2(1, 0));
+                        entity.getPosition().y = Math.nextDown(collisionBox.y - entity.getCollisionBox().h);
                         break;
                 }
             }
         }
-        else if (xSteps > 0 && movedThisFrame && entity.getPosition().y + entity.getCollisionBox().h > collisionBox.y && entity.getPosition().y < collisionBox.y + collisionBox.h)
+        else if (xSteps > 0 && movedThisFrame && entity.getPosition().y + entity.getCollisionBox().h > collisionBox.y && entity.getPosition().y < collisionBox.y + collisionBox.h) {
+            double newPos = entity.getPosition().x;
+            boolean apply = false;
             switch (xDirection) {
                 case LEFT:
-                    entity.getPosition().x = collisionBox.x - entity.getCollisionBox().w - 0.1;
+                    if (entity.getPosition().x < collisionBox.x + collisionBox.w) {
+                        newPos = Math.nextDown(collisionBox.x - entity.getCollisionBox().w);
+                        apply = true;
+                    }
                     break;
                 case RIGHT:
-                    entity.getPosition().x = collisionBox.x + collisionBox.w + 0.1;
+                    if (entity.getPosition().x > collisionBox.x) {
+                        newPos = Math.nextUp(collisionBox.x + collisionBox.w);
+                        apply = true;
+                    }
                     break;
             }
-        if(ySteps > 0 && movedThisFrame && entity.getPosition().x + entity.getCollisionBox().w > collisionBox.x && entity.getPosition().x < collisionBox.x + collisionBox.w)
+            if (apply) {
+                if (entity.getMovementStep().magnitudeSquared() < 0.9) {
+                    entity.clearMovementStep();
+                }
+                else {
+                    entity.clearMovementStep(new Vector2(newPos - entity.getPosition().x, 0));
+                }
+                entity.getPosition().x = newPos;
+            }
+        }
+        if(ySteps > 0 && movedThisFrame && entity.getPosition().x + entity.getCollisionBox().w > collisionBox.x && entity.getPosition().x < collisionBox.x + collisionBox.w) {
             switch (yDirection) {
                 case UP:
-                    entity.getPosition().y = collisionBox.y - entity.getCollisionBox().h - 0.1;
+                    if (entity.getPosition().y < collisionBox.y + collisionBox.h)
+                        entity.getPosition().y = Math.nextDown(collisionBox.y - entity.getCollisionBox().h);
                     break;
                 case DOWN:
-                    entity.getPosition().y = collisionBox.y + collisionBox.h + 0.1;
+                    if (entity.getPosition().y > collisionBox.y)
+                        entity.getPosition().y = Math.nextUp(collisionBox.y + collisionBox.h);
                     break;
             }
+            entity.clearMovementStep();
+        }
         super.collisionEffect(entity, level);
     }
 }
