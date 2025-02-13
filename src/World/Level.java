@@ -153,7 +153,7 @@ public class Level {
                     boolean solid = worldObject.isSolid() && !worldObject.isSemiSolid() ;
                     boolean passSemisolid = (worldObject.isSemiSolid() && entity.getPosition().y > worldObject.getCollisionBox().y) || !entity.standsOnSemisolid();
                     if(solid || !passSemisolid) {
-                        if (soonestEntryTime.x > entryTime.x) {
+                        if (soonestEntryTime.x > entryTime.x && !worldObject.isSemiSolid()) {
                             soonestEntryTime.x = entryTime.x;
                             equalCollisionsX.clear();
                             equalCollisionsX.add(worldObject.getId());

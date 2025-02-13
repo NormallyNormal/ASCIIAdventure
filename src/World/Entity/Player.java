@@ -57,8 +57,10 @@ public class Player extends Entity implements GlowingEntity {
             if (input.getKeyState(Keybinds.player_jump)) {
                 jumpBuffer = 0.05;
             }
-            if (!input.getKeyState(Keybinds.player_jump) && velocity.y < 0 && stopVerticalVelocityAllowed) {
-                velocity.y = 0;
+            if (!input.getKeyState(Keybinds.player_jump) && stopVerticalVelocityAllowed) {
+                if (velocity.y < 0) {
+                    velocity.y = 0;
+                }
                 jumpKeyReleasedInAir = true;
             }
             //Wall slide
@@ -80,6 +82,7 @@ public class Player extends Entity implements GlowingEntity {
                 else if (hitWallSomewhatRecently && possibleWallJumpDirection == lastCollisionDirection.opposite()) {
                     velocity.y = -15;
                     wallJumpFixedDirectionTime = 0.2;
+                    jumpKeyReleasedInAir = false;
                     if (lastCollisionDirection == Direction.RIGHT) {
                         wallJumpDirection = Direction.LEFT;
                     }
