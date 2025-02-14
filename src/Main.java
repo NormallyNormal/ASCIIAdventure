@@ -125,9 +125,6 @@ public class Main {
                 running = false;
             }
 
-//            Thread.sleep(0, 0);
-
-
             lastTime = currentTime;
             currentTime = System.nanoTime();
         }

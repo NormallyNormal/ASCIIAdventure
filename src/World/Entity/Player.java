@@ -5,6 +5,7 @@ import Render.DepthScreen;
 import Render.TransparentColor;
 import World.Entity.Particle.DashParticle;
 import World.Entity.Particle.ExtraJumpParticle;
+import World.Entity.Particle.SlamParticle;
 import World.Game;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
@@ -12,6 +13,8 @@ import Math.Vector2;
 import Math.AABB;
 import Math.Direction;
 import Settings.Keybinds;
+
+import javax.swing.text.Position;
 
 public class Player extends Entity implements GlowingEntity {
     double timeDead;
@@ -37,6 +40,9 @@ public class Player extends Entity implements GlowingEntity {
     double wallJumpFixedDirectionTime = 0;
 
     Vector2 spawnPosition = new Vector2(0, 0);
+
+    boolean slamming = false;
+    double slamMovement = 0;
 
     public Player() {
         timeDead = 0;
@@ -91,18 +97,19 @@ public class Player extends Entity implements GlowingEntity {
                     }
                 }
             }
-            if (extraJumps > 0 && velocity.y >= 0 && input.getKeyState(Keybinds.player_jump) && !hitWallSomewhatRecently && jumpKeyReleasedInAir && dashTime <= 0) {
+            if (!onGroundRecently && extraJumps > 0 && velocity.y >= 0 && input.getKeyState(Keybinds.player_jump) && !hitWallSomewhatRecently && jumpKeyReleasedInAir && dashTime <= 0) {
                 extraJumps--;
                 velocity.y = -20;
                 stopVerticalVelocityAllowed = false;
-                Game.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x, this.position.y + 0.5), Direction.LEFT));
-                Game.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x, this.position.y + 0.5), Direction.RIGHT));
+                Game.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.LEFT));
+                Game.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.RIGHT));
             }
 
             if (onGroundRecently) {
                 extraJumps = maxExtraJumps;
                 stopVerticalVelocityAllowed = true;
                 jumpKeyReleasedInAir = false;
+                slamming = false;
             }
 
             velocity.x = 0;
@@ -121,15 +128,26 @@ public class Player extends Entity implements GlowingEntity {
 
             standsOnSemisolid = !input.getKeyState(Keybinds.player_down);
 
-            if (input.getKeyState(Keybinds.player_dash) && hasDashCharge && !hitWallRecently) {
+            if (input.getKeyState(Keybinds.player_dash) && !hitWallRecently) {
                 boolean madeDash = false;
-                if (lastHorizontalDirection == Direction.LEFT && !input.getKeyState(Keybinds.player_right)) {
-                    dashDirection = Direction.LEFT;
-                    madeDash = true;
+                boolean tryingSlam = input.getKeyState(Keybinds.player_down);
+                if (hasDashCharge) {
+                    if (lastHorizontalDirection == Direction.LEFT && !input.getKeyState(Keybinds.player_right) && !tryingSlam) {
+                        dashDirection = Direction.LEFT;
+                        madeDash = true;
+                    }
+                    if (lastHorizontalDirection == Direction.RIGHT && !input.getKeyState(Keybinds.player_left) && !tryingSlam) {
+                        dashDirection = Direction.RIGHT;
+                        madeDash = true;
+                    }
                 }
-                if (lastHorizontalDirection == Direction.RIGHT && !input.getKeyState(Keybinds.player_left)) {
-                    dashDirection = Direction.RIGHT;
-                    madeDash = true;
+                if (tryingSlam && dashTime <= 0) {
+                    madeDash = false;
+                    velocity.y = 100;
+                    if (!slamming) {
+                        slamMovement = position.y;
+                    }
+                    slamming = true;
                 }
                 if (madeDash) {
                     hasDashCharge = false;
@@ -138,9 +156,19 @@ public class Player extends Entity implements GlowingEntity {
                     lastDashXPos = Integer.MIN_VALUE;
                 }
             }
+
+            if (slamming) {
+                if(position.y > slamMovement) {
+                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, slamMovement + 0.5), Direction.LEFT));
+                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, slamMovement + 0.5), Direction.RIGHT));
+                    slamMovement += 1;
+                }
+            }
+
             //Hit wall, stop dashing
             if (hitWallRecently) {
                 dashTime = 0;
+                slamming = false;
             }
             if (dashTime > 0) {
                 noGravity = true;
