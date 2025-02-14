@@ -84,6 +84,7 @@ public class Player extends Entity implements GlowingEntity {
                 if (onGroundRecently) {
                     velocity.y = -30;
                     timeSinceOnGround = Double.POSITIVE_INFINITY;
+                    onGroundRecently = false;
                 }
                 else if (hitWallSomewhatRecently && possibleWallJumpDirection == lastCollisionDirection.opposite()) {
                     velocity.y = -15;
@@ -109,6 +110,10 @@ public class Player extends Entity implements GlowingEntity {
                 extraJumps = maxExtraJumps;
                 stopVerticalVelocityAllowed = true;
                 jumpKeyReleasedInAir = false;
+                if (slamming) {
+                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.LEFT, true));
+                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.RIGHT, true));
+                }
                 slamming = false;
             }
 
@@ -141,13 +146,13 @@ public class Player extends Entity implements GlowingEntity {
                         madeDash = true;
                     }
                 }
-                if (tryingSlam && dashTime <= 0) {
-                    madeDash = false;
+                if (tryingSlam && dashTime <= 0 && !onGroundRecently && !input.getKeyState(Keybinds.player_jump)) {
                     velocity.y = 100;
                     if (!slamming) {
                         slamMovement = position.y;
                     }
                     slamming = true;
+                    lastHorizontalDirection = Direction.DOWN;
                 }
                 if (madeDash) {
                     hasDashCharge = false;
@@ -159,8 +164,8 @@ public class Player extends Entity implements GlowingEntity {
 
             if (slamming) {
                 if(position.y > slamMovement) {
-                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, slamMovement + 0.5), Direction.LEFT));
-                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, slamMovement + 0.5), Direction.RIGHT));
+                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, slamMovement + 0.5), Direction.LEFT, false));
+                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, slamMovement + 0.5), Direction.RIGHT, false));
                     slamMovement += 1;
                 }
             }
