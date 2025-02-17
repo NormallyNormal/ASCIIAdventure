@@ -12,7 +12,7 @@ import Math.Direction;
 public abstract class Entity implements CollisionObject, PhysicsObject, RenderObject {
     protected Vector2 position = new Vector2(0, 0);
     protected int depth;
-    protected Vector2 velocity = new Vector2(0, 0);;
+    protected Vector2 velocity = new Vector2(0, 0);
     protected Vector2 movementStep = new Vector2(0,0);
     protected Vector2 gravity = new Vector2(0, 0);
     protected boolean noGravity = true;

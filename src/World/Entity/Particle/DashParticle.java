@@ -10,8 +10,6 @@ import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 import Math.Vector2;
 
-import java.lang.invoke.SwitchPoint;
-
 public class DashParticle extends Entity {
     double fadeTime;
 

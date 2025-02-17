@@ -35,7 +35,7 @@ public class ExtraJumpParticle extends Entity {
 
     @Override
     public void render(DepthScreen screen, int xOffset, int yOffset) {
-        TextColor renderColor = fadeTime < 0.09 ? TextColor.ANSI.GREEN : TextColor.ANSI.GREEN_BRIGHT;
+        TextColor renderColor = fadeTime < 0.12 ? TextColor.ANSI.GREEN : TextColor.ANSI.GREEN_BRIGHT;
         if (direction == Direction.LEFT) {
             screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('[', renderColor, TransparentColor.TRANSPARENT));
         }

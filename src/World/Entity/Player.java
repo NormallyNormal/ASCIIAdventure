@@ -14,8 +14,6 @@ import Math.AABB;
 import Math.Direction;
 import Settings.Keybinds;
 
-import javax.swing.text.Position;
-
 public class Player extends Entity implements GlowingEntity {
     double timeDead;
     double jumpBuffer = 0;
@@ -58,6 +56,16 @@ public class Player extends Entity implements GlowingEntity {
     public void process(double timeDelta, Input input) {
         if (!dead) {
             boolean onGroundRecently = timeSinceOnGround < 0.1;
+            if (onGroundRecently) {
+                extraJumps = maxExtraJumps;
+                stopVerticalVelocityAllowed = true;
+                jumpKeyReleasedInAir = false;
+                if (slamming) {
+                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.LEFT, true));
+                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.RIGHT, true));
+                }
+                slamming = false;
+            }
             boolean hitWallRecently = timeSinceWallHit < 0.05;
             boolean hitWallSomewhatRecently = timeSinceWallHit < 0.2;
             if (input.getKeyState(Keybinds.player_jump)) {
@@ -85,6 +93,7 @@ public class Player extends Entity implements GlowingEntity {
                     velocity.y = -30;
                     timeSinceOnGround = Double.POSITIVE_INFINITY;
                     onGroundRecently = false;
+                    canDashCharge = true;
                 }
                 else if (hitWallSomewhatRecently && possibleWallJumpDirection == lastCollisionDirection.opposite()) {
                     velocity.y = -15;
@@ -102,19 +111,9 @@ public class Player extends Entity implements GlowingEntity {
                 extraJumps--;
                 velocity.y = -20;
                 stopVerticalVelocityAllowed = false;
+                hasDashCharge = false;
                 Game.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.LEFT));
                 Game.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.RIGHT));
-            }
-
-            if (onGroundRecently) {
-                extraJumps = maxExtraJumps;
-                stopVerticalVelocityAllowed = true;
-                jumpKeyReleasedInAir = false;
-                if (slamming) {
-                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.LEFT, true));
-                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.RIGHT, true));
-                }
-                slamming = false;
             }
 
             velocity.x = 0;
@@ -153,6 +152,7 @@ public class Player extends Entity implements GlowingEntity {
                     }
                     slamming = true;
                     lastHorizontalDirection = Direction.DOWN;
+                    extraJumps = 0;
                 }
                 if (madeDash) {
                     hasDashCharge = false;
@@ -257,6 +257,8 @@ public class Player extends Entity implements GlowingEntity {
     public void kill() {
         dashTime = 0;
         hasDashCharge = true;
+        slamming = false;
+        extraJumps = maxExtraJumps;
         super.kill();
     }
 

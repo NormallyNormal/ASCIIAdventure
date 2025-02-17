@@ -39,9 +39,9 @@ public class SlamParticle extends Entity {
         }
         else {
             if (direction == Direction.LEFT) {
-                position.x -= 25 * timeDelta;
+                position.x -= 35 * timeDelta;
             } else {
-                position.x += 25 * timeDelta;
+                position.x += 35 * timeDelta;
             }
         }
     }
@@ -56,13 +56,13 @@ public class SlamParticle extends Entity {
         else {
             renderColor = fadeTime < 0.07 ? TextColor.ANSI.RED : fadeTime < 0.12 ? TextColor.ANSI.RED_BRIGHT : TextColor.ANSI.WHITE;
         }
+        char character;
         if (direction == Direction.LEFT) {
-            char character = ground ? '◣' : '\\';
-            screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter(character, renderColor, TransparentColor.TRANSPARENT));
+            character = ground ? '◣' : '\\';
         }
         else {
-            char character = ground ? '◢' : '/';
-            screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter(character, renderColor, TransparentColor.TRANSPARENT));
+            character = ground ? '◢' : '/';
         }
+        screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter(character, renderColor, TransparentColor.TRANSPARENT));
     }
 }
