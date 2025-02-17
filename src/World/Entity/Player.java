@@ -47,7 +47,7 @@ public class Player extends Entity implements GlowingEntity {
         velocity = new Vector2(0,0);
         position = new Vector2(5.5, 5.5);
         depth = 10;
-        gravity = new Vector2(0, 60);
+        setGravityMagnitude(60);
         collisionBox = new AABB(position.x - 0.49, position.y - 0.49, 0.98, 0.98);
         noGravity = false;
     }
@@ -209,7 +209,7 @@ public class Player extends Entity implements GlowingEntity {
             if(timeDead > 1) {
                 dead = false;
                 position = new Vector2(spawnPosition.x,spawnPosition.y);
-                gravity = new Vector2(0, 60);
+                setGravityMagnitude(60);
                 timeDead = 0;
             }
         }
