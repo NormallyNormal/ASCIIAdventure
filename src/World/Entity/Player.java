@@ -259,6 +259,7 @@ public class Player extends Entity implements GlowingEntity {
         hasDashCharge = true;
         slamming = false;
         extraJumps = maxExtraJumps;
+        setGravityDownward();
         super.kill();
     }
 
@@ -268,5 +269,17 @@ public class Player extends Entity implements GlowingEntity {
 
     public void setSpawnPosition(Vector2 spawnPosition) {
         this.spawnPosition = spawnPosition;
+    }
+
+    @Override
+    public void setGravityDownward() {
+        stopVerticalVelocityAllowed = false;
+        super.setGravityDownward();
+    }
+
+    @Override
+    public void setGravityUpward() {
+        stopVerticalVelocityAllowed = false;
+        super.setGravityUpward();
     }
 }
