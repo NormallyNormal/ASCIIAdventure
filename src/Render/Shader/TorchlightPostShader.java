@@ -5,11 +5,10 @@ import Render.DepthScreen;
 import World.Entity.Entity;
 import World.Entity.GlowingEntity;
 import World.Entity.Player;
-import World.Level;
 import World.Platform.WorldObject;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
-import Math.Mth;
+import Math.M4th;
 
 import java.util.List;
 
@@ -46,7 +45,7 @@ public class TorchlightPostShader implements PostShader {
 
     private static void entityCircle(int x, int y, int xOffset, int yOffset, Entity entity) {
         if (entity instanceof GlowingEntity) {
-            double radius = Mth.screenDistance(entity.getPosition().x + xOffset - x, entity.getPosition().y + yOffset - y);
+            double radius = M4th.screenDistance(entity.getPosition().x + xOffset - x, entity.getPosition().y + yOffset - y);
             double brightRadius = ((GlowingEntity) entity).glowRadius();
             if(x < 0 || x >= ScreenConstants.PLAY_SCREEN_WIDTH || y < 0 || y >= ScreenConstants.PLAY_SCREEN_HEIGHT) {
                 return;

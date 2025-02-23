@@ -77,7 +77,7 @@ public class MovingObject extends StaticObject {
                     }
                 }
             }
-            else if (movedThisFrame) {
+            else if (movedThisFrame && entity.getPosition().y + entity.getCollisionBox().h > collisionBox.y && entity.getPosition().y < collisionBox.y + collisionBox.h) {
                 pushEntityHorizontally(entity);
             }
         }

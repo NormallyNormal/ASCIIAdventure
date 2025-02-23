@@ -13,6 +13,7 @@ import Math.Vector2;
 import Math.AABB;
 import Math.Direction;
 import Settings.Keybinds;
+import Math.M4th;
 
 public class Player extends Entity implements GlowingEntity {
     double timeDead;
@@ -40,6 +41,7 @@ public class Player extends Entity implements GlowingEntity {
     Vector2 spawnPosition = new Vector2(0, 0);
 
     boolean slamming = false;
+    boolean slamRelease = true;
     double slamMovement = 0;
 
     public Player() {
@@ -152,7 +154,7 @@ public class Player extends Entity implements GlowingEntity {
                         madeDash = true;
                     }
                 }
-                if (tryingSlam && dashTime <= 0 && !onGroundRecently && !input.getKeyState(Keybinds.player_jump)) {
+                if (tryingSlam && dashTime <= 0 && !onGroundRecently && !input.getKeyState(Keybinds.player_jump) && slamRelease) {
                     velocity.y = isGravityDownward() ? 100 : -100;
                     if (!slamming) {
                         slamMovement = position.y;
@@ -184,6 +186,10 @@ public class Player extends Entity implements GlowingEntity {
                         slamMovement -= 1;
                     }
                 }
+            }
+
+            if(!input.getKeyState(Keybinds.player_dash) || !input.getKeyState(Keybinds.player_down)) {
+                slamRelease = true;
             }
 
             //Hit wall, stop dashing
@@ -289,13 +295,22 @@ public class Player extends Entity implements GlowingEntity {
 
     @Override
     public void setGravityDownward() {
-        stopVerticalVelocityAllowed = false;
+        resetMovementForGravity();
         super.setGravityDownward();
     }
 
     @Override
     public void setGravityUpward() {
-        stopVerticalVelocityAllowed = false;
+        resetMovementForGravity();
         super.setGravityUpward();
+    }
+
+    private void resetMovementForGravity() {
+        stopVerticalVelocityAllowed = false;
+        if (slamming) {
+            velocity.y = M4th.capMagnitude(velocity.y, 20);
+        }
+        slamming = false;
+        slamRelease = false;
     }
 }

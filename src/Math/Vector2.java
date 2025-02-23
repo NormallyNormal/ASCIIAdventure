@@ -57,8 +57,8 @@ public class Vector2 {
     }
 
     public void moveTowardsZeroBy(Vector2 vector2) {
-        this.x = Mth.towardsZeroBy(this.x, vector2.x);
-        this.y = Mth.towardsZeroBy(this.y, vector2.y);
+        this.x = M4th.towardsZeroBy(this.x, vector2.x);
+        this.y = M4th.towardsZeroBy(this.y, vector2.y);
     }
 
     public void zero() {

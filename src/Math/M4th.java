@@ -1,6 +1,6 @@
 package Math;
 
-public class Mth {
+public class M4th {
     public static int mod(int a, int b) {
         return ((a % b) + b) % b;
     }
@@ -20,5 +20,15 @@ public class Mth {
             return Math.min(0, a - b);
         }
         return 0;
+    }
+
+    public static double capMagnitude(double a, double b) {
+        b = Math.abs(b);
+        if (a < 0) {
+            return Math.max(a, -b);
+        }
+        else {
+            return Math.min(a, b);
+        }
     }
 }
