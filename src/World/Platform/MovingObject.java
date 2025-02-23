@@ -64,61 +64,88 @@ public class MovingObject extends StaticObject {
 
     @Override
     public void collisionEffect(Entity entity, Level level) {
-        if(entity.getCollisionBox().y + entity.getCollisionBox().h <= collisionBox.y + 0.1) {
-            if (xSteps > 0 && movesNextFrame) {
-                entity.setMinInvincibleTicks(2);
-                switch (xDirection) {
-                    case LEFT:
-                        entity.enqueueMovement(new Vector2(-1, 0));
-                        entity.getPosition().y = Math.nextDown(collisionBox.y - entity.getCollisionBox().h);
-                        break;
-                    case RIGHT:
-                        entity.enqueueMovement(new Vector2(1, 0));
-                        entity.getPosition().y = Math.nextDown(collisionBox.y - entity.getCollisionBox().h);
-                        break;
-                }
-            }
-        }
-        else if (xSteps > 0 && movedThisFrame && entity.getPosition().y + entity.getCollisionBox().h > collisionBox.y && entity.getPosition().y < collisionBox.y + collisionBox.h) {
-            double newPos = entity.getPosition().x;
-            boolean apply = false;
-            switch (xDirection) {
-                case LEFT:
-                    if (entity.getPosition().x < collisionBox.x + collisionBox.w) {
-                        newPos = Math.nextDown(collisionBox.x - entity.getCollisionBox().w);
-                        apply = true;
+        if (xSteps > 0) {
+            if(movesNextFrame) {
+                if (entity.isGravityDownward()) {
+                    if (entity.getCollisionBox().y + entity.getCollisionBox().h <= collisionBox.y) {
+                        dragEntityHorizontally(entity);
                     }
-                    break;
-                case RIGHT:
-                    if (entity.getPosition().x > collisionBox.x) {
-                        newPos = Math.nextUp(collisionBox.x + collisionBox.w);
-                        apply = true;
-                    }
-                    break;
-            }
-            if (apply) {
-                if (entity.getMovementStep().magnitudeSquared() < 0.9) {
-                    entity.clearMovementStep();
                 }
                 else {
-                    entity.clearMovementStep(new Vector2(newPos - entity.getPosition().x, 0));
+                    if (entity.getCollisionBox().y >= collisionBox.y + collisionBox.h) {
+                        dragEntityHorizontally(entity);
+                    }
                 }
-                entity.getPosition().x = newPos;
+            }
+            else if (movedThisFrame) {
+                pushEntityHorizontally(entity);
             }
         }
-        if(ySteps > 0 && movedThisFrame && entity.getPosition().x + entity.getCollisionBox().w > collisionBox.x && entity.getPosition().x < collisionBox.x + collisionBox.w) {
-            switch (yDirection) {
-                case UP:
-                    if (entity.getPosition().y < collisionBox.y + collisionBox.h)
-                        entity.getPosition().y = Math.nextDown(collisionBox.y - entity.getCollisionBox().h);
-                    break;
-                case DOWN:
-                    if (entity.getPosition().y > collisionBox.y)
-                        entity.getPosition().y = Math.nextUp(collisionBox.y + collisionBox.h);
-                    break;
+        if(ySteps > 0 && movedThisFrame) {
+            if (entity.getPosition().x + entity.getCollisionBox().w > collisionBox.x && entity.getPosition().x < collisionBox.x + collisionBox.w) {
+                pushEntityVertically(entity);
             }
-            entity.clearMovementStep();
         }
         super.collisionEffect(entity, level);
+    }
+
+    private void pushEntityHorizontally(Entity entity) {
+        double newPos = entity.getPosition().x;
+        boolean apply = false;
+        switch (xDirection) {
+            case LEFT:
+                if (entity.getPosition().x < collisionBox.x + collisionBox.w) {
+                    newPos = Math.nextDown(collisionBox.x - entity.getCollisionBox().w);
+                    apply = true;
+                }
+                break;
+            case RIGHT:
+                if (entity.getPosition().x > collisionBox.x) {
+                    newPos = Math.nextUp(collisionBox.x + collisionBox.w);
+                    apply = true;
+                }
+                break;
+        }
+        if (apply) {
+            if (entity.getMovementStep().magnitudeSquared() < 0.9) {
+                entity.clearMovementStep();
+            }
+            else {
+                entity.clearMovementStep(new Vector2(newPos - entity.getPosition().x, 0));
+            }
+            entity.getPosition().x = newPos;
+        }
+    }
+
+    private void dragEntityHorizontally(Entity entity) {
+        entity.setMinInvincibleTicks(2);
+        switch (xDirection) {
+            case LEFT:
+                entity.enqueueMovement(new Vector2(-1, 0));
+                break;
+            case RIGHT:
+                entity.enqueueMovement(new Vector2(1, 0));
+                break;
+        }
+        if (entity.isGravityDownward()) {
+            entity.getPosition().y = Math.nextDown(collisionBox.y - entity.getCollisionBox().h);
+        }
+        else {
+            entity.getPosition().y = Math.nextUp(collisionBox.y + collisionBox.h);
+        }
+    }
+
+    private void pushEntityVertically(Entity entity) {
+        switch (yDirection) {
+            case UP:
+                if (entity.getPosition().y < collisionBox.y + collisionBox.h)
+                    entity.getPosition().y = Math.nextDown(collisionBox.y - entity.getCollisionBox().h);
+                break;
+            case DOWN:
+                if (entity.getPosition().y > collisionBox.y)
+                    entity.getPosition().y = Math.nextUp(collisionBox.y + collisionBox.h);
+                break;
+        }
+        entity.clearMovementStep();
     }
 }

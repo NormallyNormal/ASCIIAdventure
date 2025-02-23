@@ -14,7 +14,9 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
     protected int depth;
     protected Vector2 velocity = new Vector2(0, 0);
     protected Vector2 movementStep = new Vector2(0,0);
-    protected Vector2 gravity = new Vector2(0, 0);
+    protected double gravityMagnitude = 0;
+    private Direction gravityDirection = Direction.DOWN;
+    private Vector2 gravity = new Vector2(0, 0);
     protected boolean noGravity = true;
     protected AABB collisionBox = new AABB(0,0, 0 ,0);
     protected boolean standsOnSemisolid = true;
@@ -138,10 +140,15 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
         if (entryTime.y < 1) {
             velocity.y = 0;
             if (movementStep.y > 0) {
-                timeSinceOnGround = 0;
+                if (isGravityDownward()) {
+                    timeSinceOnGround = 0;
+                }
                 lastCollisionDirection = Direction.DOWN;
             }
             else {
+                if (!isGravityDownward()) {
+                    timeSinceOnGround = 0;
+                }
                 lastCollisionDirection = Direction.UP;
             }
         }
@@ -206,5 +213,24 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
                 movementStep.y = Math.max(movementStep.y, 0);
                 break;
         }
+    }
+
+    public void setGravityUpward() {
+        gravity = new Vector2(0, -gravityMagnitude);
+        gravityDirection = Direction.UP;
+    }
+
+    public void setGravityDownward() {
+        gravity = new Vector2(0, gravityMagnitude);
+        gravityDirection = Direction.DOWN;
+    }
+
+    public boolean isGravityDownward() {
+        return gravityDirection == Direction.DOWN;
+    }
+
+    protected void setGravityMagnitude(double gravityMagnitude) {
+        this.gravityMagnitude = gravityMagnitude;
+        this.gravity = new Vector2(0, gravityMagnitude);
     }
 }
