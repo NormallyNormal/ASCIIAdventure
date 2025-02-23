@@ -14,11 +14,14 @@ public class SlamParticle extends Entity {
     double fadeTime = 0.15;
     Direction direction;
     boolean ground;
-    public SlamParticle(Vector2 position, Direction direction, boolean ground) {
+    boolean downward;
+
+    public SlamParticle(Vector2 position, Direction direction, boolean ground, boolean downward) {
         this.position = position;
         this.depth = -1;
         this.direction = direction;
         this.ground = ground;
+        this.downward = downward;
         if (ground) {
             fadeTime = 0.25;
         }
@@ -57,11 +60,19 @@ public class SlamParticle extends Entity {
             renderColor = fadeTime < 0.07 ? TextColor.ANSI.RED : fadeTime < 0.12 ? TextColor.ANSI.RED_BRIGHT : TextColor.ANSI.WHITE;
         }
         char character;
-        if (direction == Direction.LEFT) {
-            character = ground ? '◣' : '\\';
+        if (downward) {
+            if (direction == Direction.LEFT) {
+                character = ground ? '◣' : '\\';
+            } else {
+                character = ground ? '◢' : '/';
+            }
         }
         else {
-            character = ground ? '◢' : '/';
+            if (direction == Direction.LEFT) {
+                character = ground ? '◤' : '/';
+            } else {
+                character = ground ? '◥' : '\\';
+            }
         }
         screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter(character, renderColor, TransparentColor.TRANSPARENT));
     }

@@ -61,8 +61,8 @@ public class Player extends Entity implements GlowingEntity {
                 stopVerticalVelocityAllowed = true;
                 jumpKeyReleasedInAir = false;
                 if (slamming) {
-                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.LEFT, true));
-                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.RIGHT, true));
+                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.LEFT, true, isGravityDownward()));
+                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.RIGHT, true, isGravityDownward()));
                 }
                 slamming = false;
             }
@@ -71,16 +71,23 @@ public class Player extends Entity implements GlowingEntity {
             if (input.getKeyState(Keybinds.player_jump)) {
                 jumpBuffer = 0.05;
             }
-            if (!input.getKeyState(Keybinds.player_jump) && stopVerticalVelocityAllowed) {
-                if (velocity.y < 0) {
-                    velocity.y = 0;
+            if (!input.getKeyState(Keybinds.player_jump)) {
+                if (stopVerticalVelocityAllowed) {
+                    if (velocity.y < 0 && isGravityDownward()) {
+                        velocity.y = 0;
+                    } else if (velocity.y > 0 && !isGravityDownward()) {
+                        velocity.y = 0;
+                    }
                 }
                 jumpKeyReleasedInAir = true;
             }
             //Wall slide
             if (timeSinceWallHit < 0.05) {
-                if (velocity.y > 5) {
+                if (velocity.y > 5 && isGravityDownward()) {
                     velocity.y = 5;
+                }
+                else if (velocity.y < -5 && !isGravityDownward()) {
+                    velocity.y = -5;
                 }
             }
             if (jumpBuffer > 0) {
@@ -90,13 +97,13 @@ public class Player extends Entity implements GlowingEntity {
                 Direction possibleWallJumpDirection = rightKey & !leftKey ? Direction.RIGHT : Direction.NONE;
                 possibleWallJumpDirection = leftKey & !rightKey ? Direction.LEFT : possibleWallJumpDirection;
                 if (onGroundRecently) {
-                    velocity.y = -30;
+                    velocity.y = isGravityDownward() ? -30 : 30;
                     timeSinceOnGround = Double.POSITIVE_INFINITY;
                     onGroundRecently = false;
                     canDashCharge = true;
                 }
                 else if (hitWallSomewhatRecently && possibleWallJumpDirection == lastCollisionDirection.opposite()) {
-                    velocity.y = -15;
+                    velocity.y = isGravityDownward() ? -15 : 15;
                     wallJumpFixedDirectionTime = 0.2;
                     jumpKeyReleasedInAir = false;
                     if (lastCollisionDirection == Direction.RIGHT) {
@@ -107,9 +114,9 @@ public class Player extends Entity implements GlowingEntity {
                     }
                 }
             }
-            if (!onGroundRecently && extraJumps > 0 && velocity.y >= 0 && input.getKeyState(Keybinds.player_jump) && !hitWallSomewhatRecently && jumpKeyReleasedInAir && dashTime <= 0) {
+            if (!onGroundRecently && extraJumps > 0 && input.getKeyState(Keybinds.player_jump) && !hitWallSomewhatRecently && jumpKeyReleasedInAir && dashTime <= 0) {
                 extraJumps--;
-                velocity.y = -20;
+                velocity.y = isGravityDownward() ? -20 : 20;
                 stopVerticalVelocityAllowed = false;
                 hasDashCharge = false;
                 Game.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.LEFT));
@@ -146,7 +153,7 @@ public class Player extends Entity implements GlowingEntity {
                     }
                 }
                 if (tryingSlam && dashTime <= 0 && !onGroundRecently && !input.getKeyState(Keybinds.player_jump)) {
-                    velocity.y = 100;
+                    velocity.y = isGravityDownward() ? 100 : -100;
                     if (!slamming) {
                         slamMovement = position.y;
                     }
@@ -163,10 +170,19 @@ public class Player extends Entity implements GlowingEntity {
             }
 
             if (slamming) {
-                if(position.y > slamMovement) {
-                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, slamMovement + 0.5), Direction.LEFT, false));
-                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, slamMovement + 0.5), Direction.RIGHT, false));
-                    slamMovement += 1;
+                if (isGravityDownward()) {
+                    if (position.y > slamMovement) {
+                        Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, slamMovement + 0.5), Direction.LEFT, false, true));
+                        Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, slamMovement + 0.5), Direction.RIGHT, false, true));
+                        slamMovement += 1;
+                    }
+                }
+                else {
+                    if (position.y < slamMovement) {
+                        Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, slamMovement + 0.5), Direction.LEFT, false, false));
+                        Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, slamMovement + 0.5), Direction.RIGHT, false, false));
+                        slamMovement -= 1;
+                    }
                 }
             }
 

@@ -86,14 +86,20 @@ public class Level {
         worldObjects.add(new MovingObject(new AABB(startingLocationX + 125 + 75, startingLocationY + 32, 10, 2), currentId++, 25, 0, 0.2));
         worldObjects.add(new MovingObject(new AABB(startingLocationX + 125 + 70, startingLocationY + 30, 10, 2), currentId++, 25, 0, 0.2));
 
-        worldObjects.add(new MovingObject(new AABB(startingLocationX + -50, startingLocationY + 33, 10, 2), currentId++, 0, 10, 0.2));
+        worldObjects.add(new MovingObject(new AABB(startingLocationX + -60, startingLocationY + 23, 10, 2), currentId++, 10, 0, 0.2));
 
         entities.add(new Torch(startingLocationX + 30, startingLocationY + 30));
 
         entities.add(new NPC(startingLocationX + 60, startingLocationY + 34));
 
-        worldObjects.add(new GravityField(new AABB(startingLocationX - 70, startingLocationY + 25, 10, 10), currentId++, true));
-        worldObjects.add(new GravityField(new AABB(startingLocationX - 90, startingLocationY + 25, 10, 10), currentId++, false));
+        worldObjects.add(new GravityField(new AABB(startingLocationX - 80, startingLocationY + 25, 10, 10), currentId++, true));
+        //worldObjects.add(new GravityField(new AABB(startingLocationX - 90, startingLocationY + 25, 10, 10), currentId++, false));
+
+        worldObjects.add(new StaticObject(new AABB(startingLocationX - 90, startingLocationY + 23, 30 , 2), currentId++));
+
+        worldObjects.add(new GravityField(new AABB(startingLocationX - 120, startingLocationY + 15, 120, 3), currentId++, false));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX - 90, startingLocationY + 13, 30 , 2), currentId++));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX - 90, startingLocationY + 6, 30 , 2), currentId++));
     }
 
     public void process(double timeDeltaSeconds, Input input) {
