@@ -116,9 +116,9 @@ public class Player extends Entity implements GlowingEntity {
                     }
                 }
             }
-            if (!onGroundRecently && extraJumps > 0 && input.getKeyState(Keybinds.player_jump) && !hitWallSomewhatRecently && jumpKeyReleasedInAir && dashTime <= 0) {
+            if (!onGroundRecently && extraJumps > 0 && input.getKeyState(Keybinds.player_jump) && !hitWallSomewhatRecently && jumpKeyReleasedInAir && dashTime <= 0 && !slamming) {
                 extraJumps--;
-                velocity.y = isGravityDownward() ? -20 : 20;
+                velocity.y = isGravityDownward() ? Math.min(velocity.y, -20) : Math.max(velocity.y, 20);
                 stopVerticalVelocityAllowed = false;
                 hasDashCharge = false;
                 Game.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.LEFT));
@@ -161,7 +161,6 @@ public class Player extends Entity implements GlowingEntity {
                     }
                     slamming = true;
                     lastHorizontalDirection = Direction.DOWN;
-                    extraJumps = 0;
                 }
                 if (madeDash) {
                     hasDashCharge = false;
@@ -308,7 +307,7 @@ public class Player extends Entity implements GlowingEntity {
     private void resetMovementForGravity() {
         stopVerticalVelocityAllowed = false;
         if (slamming) {
-            velocity.y = M4th.capMagnitude(velocity.y, 20);
+            velocity.y = M4th.capMagnitude(velocity.y, 30);
         }
         slamming = false;
         slamRelease = false;
