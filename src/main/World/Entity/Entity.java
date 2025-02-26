@@ -146,7 +146,7 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
     public void applyCollision(Vector2 entryTime) {
         if (entryTime.x < 1) {
             velocity.x = 0;
-            timeSinceWallHit = 0;
+            hitWall();
             if (movementStep.x > 0) {
                 lastCollisionDirection = Direction.RIGHT;
             }
@@ -156,24 +156,32 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
         }
         if (entryTime.y < 1) {
             velocity.y = bounce ? -velocity.y : 0;
-            bounce = false;
             if (movementStep.y > 0) {
                 if (isGravityDownward()) {
-                    timeSinceOnGround = 0;
+                    hitGround();
                 }
                 lastCollisionDirection = Direction.DOWN;
             }
             else {
                 if (!isGravityDownward()) {
-                    timeSinceOnGround = 0;
+                    hitGround();
                 }
                 lastCollisionDirection = Direction.UP;
             }
+            bounce = false;
         }
         if(entryTime.x < 1)
             movementStep.x *= Math.max(0, entryTime.x - 0.01);
         if(entryTime.y < 1)
             movementStep.y *= Math.max(0, entryTime.y - 0.01);
+    }
+
+    protected void hitGround() {
+        timeSinceOnGround = 0;
+    }
+
+    protected void hitWall() {
+        timeSinceOnGround = 0;
     }
 
     public AABB getCollisionBox() {

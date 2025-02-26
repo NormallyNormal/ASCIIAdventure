@@ -58,16 +58,6 @@ public class Player extends Entity implements GlowingEntity {
     public void process(double timeDelta, Input input) {
         if (!dead) {
             boolean onGroundRecently = timeSinceOnGround < 0.1;
-            if (onGroundRecently) {
-                extraJumps = maxExtraJumps;
-                jumpKeyReleasedInAir = false;
-                if (slamming) {
-                    double yAdd = isGravityDownward() ? 0.9 : 0.1;
-                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, this.position.y + yAdd + movementStep.y), Direction.LEFT, true, isGravityDownward()));
-                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, this.position.y + yAdd + movementStep.y), Direction.RIGHT, true, isGravityDownward()));
-                }
-                slamming = false;
-            }
             boolean hitWallRecently = timeSinceWallHit < 0.05;
             boolean hitWallSomewhatRecently = timeSinceWallHit < 0.2;
             if (input.getKeyState(Keybinds.player_jump)) {
@@ -145,7 +135,7 @@ public class Player extends Entity implements GlowingEntity {
 
             if (input.getKeyState(Keybinds.player_dash) && !hitWallRecently) {
                 boolean madeDash = false;
-                boolean tryingSlam = input.getKeyState(Keybinds.player_down);
+                boolean tryingSlam = input.getKeyState(Keybinds.player_down) && false; //slam is currently disabled
                 if (hasDashCharge) {
                     if (lastHorizontalDirection == Direction.LEFT && !input.getKeyState(Keybinds.player_right) && !tryingSlam) {
                         dashDirection = Direction.LEFT;
@@ -242,6 +232,20 @@ public class Player extends Entity implements GlowingEntity {
             }
         }
         super.process(timeDelta, input);
+    }
+
+    @Override
+    protected void hitGround() {
+        if (!bounce)
+            extraJumps = maxExtraJumps;
+        jumpKeyReleasedInAir = false;
+        if (slamming) {
+            double yAdd = isGravityDownward() ? 0.9 : 0.1;
+            Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, this.position.y + yAdd + movementStep.y), Direction.LEFT, true, isGravityDownward()));
+            Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, this.position.y + yAdd + movementStep.y), Direction.RIGHT, true, isGravityDownward()));
+        }
+        slamming = false;
+        super.hitGround();
     }
 
     @Override
