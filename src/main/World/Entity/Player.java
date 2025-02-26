@@ -91,6 +91,7 @@ public class Player extends Entity implements GlowingEntity {
                 possibleWallJumpDirection = leftKey & !rightKey ? Direction.LEFT : possibleWallJumpDirection;
                 if (onGroundRecently) {
                     velocity.y = isGravityDownward() ? -30 : 30;
+                    jumpKeyReleasedInAir = false;
                     stopVerticalVelocityAllowed = true;
                     timeSinceOnGround = Double.POSITIVE_INFINITY;
                     onGroundRecently = false;
