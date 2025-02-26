@@ -2,6 +2,7 @@ package main.World.Entity;
 
 import main.Input.Input;
 import main.World.CollisionObject;
+import main.World.Game;
 import main.World.PhysicsObject;
 import main.World.RenderObject;
 import main.Render.DepthScreen;
@@ -28,6 +29,8 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
 
     protected double timeSinceWallHit = Double.POSITIVE_INFINITY;
     protected Direction lastCollisionDirection = Direction.NONE;
+
+    protected boolean bounce;
 
     public void process(double timeDelta, Input input) {
         position.add(movementStep);
@@ -122,6 +125,20 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
         return exitTime;
     }
 
+    public Direction getCollisionDirection(Vector2 entryTime) {
+        if (entryTime.x < 1) {
+            if (movementStep.x < 0)
+                return Direction.LEFT;
+            return Direction.RIGHT;
+        }
+        if (entryTime.y < 1) {
+            if (movementStep.y < 0)
+                return Direction.UP;
+            return Direction.DOWN;
+        }
+        return Direction.NONE;
+    }
+
     public boolean collides(Vector2 entryTime, Vector2 exitTime) {
         return entryTime.x < exitTime.x || entryTime.y < exitTime.y;
     }
@@ -138,7 +155,8 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
             }
         }
         if (entryTime.y < 1) {
-            velocity.y = 0;
+            velocity.y = bounce ? -velocity.y : 0;
+            bounce = false;
             if (movementStep.y > 0) {
                 if (isGravityDownward()) {
                     timeSinceOnGround = 0;
@@ -232,5 +250,13 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
     protected void setGravityMagnitude(double gravityMagnitude) {
         this.gravityMagnitude = gravityMagnitude;
         this.gravity = new Vector2(0, gravityMagnitude);
+    }
+
+    public boolean isOnScreen() {
+        return collisionBox.overlaps(Game.screenBoundingBox);
+    }
+
+    public void bounce() {
+        bounce = true;
     }
 }

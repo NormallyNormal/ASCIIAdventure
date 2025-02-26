@@ -1,6 +1,7 @@
 package main.World.Entity.Particle;
 
 import main.Input.Input;
+import main.Math.AABB;
 import main.Math.Direction;
 import main.Math.Vector2;
 import main.Render.DepthScreen;
@@ -18,6 +19,7 @@ public class SlamParticle extends Entity {
 
     public SlamParticle(Vector2 position, Direction direction, boolean ground, boolean downward) {
         this.position = position;
+        this.collisionBox = new AABB(position.x, position.y, 1, 1);
         this.depth = -1;
         this.direction = direction;
         this.ground = ground;

@@ -1,6 +1,7 @@
 package main.World.Entity.Particle;
 
 import main.Input.Input;
+import main.Math.AABB;
 import main.Render.DepthScreen;
 import main.Render.TransparentColor;
 import main.Settings.Other;
@@ -15,6 +16,7 @@ public class DashParticle extends Entity {
 
     public DashParticle(Vector2 position) {
         this.position = position;
+        this.collisionBox = new AABB(position.x, position.y, 1, 1);
         fadeTime = 0.2;
         this.depth = -1;
     }

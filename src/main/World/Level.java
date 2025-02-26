@@ -101,6 +101,11 @@ public class Level {
         worldObjects.add(new GravityField(new AABB(startingLocationX - 120, startingLocationY + 15, 120, 3), currentId++, false));
         worldObjects.add(new StaticObject(new AABB(startingLocationX - 90, startingLocationY + 13, 30 , 2), currentId++));
         worldObjects.add(new StaticObject(new AABB(startingLocationX - 90, startingLocationY + 6, 30 , 2), currentId++));
+
+        worldObjects.add(new StaticHazardObject(new AABB(startingLocationX + 125, startingLocationY + -10, 110, 1), currentId++));
+
+        worldObjects.add(new BouncyObject(new AABB(startingLocationX + 20, startingLocationY + 33, 5, 2), currentId++));
+        worldObjects.add(new BouncyObject(new AABB(startingLocationX - 95, startingLocationY + 17, 5, 2), currentId++));
     }
 
     public void process(double timeDeltaSeconds, Input input) {
@@ -124,11 +129,13 @@ public class Level {
         lastRenderOffsetX = xOffset;
         lastRenderOffsetY = yOffset;
         for (WorldObject worldObject : worldObjects) {
-            worldObject.render(screen, xOffset, yOffset);
+            if (worldObject.isOnScreen())
+                worldObject.render(screen, xOffset, yOffset);
         }
         player.render(screen, xOffset, yOffset);
         for (Entity entity : entities) {
-            entity.render(screen, xOffset, yOffset);
+            if (entity.isOnScreen())
+                entity.render(screen, xOffset, yOffset);
         }
     }
 
@@ -168,6 +175,8 @@ public class Level {
         }
     }
 
+    List<WorldObject> collidedThisTick = new ArrayList<>();
+
     private void runPlatformCollisions(Entity entity) {
         AABB bbb = entity.getCollisionBox().createBBB(entity.getMovementStep());
         Vector2 soonestEntryTime = new Vector2(1, 1);
@@ -200,16 +209,22 @@ public class Level {
                             equalCollisionsY.add(worldObject.getId());
                         }
                     }
-                    worldObject.collisionEffect(entity, this);
+                    collidedThisTick.add(worldObject);
+                    worldObject.intersectEffect(entity, this, entity.getCollisionDirection(entryTime));
                 }
                 else if (entity.getCollisionBox().overlaps(worldObject.getCollisionBox())) {
-                    worldObject.collisionEffect(entity, this);
+                    collidedThisTick.add(worldObject);
+                    worldObject.intersectEffect(entity, this);
                 }
             }
         }
         if (mayIngoreYFlag && !equalCollisionsY.retainAll(equalCollisionsX))
             soonestEntryTime.y = 1.0;
         entity.applyCollision(soonestEntryTime);
+        for (WorldObject worldObject : collidedThisTick) {
+            worldObject.collisionEffect(entity, this);
+        }
+        collidedThisTick.clear();
     }
 
     public void addWorldObject(WorldObject worldObject) {

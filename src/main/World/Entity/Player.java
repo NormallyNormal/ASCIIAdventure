@@ -60,12 +60,11 @@ public class Player extends Entity implements GlowingEntity {
             boolean onGroundRecently = timeSinceOnGround < 0.1;
             if (onGroundRecently) {
                 extraJumps = maxExtraJumps;
-                stopVerticalVelocityAllowed = true;
                 jumpKeyReleasedInAir = false;
                 if (slamming) {
                     double yAdd = isGravityDownward() ? 0.9 : 0.1;
-                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, this.position.y + yAdd), Direction.LEFT, true, isGravityDownward()));
-                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, this.position.y + yAdd), Direction.RIGHT, true, isGravityDownward()));
+                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, this.position.y + yAdd + movementStep.y), Direction.LEFT, true, isGravityDownward()));
+                    Game.currentLevel.addEntity(new SlamParticle(new Vector2(this.position.x + 0.5, this.position.y + yAdd + movementStep.y), Direction.RIGHT, true, isGravityDownward()));
                 }
                 slamming = false;
             }
@@ -82,6 +81,7 @@ public class Player extends Entity implements GlowingEntity {
                         velocity.y = 0;
                     }
                 }
+                stopVerticalVelocityAllowed = false;
                 jumpKeyReleasedInAir = true;
             }
             //Wall slide
@@ -101,6 +101,7 @@ public class Player extends Entity implements GlowingEntity {
                 possibleWallJumpDirection = leftKey & !rightKey ? Direction.LEFT : possibleWallJumpDirection;
                 if (onGroundRecently) {
                     velocity.y = isGravityDownward() ? -30 : 30;
+                    stopVerticalVelocityAllowed = true;
                     timeSinceOnGround = Double.POSITIVE_INFINITY;
                     onGroundRecently = false;
                     canDashCharge = true;
@@ -213,8 +214,13 @@ public class Player extends Entity implements GlowingEntity {
                     velocity.y = 0;
                 }
                 if (lastDashXPos != Math.floor(position.x)) {
+                    if (lastDashXPos != Integer.MIN_VALUE) {
+                        int particlesToCreate = (int) Math.floor(position.x) - lastDashXPos;
+                        for (int i = 0; Math.abs(i) <= Math.abs(particlesToCreate); i = particlesToCreate > 0 ? i + 1 : i - 1) {
+                            Game.currentLevel.addEntity(new DashParticle(new Vector2(this.position.x + i + 0.5, this.position.y + 0.5)));
+                        }
+                    }
                     lastDashXPos = (int)Math.floor(position.x);
-                    Game.currentLevel.addEntity(new DashParticle(new Vector2(this.position.x, this.position.y + 0.5)));
                 }
                 standsOnSemisolid = false;
             }
@@ -312,5 +318,11 @@ public class Player extends Entity implements GlowingEntity {
         }
         slamming = false;
         slamRelease = false;
+    }
+
+    @Override
+    public void bounce() {
+        stopVerticalVelocityAllowed = false;
+        super.bounce();
     }
 }

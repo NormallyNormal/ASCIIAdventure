@@ -11,5 +11,5 @@ public class Keybinds {
     public static int player_down = KeyEvent.VK_DOWN;
     public static int player_dash = KeyEvent.VK_SHIFT;
 
-    public static int dialogue_next = KeyEvent.VK_Z;
+    public static int dialogue_next = KeyEvent.VK_ENTER;
 }

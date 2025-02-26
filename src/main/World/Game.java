@@ -2,6 +2,7 @@ package main.World;
 
 import main.Constants.ScreenConstants;
 import main.Input.Input;
+import main.Math.AABB;
 import main.Render.DepthScreen;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
@@ -10,17 +11,18 @@ import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
 import main.Math.Direction;
+import main.Settings.Keybinds;
 
 public class Game {
     public static Level currentLevel;
+    public static final AABB screenBoundingBox = new AABB(0, 0, ScreenConstants.PLAY_SCREEN_WIDTH, ScreenConstants.PLAY_SCREEN_HEIGHT);
 
-    public static void run() throws IOException, FontFormatException {
+    public static void run() throws IOException, FontFormatException, InterruptedException {
         SwingTerminalFrame terminal = new DefaultTerminalFactory().setInitialTerminalSize(new TerminalSize(ScreenConstants.PLAY_SCREEN_WIDTH,ScreenConstants.PLAY_SCREEN_HEIGHT)).createSwingTerminal();
 
         terminal.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);Font ubuntuMono = Font.createFont(Font.TRUETYPE_FONT, new File("src/resources/font/UbuntuMono-Regular.ttf"))
@@ -46,7 +48,7 @@ public class Game {
         double timeSinceLastFrame = 0;
         double timeSinceLastTransitionMovement = 0;
 
-        double fps = 0;
+        float fps = ScreenConstants.TARGET_FPS;
         double tps = 0;
 
         DecimalFormat df = new DecimalFormat("#.##");
@@ -59,12 +61,17 @@ public class Game {
         int renderXOffset = -levelFrameX * ScreenConstants.PLAY_SCREEN_WIDTH;
         int renderYOffset = -levelFrameY * ScreenConstants.PLAY_SCREEN_HEIGHT;
 
+        float overshootFPS = ScreenConstants.TARGET_FPS;
         while(running) {
             input.newFrame();
             timeDeltaSeconds = (currentTime - lastTime) * 1.0e-9;
-            if (timeDeltaSeconds > 0.1) {
+            if (timeDeltaSeconds > 1) {
                 lastTime = currentTime;
                 continue;
+            }
+            if (timeDeltaSeconds < 0) {
+                timeDeltaSeconds = 0;
+                lastTime = currentTime;
             }
             timeSinceLastFrame += timeDeltaSeconds;
             timeSinceLastTransitionMovement += timeDeltaSeconds;
@@ -104,7 +111,10 @@ public class Game {
                     timeSinceLastTransitionMovement -= transitionFrequency;
                 }
             }
-            if(timeSinceLastFrame >= 1/ScreenConstants.TARGET_FPS) {
+            if(timeSinceLastFrame >= 1/overshootFPS) {
+                screenBoundingBox.x = -renderXOffset;
+                screenBoundingBox.y = -renderYOffset;
+
                 screen.clear();
                 currentLevel.render(screen, renderXOffset, renderYOffset);
 
@@ -116,7 +126,7 @@ public class Game {
 
                 screen.refresh();
 
-                fps = fps * 0.9 + 0.1 * (1/timeSinceLastFrame);
+                fps = (float) (fps * 0.9f + 0.1f * (1f/timeSinceLastFrame));
                 timeSinceLastFrame -= 1/ScreenConstants.TARGET_FPS;
             }
 
@@ -126,7 +136,7 @@ public class Game {
                 tps = 0;
             }
 
-            if (input.getKeyState(KeyEvent.VK_ESCAPE)) {
+            if (input.getKeyState(Keybinds.exit)) {
                 running = false;
             }
 
@@ -134,6 +144,10 @@ public class Game {
             currentTime = System.nanoTime();
 
             terminal.requestFocusInWindow();
+
+            Thread.sleep(1);
+
+            overshootFPS = (ScreenConstants.TARGET_FPS - fps) + ScreenConstants.TARGET_FPS;
         }
         terminal.close();
     }

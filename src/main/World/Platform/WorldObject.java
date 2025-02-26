@@ -1,10 +1,8 @@
 package main.World.Platform;
-import main.World.CollisionObject;
+import main.World.*;
 import main.World.Entity.Entity;
-import main.World.Level;
-import main.World.RenderObject;
-import main.World.Identifiable;
 import main.Math.AABB;
+import main.Math.Direction;
 
 public abstract class WorldObject implements CollisionObject, RenderObject, Identifiable {
     AABB collisionBox;
@@ -27,11 +25,23 @@ public abstract class WorldObject implements CollisionObject, RenderObject, Iden
 
     }
 
+    public void intersectEffect(Entity entity, Level level) {
+
+    }
+
+    public void intersectEffect(Entity entity, Level level, Direction direction) {
+        intersectEffect(entity, level);
+    }
+
     public int getId() {
         return id;
     }
 
     public boolean isSemiSolid() {
         return semiSolid;
+    }
+
+    public boolean isOnScreen() {
+        return collisionBox.overlaps(Game.screenBoundingBox);
     }
 }

@@ -1,6 +1,7 @@
 package main.World.Entity.Particle;
 
 import main.Input.Input;
+import main.Math.AABB;
 import main.Render.DepthScreen;
 import main.Render.TransparentColor;
 import main.World.Entity.Entity;
@@ -15,6 +16,7 @@ public class ExtraJumpParticle extends Entity {
     Direction direction;
     public ExtraJumpParticle(Vector2 position, Direction direction) {
         this.position = position;
+        this.collisionBox = new AABB(position.x, position.y, 1, 1);
         this.depth = -1;
         this.direction = direction;
     }

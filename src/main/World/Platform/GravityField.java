@@ -62,7 +62,7 @@ public class GravityField extends WorldObject {
         }
     }
 
-    public void collisionEffect(Entity entity, Level level) {
+    public void intersectEffect(Entity entity, Level level) {
         if (up && entity.isGravityDownward()) {
             entity.setGravityUpward();
         }

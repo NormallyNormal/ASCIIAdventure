@@ -1,6 +1,7 @@
 package main.World.Entity;
 
 import main.Input.Input;
+import main.Math.AABB;
 import main.Render.DepthScreen;
 import main.Render.TransparentColor;
 import main.UI.Element.DialogueBox;
@@ -15,6 +16,7 @@ public class NPC extends Entity {
     public NPC(int x, int y) {
         this.position.x = x;
         this.position.y = y;
+        this.collisionBox = new AABB(x, y, 1, 1);
     }
 
     @Override

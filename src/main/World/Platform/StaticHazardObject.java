@@ -24,7 +24,7 @@ public class StaticHazardObject extends StaticObject {
     }
 
     @Override
-    public void collisionEffect(Entity entity, Level level) {
+    public void intersectEffect(Entity entity, Level level) {
         entity.kill();
         super.collisionEffect(entity, level);
     }
