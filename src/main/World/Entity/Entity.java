@@ -181,7 +181,7 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
     }
 
     protected void hitWall() {
-        timeSinceOnGround = 0;
+        timeSinceWallHit = 0;
     }
 
     public AABB getCollisionBox() {
