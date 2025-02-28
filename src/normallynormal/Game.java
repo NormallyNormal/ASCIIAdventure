@@ -69,7 +69,6 @@ public class Game {
 
         float overshootFPS = ScreenConstants.TARGET_FPS;
         while(running) {
-            input.newFrame();
             timeDeltaSeconds = (currentTime - lastTime) * 1.0e-9;
             if (timeDeltaSeconds > 1) {
                 lastTime = currentTime;
@@ -145,14 +144,14 @@ public class Game {
                 running = false;
             }
 
-            lastTime = currentTime;
-            currentTime = System.nanoTime();
-
             terminal.requestFocusInWindow();
 
             Thread.sleep(1);
 
-            overshootFPS = (ScreenConstants.TARGET_FPS - fps) + ScreenConstants.TARGET_FPS;
+            overshootFPS = Math.max(ScreenConstants.TARGET_FPS, (ScreenConstants.TARGET_FPS - fps) + ScreenConstants.TARGET_FPS);
+
+            lastTime = currentTime;
+            currentTime = System.nanoTime();
         }
         terminal.close();
     }

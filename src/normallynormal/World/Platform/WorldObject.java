@@ -6,7 +6,7 @@ import normallynormal.Math.AABB;
 import normallynormal.Math.Direction;
 
 public abstract class WorldObject implements CollisionObject, RenderObject, Identifiable {
-    AABB collisionBox;
+    protected AABB collisionBox;
     boolean solid = true;
     int id;
     boolean semiSolid = false;

@@ -15,6 +15,7 @@ import normallynormal.Math.Vector2;
 import normallynormal.Math.Direction;
 import normallynormal.Constants.ScreenConstants;
 import normallynormal.Math.M4th;
+import normallynormal.World.Platform.Decorated.RainbowPlatform;
 
 public class Level {
     private final List<WorldObject> worldObjects;
@@ -57,7 +58,7 @@ public class Level {
 //        worldObjects.add(new MovingObject(new AABB(20, 5, 5, 5), currentId++, 10, 0, 0.4));
 //        worldObjects.add(new StaticObject(new AABB(28, 2, 5, 3), currentId++));
 
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + -120, startingLocationY + 35, 360, 5), currentId++));
+        worldObjects.add(new RainbowPlatform(new AABB(startingLocationX + -120, startingLocationY + 35, 360, 5), currentId++));
         worldObjects.add(new StaticObject(new AABB(startingLocationX + -120, startingLocationY + -40, 360, 5), currentId++));
         worldObjects.add(new StaticObject(new AABB(startingLocationX + -120, startingLocationY + -35, 5, 70), currentId++));
         worldObjects.add(new StaticObject(new AABB(startingLocationX + 235, startingLocationY + -35, 5, 70), currentId++));
