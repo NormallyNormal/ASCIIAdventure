@@ -1,15 +1,20 @@
 package normallynormal.World.Platform;
 import normallynormal.Game;
+import normallynormal.Render.Renderers.AbstractRenderer;
+import normallynormal.Render.Renderers.DefaultRenderer;
 import normallynormal.World.*;
 import normallynormal.World.Entity.Entity;
 import normallynormal.Math.AABB;
 import normallynormal.Math.Direction;
 
-public abstract class WorldObject implements CollisionObject, RenderObject, Identifiable {
+public abstract class WorldObject implements CollisionObject, Identifiable {
     protected AABB collisionBox;
+    protected AABB visibilityBox;
     boolean solid = true;
     int id;
     boolean semiSolid = false;
+    AbstractRenderer renderer = new DefaultRenderer(this::getCollisionBox);
+
     public AABB getCollisionBox() {
         return collisionBox;
     }
@@ -43,6 +48,14 @@ public abstract class WorldObject implements CollisionObject, RenderObject, Iden
     }
 
     public boolean isOnScreen() {
-        return collisionBox.overlaps(Game.screenBoundingBox);
+        return visibilityBox.overlaps(Game.screenBoundingBox);
+    }
+
+    public AbstractRenderer getRenderer() {
+        return renderer;
+    }
+
+    public void setRenderer(AbstractRenderer renderer) {
+        this.renderer = renderer;
     }
 }

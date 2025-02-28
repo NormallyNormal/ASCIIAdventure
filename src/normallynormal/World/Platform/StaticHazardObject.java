@@ -14,18 +14,9 @@ public class StaticHazardObject extends StaticObject {
         this.solid = false;
     }
 
-    public void render(DepthScreen screen, int xOffset, int yOffset) {
-        for (int i = 0; i < collisionBox.w; i++) {
-            for (int j = 0; j < collisionBox.h; j++) {
-                char filler = '◮';
-                screen.setCharacterWithDepth((int)collisionBox.x + i, (int)collisionBox.y + j, xOffset, yOffset, 0, new TextCharacter(filler, TextColor.ANSI.RED, TextColor.ANSI.BLACK));
-            }
-        }
-    }
-
     @Override
     public void intersectEffect(Entity entity, Level level) {
         entity.kill();
-        super.collisionEffect(entity, level);
+        super.intersectEffect(entity, level);
     }
 }
