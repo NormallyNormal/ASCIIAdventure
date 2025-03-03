@@ -2,6 +2,7 @@ package normallynormal.World;
 
 import java.util.*;
 
+import normallynormal.Render.Renderers.RainbowRenderer;
 import normallynormal.Render.Shader.PostShader;
 import normallynormal.World.Entity.Entity;
 import normallynormal.World.Entity.NPC;
@@ -15,7 +16,6 @@ import normallynormal.Math.Vector2;
 import normallynormal.Math.Direction;
 import normallynormal.Constants.ScreenConstants;
 import normallynormal.Math.M4th;
-import normallynormal.World.Platform.Decorated.RainbowPlatform;
 
 public class Level {
     private final List<WorldObject> worldObjects;
@@ -58,21 +58,23 @@ public class Level {
 //        worldObjects.add(new MovingObject(new AABB(20, 5, 5, 5), currentId++, 10, 0, 0.4));
 //        worldObjects.add(new StaticObject(new AABB(28, 2, 5, 3), currentId++));
 
-        worldObjects.add(new RainbowPlatform(new AABB(startingLocationX + -120, startingLocationY + 35, 360, 5), currentId++));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + -120, startingLocationY + 35, 360, 5), currentId++));
         worldObjects.add(new StaticObject(new AABB(startingLocationX + -120, startingLocationY + -40, 360, 5), currentId++));
         worldObjects.add(new StaticObject(new AABB(startingLocationX + -120, startingLocationY + -35, 5, 70), currentId++));
         worldObjects.add(new StaticObject(new AABB(startingLocationX + 235, startingLocationY + -35, 5, 70), currentId++));
 
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 30, 5, 1), currentId++, true));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 25, 5, 1), currentId++, true));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 20, 5, 1), currentId++, true));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 15, 5, 1), currentId++, true));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 10, 5, 1), currentId++, true));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 5, 5, 1), currentId++, true));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 0, 5, 1), currentId++, true));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + -5, 5, 1), currentId++, true));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + -10, 5, 1), currentId++, true));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 0, startingLocationY + -15, 120, 1), currentId++, true));
+
+        //The semi bois
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 30, 5, 1), currentId++));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 25, 5, 1), currentId++));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 20, 5, 1), currentId++));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 15, 5, 1), currentId++));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 10, 5, 1), currentId++));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 5, 5, 1), currentId++));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 0, 5, 1), currentId++));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + -5, 5, 1), currentId++));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + -10, 5, 1), currentId++));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 0, startingLocationY + -15, 120, 1), currentId++));
 
         worldObjects.add(new StaticHazardObject(new AABB(startingLocationX + 125, startingLocationY + 34, 110, 1), currentId++));
 
@@ -95,13 +97,18 @@ public class Level {
         entities.add(new NPC(startingLocationX + 60, startingLocationY + 34));
 
         worldObjects.add(new GravityField(new AABB(startingLocationX - 80, startingLocationY + 25, 10, 10), currentId++, true));
-        //worldObjects.add(new GravityField(new AABB(startingLocationX - 90, startingLocationY + 25, 10, 10), currentId++, false));
-
-        worldObjects.add(new StaticObject(new AABB(startingLocationX - 90, startingLocationY + 23, 30 , 2), currentId++));
-
         worldObjects.add(new GravityField(new AABB(startingLocationX - 120, startingLocationY + 15, 120, 3), currentId++, false));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX - 90, startingLocationY + 13, 30 , 2), currentId++));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX - 90, startingLocationY + 6, 30 , 2), currentId++));
+
+        StaticObject s1 = new StaticObject(new AABB(startingLocationX - 90, startingLocationY + 23, 30 , 2), currentId++);
+        s1.setRenderer(new RainbowRenderer(s1::getVisibilityBox));
+        worldObjects.add(s1);
+        StaticObject s2 = new StaticObject(new AABB(startingLocationX - 90, startingLocationY + 13, 30 , 2), currentId++);
+        s2.setRenderer(new RainbowRenderer(s2::getVisibilityBox));
+        worldObjects.add(s2);
+
+        StaticObject s3 = new StaticObject(new AABB(startingLocationX - 90, startingLocationY + 6, 30 , 2), currentId++);
+        s3.setRenderer(new RainbowRenderer(s3::getVisibilityBox));
+        worldObjects.add(s3);
 
         worldObjects.add(new StaticHazardObject(new AABB(startingLocationX + 125, startingLocationY + -10, 110, 1), currentId++));
 
@@ -131,7 +138,7 @@ public class Level {
         lastRenderOffsetY = yOffset;
         for (WorldObject worldObject : worldObjects) {
             if (worldObject.isOnScreen())
-                worldObject.render(screen, xOffset, yOffset);
+                worldObject.getRenderer().render(screen, xOffset, yOffset);
         }
         player.render(screen, xOffset, yOffset);
         for (Entity entity : entities) {
