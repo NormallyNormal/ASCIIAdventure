@@ -1,13 +1,9 @@
 package normallynormal.World.Platform;
 
-import normallynormal.Render.DepthScreen;
-import normallynormal.Render.TransparentColor;
+import normallynormal.Render.Renderers.GravityFieldRenderer;
 import normallynormal.World.Entity.Entity;
 import normallynormal.World.Level;
 import normallynormal.Math.AABB;
-import com.googlecode.lanterna.TextCharacter;
-import com.googlecode.lanterna.TextColor;
-import normallynormal.Math.Noise;
 
 public class GravityField extends WorldObject {
 
@@ -19,6 +15,7 @@ public class GravityField extends WorldObject {
         this.visibilityBox = collisionBox;
         this.up = up;
         this.solid = false;
+        this.setRenderer(new GravityFieldRenderer(this::getVisibilityBox, this::getUp));
     }
 
     public void intersectEffect(Entity entity, Level level) {
@@ -28,5 +25,9 @@ public class GravityField extends WorldObject {
         if (!up && !entity.isGravityDownward()) {
             entity.setGravityDownward();
         }
+    }
+
+    public boolean getUp() {
+        return up;
     }
 }

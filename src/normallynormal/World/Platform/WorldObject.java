@@ -19,6 +19,10 @@ public abstract class WorldObject implements CollisionObject, Identifiable {
         return collisionBox;
     }
 
+    public AABB getVisibilityBox() {
+        return visibilityBox;
+    }
+
     public void process(double timeDeltaSeconds, Level level) {
 
     }

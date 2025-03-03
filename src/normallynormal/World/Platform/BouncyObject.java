@@ -1,10 +1,8 @@
 package normallynormal.World.Platform;
 
-import com.googlecode.lanterna.TextCharacter;
-import com.googlecode.lanterna.TextColor;
 import normallynormal.Math.AABB;
 import normallynormal.Math.Direction;
-import normallynormal.Render.DepthScreen;
+import normallynormal.Render.Renderers.BouncePadRenderer;
 import normallynormal.World.Entity.Entity;
 import normallynormal.World.Level;
 
@@ -13,6 +11,7 @@ public class BouncyObject extends StaticObject {
 
     public BouncyObject(AABB collisionBox, int id) {
         super(collisionBox, id);
+        this.setRenderer(new BouncePadRenderer(this::getVisibilityBox, this::lastBounceTime));
     }
 
     public void intersectEffect(Entity entity, Level level, Direction direction) {

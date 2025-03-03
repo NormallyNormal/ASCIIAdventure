@@ -3,7 +3,6 @@ package normallynormal.Render.Renderers;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 import normallynormal.Math.AABB;
-import normallynormal.Math.Direction;
 import normallynormal.Math.Noise;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;

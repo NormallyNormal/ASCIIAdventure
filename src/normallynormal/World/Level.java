@@ -2,6 +2,7 @@ package normallynormal.World;
 
 import java.util.*;
 
+import normallynormal.Render.Renderers.RainbowRenderer;
 import normallynormal.Render.Shader.PostShader;
 import normallynormal.World.Entity.Entity;
 import normallynormal.World.Entity.NPC;
@@ -96,13 +97,18 @@ public class Level {
         entities.add(new NPC(startingLocationX + 60, startingLocationY + 34));
 
         worldObjects.add(new GravityField(new AABB(startingLocationX - 80, startingLocationY + 25, 10, 10), currentId++, true));
-        //worldObjects.add(new GravityField(new AABB(startingLocationX - 90, startingLocationY + 25, 10, 10), currentId++, false));
-
-        worldObjects.add(new StaticObject(new AABB(startingLocationX - 90, startingLocationY + 23, 30 , 2), currentId++));
-
         worldObjects.add(new GravityField(new AABB(startingLocationX - 120, startingLocationY + 15, 120, 3), currentId++, false));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX - 90, startingLocationY + 13, 30 , 2), currentId++));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX - 90, startingLocationY + 6, 30 , 2), currentId++));
+
+        StaticObject s1 = new StaticObject(new AABB(startingLocationX - 90, startingLocationY + 23, 30 , 2), currentId++);
+        s1.setRenderer(new RainbowRenderer(s1::getVisibilityBox));
+        worldObjects.add(s1);
+        StaticObject s2 = new StaticObject(new AABB(startingLocationX - 90, startingLocationY + 13, 30 , 2), currentId++);
+        s2.setRenderer(new RainbowRenderer(s2::getVisibilityBox));
+        worldObjects.add(s2);
+
+        StaticObject s3 = new StaticObject(new AABB(startingLocationX - 90, startingLocationY + 6, 30 , 2), currentId++);
+        s3.setRenderer(new RainbowRenderer(s3::getVisibilityBox));
+        worldObjects.add(s3);
 
         worldObjects.add(new StaticHazardObject(new AABB(startingLocationX + 125, startingLocationY + -10, 110, 1), currentId++));
 
