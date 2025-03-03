@@ -5,14 +5,12 @@ import normallynormal.World.Entity.Entity;
 import normallynormal.World.Level;
 import normallynormal.Math.AABB;
 
-public class GravityField extends WorldObject {
+public class GravityField extends MoveableObject {
 
     boolean up;
 
     public GravityField(AABB collisionBox, int id, boolean up) {
-        this.id = id;
-        this.collisionBox = collisionBox;
-        this.visibilityBox = collisionBox;
+        super(collisionBox, id);
         this.up = up;
         this.solid = false;
         this.setRenderer(new GravityFieldRenderer(this::getVisibilityBox, this::getUp));

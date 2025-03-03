@@ -1,11 +1,21 @@
 package normallynormal.Math;
 
 public enum Direction {
-    NONE,
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT;
+    NONE(0),
+    UP(1),
+    DOWN(1 << 1),
+    LEFT(1 << 2),
+    RIGHT(1 << 3);
+
+    private final int value;
+
+    Direction(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
 
     public int toMovement() {
         return switch (this) {
@@ -41,5 +51,9 @@ public enum Direction {
             case LEFT, RIGHT -> false;
             default -> false;
         };
+    }
+
+    public boolean isAnyOf(int directions) {
+        return (this.getValue() & directions) != 0;
     }
 }

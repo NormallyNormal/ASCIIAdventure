@@ -6,7 +6,7 @@ import normallynormal.Render.Renderers.BouncePadRenderer;
 import normallynormal.World.Entity.Entity;
 import normallynormal.World.Level;
 
-public class BouncyObject extends StaticObject {
+public class BouncyObject extends MoveableObject {
     private long bounceTime = System.currentTimeMillis() - 1000;
 
     public BouncyObject(AABB collisionBox, int id) {
