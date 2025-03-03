@@ -7,7 +7,7 @@ Also has dash and double jump abilities.
 Solid platforms that the player can land on. They can also move and bring the player along.
 Semi-solid platforms allow the player to jump up through them or drop down.
 ### Seperate Moving Object Renderers
-Each world object can have an independent renderer object associated with it. They can easily be given different special effects without chaging behavior.
+Each world object can have an independent renderer object associated with it. They can easily be given different special effects without changing behavior.
 ### Seperate Moving Object Controllers
 Each moving world object can have an independent movement controller associated with it. This allows for endless potential movement patterns, coordination between moving objects, and more.
 ### Hazards
