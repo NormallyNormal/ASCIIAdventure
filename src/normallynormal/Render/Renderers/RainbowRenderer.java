@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class RainbowRenderer extends AbstractRenderer {
-    private final Supplier<AABB> collisionBoxSupplier;
+    private final Supplier<AABB> visibilityBoxSupplier;
 
     private static final char[] ditherChars = {'█', '▓', '▒', '░'};
     private static final TextColor[] rainbow = {TextColor.ANSI.RED, TextColor.ANSI.RED_BRIGHT, TextColor.ANSI.YELLOW_BRIGHT, TextColor.ANSI.GREEN, TextColor.ANSI.BLUE_BRIGHT, TextColor.ANSI.MAGENTA};
@@ -18,7 +18,7 @@ public class RainbowRenderer extends AbstractRenderer {
     private static final TextCharacter white = new TextCharacter('█', TextColor.ANSI.WHITE, TextColor.ANSI.WHITE);
 
     public RainbowRenderer(Supplier<AABB> collisionBoxSupplier) {
-        this.collisionBoxSupplier = collisionBoxSupplier;
+        this.visibilityBoxSupplier = collisionBoxSupplier;
         if (rainbowChars.isEmpty()) {
             constructRainbowChars();
         }
@@ -33,7 +33,7 @@ public class RainbowRenderer extends AbstractRenderer {
     }
 
     public void render(DepthScreen screen, int xOffset, int yOffset) {
-        AABB collisionBox = collisionBoxSupplier.get();
+        AABB collisionBox = visibilityBoxSupplier.get();
         for (int i = 0; i <= collisionBox.w - 1; i++) {
             for (int j = 0; j <= collisionBox.h - 1; j++) {
                 screen.setCharacterWithDepth((int) collisionBox.x + i, (int) collisionBox.y + j, xOffset, yOffset, 0, rainbowChars.get(((int) collisionBox.x + i + ((int)System.currentTimeMillis() / 100)) % rainbowChars.size()));

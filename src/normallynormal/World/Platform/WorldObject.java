@@ -12,8 +12,13 @@ public abstract class WorldObject implements CollisionObject, Identifiable {
     protected AABB visibilityBox;
     boolean solid = true;
     int id;
-    boolean semiSolid = false;
     AbstractRenderer renderer = new DefaultRenderer(this::getCollisionBox);
+
+    public WorldObject(AABB collisionBox, int id) {
+        this.id = id;
+        this.collisionBox = collisionBox;
+        this.visibilityBox = new AABB(0, 0, 0, 0);
+    }
 
     public AABB getCollisionBox() {
         return collisionBox;
@@ -24,10 +29,21 @@ public abstract class WorldObject implements CollisionObject, Identifiable {
     }
 
     public void process(double timeDeltaSeconds, Level level) {
+        updateVisibilityBox();
+    }
 
+    private void updateVisibilityBox() {
+        this.visibilityBox.x = Math.floor(collisionBox.x);
+        this.visibilityBox.y = Math.floor(collisionBox.y);
+        this.visibilityBox.w = Math.ceil(collisionBox.w);
+        this.visibilityBox.h = Math.ceil(collisionBox.h);
     }
 
     public boolean isSolid() {
+        return solid;
+    }
+
+    public boolean isSolid(Entity entity) {
         return solid;
     }
 
@@ -45,10 +61,6 @@ public abstract class WorldObject implements CollisionObject, Identifiable {
 
     public int getId() {
         return id;
-    }
-
-    public boolean isSemiSolid() {
-        return semiSolid;
     }
 
     public boolean isOnScreen() {

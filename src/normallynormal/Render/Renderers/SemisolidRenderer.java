@@ -8,16 +8,16 @@ import normallynormal.Render.DepthScreen;
 import java.util.function.Supplier;
 
 public class SemisolidRenderer extends AbstractRenderer {
-    private final Supplier<AABB> collisionBoxSupplier;
+    private final Supplier<AABB> visibilityBoxSupplier;
 
     private static final TextCharacter dash = new TextCharacter('¯', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK);
 
-    public SemisolidRenderer(Supplier<AABB> collisionBoxSupplier) {
-        this.collisionBoxSupplier = collisionBoxSupplier;
+    public SemisolidRenderer(Supplier<AABB> visibilityBoxSupplier) {
+        this.visibilityBoxSupplier = visibilityBoxSupplier;
     }
 
     public void render(DepthScreen screen, int xOffset, int yOffset) {
-        AABB collisionBox = collisionBoxSupplier.get();
+        AABB collisionBox = visibilityBoxSupplier.get();
         for (int i = 0; i <= collisionBox.w - 1; i++) {
             screen.setCharacterWithDepth((int)collisionBox.x + i, (int)collisionBox.y, xOffset, yOffset, 0, dash);
         }

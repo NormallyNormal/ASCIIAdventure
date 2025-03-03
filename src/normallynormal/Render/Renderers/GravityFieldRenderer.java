@@ -10,7 +10,7 @@ import normallynormal.Render.TransparentColor;
 import java.util.function.Supplier;
 
 public class GravityFieldRenderer extends AbstractRenderer {
-    private final Supplier<AABB> collisionBoxSupplier;
+    private final Supplier<AABB> visibilityBoxSupplier;
     private final Supplier<Boolean> upSupplier;
 
     private static final TextCharacter arrowTextUp = new TextCharacter('▲', TextColor.ANSI.YELLOW , TransparentColor.TRANSPARENT);
@@ -23,13 +23,13 @@ public class GravityFieldRenderer extends AbstractRenderer {
 
     private static final int rate = 70;
 
-    public GravityFieldRenderer(Supplier<AABB> collisionBoxSupplier, Supplier<Boolean> upSupplier) {
-        this.collisionBoxSupplier = collisionBoxSupplier;
+    public GravityFieldRenderer(Supplier<AABB> visibilityBoxSupplier, Supplier<Boolean> upSupplier) {
+        this.visibilityBoxSupplier = visibilityBoxSupplier;
         this.upSupplier = upSupplier;
     }
 
     public void render(DepthScreen screen, int xOffset, int yOffset) {
-        AABB collisionBox = collisionBoxSupplier.get();
+        AABB collisionBox = visibilityBoxSupplier.get();
         TextCharacter arrowText;
         TextCharacter trailText1;
         TextCharacter trailText2;
@@ -39,7 +39,7 @@ public class GravityFieldRenderer extends AbstractRenderer {
             trailText2 = trailText2Up;
             for (int i = 0; i <= collisionBox.w - 1; i++) {
                 for (int j = -2; j <= collisionBox.h - 1; j++) {
-                    if (Noise.xyNoise(i, j + ((int)System.currentTimeMillis()/rate)) < 0.2) {
+                    if (Noise.xyNoise((int) collisionBox.x + i, (int) collisionBox.y + j + ((int)System.currentTimeMillis()/rate)) < 0.2) {
                         if (j <= collisionBox.h - 1 && j >= 0)
                             screen.setCharacterWithDepth((int) collisionBox.x + i, (int) collisionBox.y + j, xOffset, yOffset, -20, arrowText);
                         if (j - 1 <= collisionBox.h - 1 && j >= -1)
@@ -56,7 +56,7 @@ public class GravityFieldRenderer extends AbstractRenderer {
             trailText2 = trailText2Down;
             for (int i = 0; i <= collisionBox.w - 1; i++) {
                 for (int j = 0; j <= collisionBox.h - 1 + 2; j++) {
-                    if (Noise.xyNoise(i, j - ((int)System.currentTimeMillis()/rate)) < 0.2) {
+                    if (Noise.xyNoise((int) collisionBox.x + i, (int) collisionBox.y + j - ((int)System.currentTimeMillis()/rate)) < 0.2) {
                         if (j >= 0 && j <= collisionBox.h - 1)
                             screen.setCharacterWithDepth((int) collisionBox.x + i, (int) collisionBox.y + j, xOffset, yOffset, -20, arrowText);
                         if (j >= 1 && j <= collisionBox.h)

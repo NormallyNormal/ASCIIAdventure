@@ -65,38 +65,59 @@ public class Level {
 
 
         //The semi bois
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 30, 5, 1), currentId++));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 25, 5, 1), currentId++));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 20, 5, 1), currentId++));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 15, 5, 1), currentId++));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 10, 5, 1), currentId++));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 5, 5, 1), currentId++));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + 0, 5, 1), currentId++));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + -5, 5, 1), currentId++));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 10, startingLocationY + -10, 5, 1), currentId++));
-        worldObjects.add(new StaticObject(new AABB(startingLocationX + 0, startingLocationY + -15, 120, 1), currentId++));
+        worldObjects.add(new SemisolidPlatform(new AABB(startingLocationX + 10, startingLocationY + 30, 5, 1), currentId++));
+        worldObjects.add(new SemisolidPlatform(new AABB(startingLocationX + 10, startingLocationY + 25, 5, 1), currentId++));
+        worldObjects.add(new SemisolidPlatform(new AABB(startingLocationX + 10, startingLocationY + 20, 5, 1), currentId++));
+        worldObjects.add(new SemisolidPlatform(new AABB(startingLocationX + 10, startingLocationY + 15, 5, 1), currentId++));
+        worldObjects.add(new SemisolidPlatform(new AABB(startingLocationX + 10, startingLocationY + 10, 5, 1), currentId++));
+        worldObjects.add(new SemisolidPlatform(new AABB(startingLocationX + 10, startingLocationY + 5, 5, 1), currentId++));
+        worldObjects.add(new SemisolidPlatform(new AABB(startingLocationX + 10, startingLocationY, 5, 1), currentId++));
+        worldObjects.add(new SemisolidPlatform(new AABB(startingLocationX + 10, startingLocationY + -5, 5, 1), currentId++));
+        worldObjects.add(new SemisolidPlatform(new AABB(startingLocationX + 10, startingLocationY + -10, 5, 1), currentId++));
+        worldObjects.add(new SemisolidPlatform(new AABB(startingLocationX, startingLocationY + -15, 120, 1), currentId++));
 
         worldObjects.add(new StaticHazardObject(new AABB(startingLocationX + 125, startingLocationY + 34, 110, 1), currentId++));
 
-        worldObjects.add(new MovingObject(new AABB(startingLocationX + 70, startingLocationY + 33, 10, 2), currentId++, 30, 0, 0.2));
+        MoveableObject mo1 = new MoveableObject(new AABB(startingLocationX + 70, startingLocationY + 33, 10, 2), currentId++);
+        mo1.createBasicController(Direction.RIGHT, 30, 0.2);
+        worldObjects.add(mo1);
+
         worldObjects.add(new StaticObject(new AABB(startingLocationX + 106, startingLocationY + 30, 2, 5), currentId++));
         worldObjects.add(new StaticObject(new AABB(startingLocationX + 106, startingLocationY + 28, 2, 2), currentId++));
-        //worldObjects.add(new MovingObject(new AABB(startingLocationX + 45, startingLocationY + 33, 15, 2), currentId++, 1, 0, 0.001));
 
-        worldObjects.add(new MovingObject(new AABB(startingLocationX + 125, startingLocationY + 32, 10, 2), currentId++, 25, 0, 0.2));
-        worldObjects.add(new MovingObject(new AABB(startingLocationX + 125 + 25, startingLocationY + 32, 10, 2), currentId++, 25, 0, 0.2));
-        worldObjects.add(new MovingObject(new AABB(startingLocationX + 125 + 50, startingLocationY + 32, 10, 2), currentId++, 25, 0, 0.2));
-        worldObjects.add(new MovingObject(new AABB(startingLocationX + 125 + 75, startingLocationY + 32, 10, 2), currentId++, 25, 0, 0.2));
-        worldObjects.add(new MovingObject(new AABB(startingLocationX + 125 + 70, startingLocationY + 30, 10, 2), currentId++, 25, 0, 0.2));
+        MoveableObject mo2 = new MoveableObject(new AABB(startingLocationX + 125, startingLocationY + 32, 10, 2), currentId++);
+        mo2.createBasicController(Direction.RIGHT, 25, 0.2);
+        worldObjects.add(mo2);
+        MoveableObject mo3 = new MoveableObject(new AABB(startingLocationX + 125 + 25, startingLocationY + 32, 10, 2), currentId++);
+        mo3.createBasicController(Direction.RIGHT, 25, 0.2);
+        worldObjects.add(mo3);
+        MoveableObject mo4 = new MoveableObject(new AABB(startingLocationX + 125 + 50, startingLocationY + 32, 10, 2), currentId++);
+        mo4.createBasicController(Direction.RIGHT, 25, 0.2);
+        worldObjects.add(mo4);
+        MoveableObject mo5 = new MoveableObject(new AABB(startingLocationX + 125 + 75, startingLocationY + 32, 10, 2), currentId++);
+        mo5.createBasicController(Direction.RIGHT, 25, 0.2);
+        worldObjects.add(mo5);
+        MoveableObject mo6 = new MoveableObject(new AABB(startingLocationX + 125 + 70, startingLocationY + 30, 10, 2), currentId++);
+        mo6.createBasicController(Direction.RIGHT, 25, 0.2);
+        worldObjects.add(mo6);
 
-        worldObjects.add(new MovingObject(new AABB(startingLocationX + -60, startingLocationY + 23, 10, 2), currentId++, 10, 0, 0.2));
-        worldObjects.add(new MovingObject(new AABB(startingLocationX + -40, startingLocationY + 32, 10, 2), currentId++, 0, 9, 0.2));
+        MoveableObject mo7 = new MoveableObject(new AABB(startingLocationX - 60, startingLocationY + 23, 10, 2), currentId++);
+        mo7.createBasicController(Direction.RIGHT, 10, 0.2);
+        mo7.setRenderer(new RainbowRenderer(mo7::getVisibilityBox));
+        worldObjects.add(mo7);
+
+        MoveableObject mo8 = new MoveableObject(new AABB(startingLocationX - 40, startingLocationY + 32, 10, 2), currentId++);
+        mo8.createBasicController(Direction.UP, 9, 0.2);
+        mo8.setRenderer(new RainbowRenderer(mo8::getVisibilityBox));
+        worldObjects.add(mo8);
 
         entities.add(new Torch(startingLocationX + 30, startingLocationY + 30));
 
         entities.add(new NPC(startingLocationX + 60, startingLocationY + 34));
 
-        worldObjects.add(new GravityField(new AABB(startingLocationX - 80, startingLocationY + 25, 10, 10), currentId++, true));
+        GravityField gf1 = new GravityField(new AABB(startingLocationX - 70, startingLocationY + 25, 10, 10), currentId++, true);
+        gf1.createBasicController(Direction.LEFT, 20, 0.1);
+        worldObjects.add(gf1);
         worldObjects.add(new GravityField(new AABB(startingLocationX - 120, startingLocationY + 15, 120, 3), currentId++, false));
 
         StaticObject s1 = new StaticObject(new AABB(startingLocationX - 90, startingLocationY + 23, 30 , 2), currentId++);
@@ -155,7 +176,7 @@ public class Level {
 
     private void checkInsidePlatform(Entity entity) {
         for (WorldObject worldObject : worldObjects) {
-            if(worldObject.isSolid() && !worldObject.isSemiSolid() && worldObject.getCollisionBox().overlaps(entity.getCollisionBox())) {
+            if(worldObject.isSolid(entity) && worldObject.getCollisionBox().overlaps(entity.getCollisionBox())) {
                 double area = entity.getCollisionBox().overlapArea(worldObject.getCollisionBox());
                 if (!entity.hasEnqueuedMovement()) {
                     if (area > entity.getCollisionBox().area() * 0.5) {
@@ -196,10 +217,8 @@ public class Level {
                 Vector2 entryTime = entity.getEntryTime(worldObject.getCollisionBox());
                 Vector2 exitTime = entity.getExitTime(worldObject.getCollisionBox());
                 if (entity.collides(entryTime, exitTime)) {
-                    boolean solid = worldObject.isSolid() && !worldObject.isSemiSolid() ;
-                    boolean passSemisolid = (worldObject.isSemiSolid() && entity.getPosition().y > worldObject.getCollisionBox().y) || !entity.standsOnSemisolid();
-                    if(solid || (!passSemisolid && worldObject.isSemiSolid())) {
-                        if (soonestEntryTime.x > entryTime.x && !worldObject.isSemiSolid()) {
+                    if(worldObject.isSolid(entity)) {
+                        if (soonestEntryTime.x > entryTime.x) {
                             soonestEntryTime.x = entryTime.x;
                             equalCollisionsX.clear();
                             equalCollisionsX.add(worldObject.getId());

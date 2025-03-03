@@ -8,14 +8,14 @@ import normallynormal.Render.DepthScreen;
 import java.util.function.Supplier;
 
 public class DefaultRenderer extends AbstractRenderer {
-    private final Supplier<AABB> collisionBoxSupplier;
+    private final Supplier<AABB> visibilityBoxSupplier;
 
-    public DefaultRenderer(Supplier<AABB> collisionBoxSupplier) {
-        this.collisionBoxSupplier = collisionBoxSupplier;
+    public DefaultRenderer(Supplier<AABB> visibilityBoxSupplier) {
+        this.visibilityBoxSupplier = visibilityBoxSupplier;
     }
 
     public void render(DepthScreen screen, int xOffset, int yOffset) {
-        AABB collisionBox = collisionBoxSupplier.get();
+        AABB collisionBox = visibilityBoxSupplier.get();
         for (int i = 0; i <= collisionBox.w - 1; i++) {
             for (int j = 0; j <= collisionBox.h - 1; j++) {
                 char filler = ' ';
