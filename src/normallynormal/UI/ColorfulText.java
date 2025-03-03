@@ -15,8 +15,8 @@ public class ColorfulText {
     List<TextColor> textColors = new ArrayList<>();
 
     Pattern rgbPattern = Pattern.compile("<(\\d{1,3},\\d{1,3},\\d{1,3})>");
-    Pattern namePattern = Pattern.compile("<([A-Z]+)>");
-    Pattern pattern = Pattern.compile("<(\\d{1,3},\\d{1,3},\\d{1,3}|[A-Z]+)>");
+    Pattern namePattern = Pattern.compile("<([A-Z_]+)>");
+    Pattern pattern = Pattern.compile("<(\\d{1,3},\\d{1,3},\\d{1,3}|[A-Z_]+)>");
 
     public ColorfulText(String string) {
         StringBuilder buildText = new StringBuilder();

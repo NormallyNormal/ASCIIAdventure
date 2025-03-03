@@ -111,6 +111,7 @@ public class Player extends Entity implements GlowingEntity {
             }
             if (!onGroundRecently && extraJumps > 0 && timeSinceOnGround > 0.25 && input.getKeyState(Keybinds.player_jump) && !hitWallSomewhatRecently && jumpKeyReleasedInAir && dashTime <= 0 && !slamming) {
                 extraJumps--;
+                jumpKeyReleasedInAir = false;
                 velocity.y = isGravityDownward() ? Math.min(velocity.y, -20) : Math.max(velocity.y, 20);
                 stopVerticalVelocityAllowed = false;
                 hasDashCharge = false;

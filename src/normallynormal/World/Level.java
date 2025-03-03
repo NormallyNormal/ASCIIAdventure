@@ -3,6 +3,7 @@ package normallynormal.World;
 import java.util.*;
 
 import normallynormal.Render.Renderers.RainbowRenderer;
+import normallynormal.Render.Renderers.SpikesRenderer;
 import normallynormal.Render.Shader.PostShader;
 import normallynormal.World.Entity.Entity;
 import normallynormal.World.Entity.NPC;
@@ -117,6 +118,8 @@ public class Level {
 
         GravityField gf1 = new GravityField(new AABB(startingLocationX - 70, startingLocationY + 25, 10, 10), currentId++, true);
         gf1.createBasicController(Direction.LEFT, 20, 0.1);
+        //demo of custom renderers
+        //gf1.setRenderer(new SpikesRenderer(gf1::getVisibilityBox));
         worldObjects.add(gf1);
         worldObjects.add(new GravityField(new AABB(startingLocationX - 120, startingLocationY + 15, 120, 3), currentId++, false));
 

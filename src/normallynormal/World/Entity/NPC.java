@@ -10,7 +10,7 @@ import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 
 public class NPC extends Entity {
-    DialogueBox dialogueBox = new DialogueBox(new String[]{"Hello!", "Hello again!", "Look at all these <RED>COLORS <DEFAULT>and <BLUE>COLORS", "And look how this very very very very very long text is so very very very very very long that it has to wrap around to the next line. Isn't that interesting?"});
+    DialogueBox dialogueBox = new DialogueBox(new String[]{"Hello!", "This is just placeholder text for the demo level to show how NPCs work.", "Also, text can have special <RED>COLORS<DEFAULT> and <BLUE_BRIGHT>COLORS<DEFAULT>.", "That way, an NPC could emphasize certain important things...", "Did you know you can press up again after jumping to <GREEN>double jump<DEFAULT>?", "You can also press shift to <BLUE_BRIGHT>dash<DEFAULT>.", "That's all I have to say. If you keep talking to me, I'll just repeat this line again."});
     boolean dbEnabled = false;
 
     public NPC(int x, int y) {
