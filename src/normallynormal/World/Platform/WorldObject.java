@@ -47,16 +47,12 @@ public abstract class WorldObject implements CollisionObject, Identifiable {
         return solid;
     }
 
-    public void collisionEffect(Entity entity, Level level) {
-
-    }
-
-    public void intersectEffect(Entity entity, Level level) {
+    public void collisionEffect(Entity entity, Level level, Direction direction) {
 
     }
 
     public void intersectEffect(Entity entity, Level level, Direction direction) {
-        intersectEffect(entity, level);
+        
     }
 
     public int getId() {

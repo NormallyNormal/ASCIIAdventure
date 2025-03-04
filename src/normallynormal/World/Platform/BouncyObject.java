@@ -14,12 +14,13 @@ public class BouncyObject extends MoveableObject {
         this.setRenderer(new BouncePadRenderer(this::getVisibilityBox, this::lastBounceTime));
     }
 
+    @Override
     public void intersectEffect(Entity entity, Level level, Direction direction) {
         if (direction.isVertical()) {
             entity.bounce();
             bounceTime = System.currentTimeMillis();
         }
-        super.intersectEffect(entity, level);
+        super.intersectEffect(entity, level, direction);
     }
 
     public long lastBounceTime() {

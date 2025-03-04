@@ -21,10 +21,10 @@ public abstract class AbstractPlatformController {
 
     public abstract void process(double timeDeltaSeconds, Level level);
 
-    public void collisionEffect(Entity entity, Level level) {
+    public void collisionEffect(Entity entity, Level level, Direction collisionDirection) {
         AABB collisionBox = controlledMovableObject.getCollisionBox();
         if (!direction.isVertical()) {
-            if (movesNextFrame) {
+            if (collisionDirection.isVertical() && movesNextFrame) {
                 if (entity.isGravityDownward()) {
                     if (entity.getCollisionBox().y + entity.getCollisionBox().h <= collisionBox.y) {
                         dragEntityHorizontally(entity);
@@ -34,7 +34,7 @@ public abstract class AbstractPlatformController {
                         dragEntityHorizontally(entity);
                     }
                 }
-            } else if (movedThisFrame && entity.getPosition().y + entity.getCollisionBox().h > collisionBox.y && entity.getPosition().y < collisionBox.y + collisionBox.h) {
+            } else if (!collisionDirection.isVertical() && movedThisFrame && entity.getPosition().y + entity.getCollisionBox().h > collisionBox.y && entity.getPosition().y < collisionBox.y + collisionBox.h) {
                 pushEntityHorizontally(entity);
             }
         }
@@ -51,16 +51,16 @@ public abstract class AbstractPlatformController {
         boolean apply = false;
         switch (direction) {
             case LEFT:
-                if (entity.getPosition().x <= collisionBox.x + entity.getMovementStep().x) {
-                    newPos = Math.nextDown(collisionBox.x - entity.getCollisionBox().w);
-                    apply = true;
-                }
+//                if (entity.getPosition().x <= collisionBox.x + entity.getMovementStep().x) {
+                newPos = Math.nextDown(collisionBox.x - entity.getCollisionBox().w);
+                apply = true;
+//                }
                 break;
             case RIGHT:
-                if (entity.getPosition().x >= collisionBox.x + collisionBox.w - 1 + entity.getMovementStep().x) {
-                    newPos = Math.nextUp(collisionBox.x + collisionBox.w);
-                    apply = true;
-                }
+//                if (entity.getPosition().x >= collisionBox.x + collisionBox.w - entity.getCollisionBox().w + entity.getMovementStep().x) {
+                newPos = Math.nextUp(collisionBox.x + collisionBox.w);
+                apply = true;
+//                }
                 break;
         }
         if (apply) {

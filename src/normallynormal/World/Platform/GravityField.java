@@ -1,5 +1,6 @@
 package normallynormal.World.Platform;
 
+import normallynormal.Math.Direction;
 import normallynormal.Render.Renderers.GravityFieldRenderer;
 import normallynormal.World.Entity.Entity;
 import normallynormal.World.Level;
@@ -16,13 +17,15 @@ public class GravityField extends MoveableObject {
         this.setRenderer(new GravityFieldRenderer(this::getVisibilityBox, this::getUp));
     }
 
-    public void intersectEffect(Entity entity, Level level) {
+    @Override
+    public void intersectEffect(Entity entity, Level level, Direction direction) {
         if (up && entity.isGravityDownward()) {
             entity.setGravityUpward();
         }
         if (!up && !entity.isGravityDownward()) {
             entity.setGravityDownward();
         }
+        super.intersectEffect(entity, level, direction);
     }
 
     public boolean getUp() {

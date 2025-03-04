@@ -32,10 +32,10 @@ public class MoveableObject extends StaticObject {
     }
 
     @Override
-    public void collisionEffect(Entity entity, Level level) {
+    public void collisionEffect(Entity entity, Level level, Direction direction) {
         if (controller != null && isSolid(entity)) {
-            controller.collisionEffect(entity, level);
+            controller.collisionEffect(entity, level, direction);
         }
-        super.collisionEffect(entity, level);
+        super.collisionEffect(entity, level, direction);
     }
 }

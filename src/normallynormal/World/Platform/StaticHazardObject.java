@@ -1,5 +1,6 @@
 package normallynormal.World.Platform;
 
+import normallynormal.Math.Direction;
 import normallynormal.Render.Renderers.SpikesRenderer;
 import normallynormal.World.Entity.Entity;
 import normallynormal.World.Level;
@@ -14,8 +15,8 @@ public class StaticHazardObject extends StaticObject {
     }
 
     @Override
-    public void intersectEffect(Entity entity, Level level) {
+    public void intersectEffect(Entity entity, Level level, Direction direction) {
         entity.kill();
-        super.intersectEffect(entity, level);
+        super.intersectEffect(entity, level, direction);
     }
 }

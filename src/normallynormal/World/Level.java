@@ -80,7 +80,7 @@ public class Level {
         worldObjects.add(new StaticHazardObject(new AABB(startingLocationX + 125, startingLocationY + 34, 110, 1), currentId++));
 
         MoveableObject mo1 = new MoveableObject(new AABB(startingLocationX + 70, startingLocationY + 33, 10, 2), currentId++);
-        mo1.createBasicController(Direction.RIGHT, 30, 0.2);
+        mo1.createBasicController(Direction.RIGHT, 30, 0.1);
         worldObjects.add(mo1);
 
         worldObjects.add(new StaticObject(new AABB(startingLocationX + 106, startingLocationY + 30, 2, 5), currentId++));
@@ -103,12 +103,12 @@ public class Level {
         worldObjects.add(mo6);
 
         MoveableObject mo7 = new MoveableObject(new AABB(startingLocationX - 60, startingLocationY + 23, 10, 2), currentId++);
-        mo7.createBasicController(Direction.RIGHT, 10, 0.2);
+        mo7.createBasicController(Direction.RIGHT, 10, 0.05);
         mo7.setRenderer(new RainbowRenderer(mo7::getVisibilityBox));
         worldObjects.add(mo7);
 
         MoveableObject mo8 = new MoveableObject(new AABB(startingLocationX - 40, startingLocationY + 32, 10, 2), currentId++);
-        mo8.createBasicController(Direction.UP, 9, 0.2);
+        mo8.createBasicController(Direction.UP, 9, 0.1);
         mo8.setRenderer(new RainbowRenderer(mo8::getVisibilityBox));
         worldObjects.add(mo8);
 
@@ -207,7 +207,9 @@ public class Level {
         }
     }
 
-    List<WorldObject> collidedThisTick = new ArrayList<>();
+    private record ObjectEntryPair(WorldObject worldObject, Direction entryDirection) { }
+
+    List<ObjectEntryPair> collidedThisTick = new ArrayList<>();
 
     private void runPlatformCollisions(Entity entity) {
         AABB bbb = entity.getCollisionBox().createBBB(entity.getMovementStep());
@@ -239,20 +241,20 @@ public class Level {
                             equalCollisionsY.add(worldObject.getId());
                         }
                     }
-                    collidedThisTick.add(worldObject);
+                    collidedThisTick.add(new ObjectEntryPair(worldObject, entity.getCollisionDirection(entryTime)));
                     worldObject.intersectEffect(entity, this, entity.getCollisionDirection(entryTime));
                 }
                 else if (entity.getCollisionBox().overlaps(worldObject.getCollisionBox())) {
-                    collidedThisTick.add(worldObject);
-                    worldObject.intersectEffect(entity, this);
+                    collidedThisTick.add(new ObjectEntryPair(worldObject, entity.getCollisionDirection(entryTime)));
+                    worldObject.intersectEffect(entity, this, entity.getCollisionDirection(entryTime));
                 }
             }
         }
         if (mayIngoreYFlag && !equalCollisionsY.retainAll(equalCollisionsX))
             soonestEntryTime.y = 1.0;
         entity.applyCollision(soonestEntryTime);
-        for (WorldObject worldObject : collidedThisTick) {
-            worldObject.collisionEffect(entity, this);
+        for (ObjectEntryPair objectEntryPair : collidedThisTick) {
+            objectEntryPair.worldObject.collisionEffect(entity, this, objectEntryPair.entryDirection);
         }
         collidedThisTick.clear();
     }
