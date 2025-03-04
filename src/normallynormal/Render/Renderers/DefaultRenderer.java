@@ -8,10 +8,9 @@ import normallynormal.Render.DepthScreen;
 import java.util.function.Supplier;
 
 public class DefaultRenderer extends AbstractRenderer {
-    private final Supplier<AABB> visibilityBoxSupplier;
 
     public DefaultRenderer(Supplier<AABB> visibilityBoxSupplier) {
-        this.visibilityBoxSupplier = visibilityBoxSupplier;
+        super(visibilityBoxSupplier);
     }
 
     public void render(DepthScreen screen, int xOffset, int yOffset) {

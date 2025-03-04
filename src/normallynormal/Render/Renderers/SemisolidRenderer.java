@@ -8,12 +8,11 @@ import normallynormal.Render.DepthScreen;
 import java.util.function.Supplier;
 
 public class SemisolidRenderer extends AbstractRenderer {
-    private final Supplier<AABB> visibilityBoxSupplier;
 
     private static final TextCharacter dash = new TextCharacter('¯', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK);
 
     public SemisolidRenderer(Supplier<AABB> visibilityBoxSupplier) {
-        this.visibilityBoxSupplier = visibilityBoxSupplier;
+        super(visibilityBoxSupplier);
     }
 
     public void render(DepthScreen screen, int xOffset, int yOffset) {

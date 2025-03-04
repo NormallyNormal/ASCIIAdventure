@@ -20,6 +20,7 @@ public class Player extends Entity implements GlowingEntity {
     double jumpBuffer = 0;
 
     Direction lastHorizontalDirection = Direction.NONE;
+    int lastFrameInputVelocityX;
 
     boolean hasDashCharge = true;
     boolean canDashCharge = true;
@@ -119,19 +120,19 @@ public class Player extends Entity implements GlowingEntity {
                 Game.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.RIGHT));
             }
 
-            velocity.x = 0;
             boolean isWallJumping = wallJumpFixedDirectionTime > 0;
+            wallJumpFixedDirectionTime -= timeDelta;
             boolean wallJumpingLeft = (isWallJumping && wallJumpDirection == Direction.LEFT);
             boolean wallJumpingRight = (isWallJumping && wallJumpDirection == Direction.RIGHT);
             if ((input.getKeyState(Keybinds.player_left) & ! wallJumpingRight) || wallJumpingLeft) {
-                velocity.x -= isWallJumping ? 30 : 20;
+                instantVelocity.x += isWallJumping ? -30 : -20;
                 lastHorizontalDirection = Direction.LEFT;
             }
             if ((input.getKeyState(Keybinds.player_right) & !wallJumpingLeft) || wallJumpingRight) {
-                velocity.x += isWallJumping ? 30 : 20;
+                instantVelocity.x += isWallJumping ? 30 : 20;
                 lastHorizontalDirection = Direction.RIGHT;
             }
-            wallJumpFixedDirectionTime -= timeDelta;
+
 
             standsOnSemisolid = !input.getKeyState(Keybinds.player_down);
 
@@ -198,11 +199,11 @@ public class Player extends Entity implements GlowingEntity {
             }
             if (dashTime > 0) {
                 if (dashDirection == Direction.LEFT) {
-                    velocity.x = -dashSpeed;
+                    instantVelocity.x += -dashSpeed;
                     velocity.y = 0;
                 }
                 if (dashDirection == Direction.RIGHT) {
-                    velocity.x = dashSpeed;
+                    instantVelocity.x += dashSpeed;
                     velocity.y = 0;
                 }
                 if (lastDashXPos != Math.floor(position.x)) {

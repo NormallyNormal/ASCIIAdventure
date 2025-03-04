@@ -10,7 +10,6 @@ import normallynormal.Render.TransparentColor;
 import java.util.function.Supplier;
 
 public class GravityFieldRenderer extends AbstractRenderer {
-    private final Supplier<AABB> visibilityBoxSupplier;
     private final Supplier<Boolean> upSupplier;
 
     private static final TextCharacter arrowTextUp = new TextCharacter('▲', TextColor.ANSI.YELLOW , TransparentColor.TRANSPARENT);
@@ -24,7 +23,7 @@ public class GravityFieldRenderer extends AbstractRenderer {
     private static final int rate = 70;
 
     public GravityFieldRenderer(Supplier<AABB> visibilityBoxSupplier, Supplier<Boolean> upSupplier) {
-        this.visibilityBoxSupplier = visibilityBoxSupplier;
+        super(visibilityBoxSupplier);
         this.upSupplier = upSupplier;
     }
 

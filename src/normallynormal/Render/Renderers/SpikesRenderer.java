@@ -9,12 +9,11 @@ import normallynormal.Render.TransparentColor;
 import java.util.function.Supplier;
 
 public class SpikesRenderer extends AbstractRenderer {
-    private final Supplier<AABB> visibilityBoxSupplier;
 
     private static final TextCharacter spike = new TextCharacter('◮', TextColor.ANSI.RED, TransparentColor.TRANSPARENT);
 
     public SpikesRenderer(Supplier<AABB> visibilityBoxSupplier) {
-        this.visibilityBoxSupplier = visibilityBoxSupplier;
+        super(visibilityBoxSupplier);
     }
 
     public void render(DepthScreen screen, int xOffset, int yOffset) {

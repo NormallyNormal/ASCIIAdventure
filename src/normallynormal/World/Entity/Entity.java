@@ -14,6 +14,7 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
     protected Vector2 position = new Vector2(0, 0);
     protected int depth;
     protected Vector2 velocity = new Vector2(0, 0);
+    protected Vector2 instantVelocity = new Vector2(0, 0);
     protected Vector2 movementStep = new Vector2(0,0);
     protected double gravityMagnitude = 0;
     private Direction gravityDirection = Direction.DOWN;
@@ -42,9 +43,10 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
             movementStep.add(enqueuedMovement);
         }
         else{
-            movementStep = Vector2.multiply(velocity, timeDelta);
+            movementStep = Vector2.multiply(Vector2.add(velocity, instantVelocity), timeDelta);
         }
         enqueuedMovement.zero();
+        instantVelocity.zero();
         collisionBox.x = position.x;
         collisionBox.y = position.y;
         timeSinceOnGround += timeDelta;
@@ -194,6 +196,10 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
 
     public Vector2 getVelocity() {
         return velocity;
+    }
+
+    public Vector2 getInstantVelocity() {
+        return instantVelocity;
     }
 
     public Vector2 getMovementStep() {

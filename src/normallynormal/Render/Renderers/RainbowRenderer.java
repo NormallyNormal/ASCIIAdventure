@@ -10,14 +10,13 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class RainbowRenderer extends AbstractRenderer {
-    private final Supplier<AABB> visibilityBoxSupplier;
 
     private static final char[] ditherChars = {'█', '▓', '▒', '░'};
     private static final TextColor[] rainbow = {TextColor.ANSI.RED, TextColor.ANSI.YELLOW, new TextColor.RGB(200, 200, 0), TextColor.ANSI.GREEN, TextColor.ANSI.BLUE_BRIGHT, TextColor.ANSI.MAGENTA};
     private static final List<TextCharacter> rainbowChars = new ArrayList<>();
 
-    public RainbowRenderer(Supplier<AABB> collisionBoxSupplier) {
-        this.visibilityBoxSupplier = collisionBoxSupplier;
+    public RainbowRenderer(Supplier<AABB> visibilityBoxSupplier) {
+        super(visibilityBoxSupplier);
         if (rainbowChars.isEmpty()) {
             constructRainbowChars();
         }

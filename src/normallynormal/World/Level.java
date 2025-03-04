@@ -103,12 +103,12 @@ public class Level {
         worldObjects.add(mo6);
 
         MoveableObject mo7 = new MoveableObject(new AABB(startingLocationX - 60, startingLocationY + 23, 10, 2), currentId++);
-        mo7.createBasicController(Direction.RIGHT, 10, 0.05);
+        mo7.createBasicController(Direction.RIGHT, 10, 0.1);
         mo7.setRenderer(new RainbowRenderer(mo7::getVisibilityBox));
         worldObjects.add(mo7);
 
         MoveableObject mo8 = new MoveableObject(new AABB(startingLocationX - 40, startingLocationY + 32, 10, 2), currentId++);
-        mo8.createBasicController(Direction.UP, 9, 0.1);
+        mo8.createBasicController(Direction.UP, 9, 0.2);
         mo8.setRenderer(new RainbowRenderer(mo8::getVisibilityBox));
         worldObjects.add(mo8);
 
@@ -138,6 +138,11 @@ public class Level {
 
         worldObjects.add(new BouncyObject(new AABB(startingLocationX + 20, startingLocationY + 33, 5, 2), currentId++));
         worldObjects.add(new BouncyObject(new AABB(startingLocationX - 95, startingLocationY + 17, 5, 2), currentId++));
+
+        worldObjects.add(new ConveyorObject(new AABB(startingLocationX + 20, startingLocationY + -16, 20, 1), currentId++, Direction.RIGHT, 10));
+        worldObjects.add(new ConveyorObject(new AABB(startingLocationX + 40, startingLocationY + -25, 1, 10), currentId++, Direction.UP, 10));
+        worldObjects.add(new ConveyorObject(new AABB(startingLocationX + 41, startingLocationY + -25, 20, 1), currentId++, Direction.RIGHT, 10));
+        worldObjects.add(new ConveyorObject(new AABB(startingLocationX + 45, startingLocationY + -16, 20, 1), currentId++, Direction.LEFT, 10));
     }
 
     public void process(double timeDeltaSeconds, Input input) {
@@ -215,6 +220,7 @@ public class Level {
         AABB bbb = entity.getCollisionBox().createBBB(entity.getMovementStep());
         Vector2 soonestEntryTime = new Vector2(1, 1);
         boolean mayIngoreYFlag = false;
+        boolean mayIngoreXFlag = false;
         Set<Integer> equalCollisionsX = new TreeSet<>();
         Set<Integer> equalCollisionsY = new TreeSet<>();
         for (WorldObject worldObject : worldObjects) {
@@ -238,6 +244,7 @@ public class Level {
                             equalCollisionsY.add(worldObject.getId());
                         }
                         else if (soonestEntryTime.y == entryTime.y) {
+                            mayIngoreXFlag = true;
                             equalCollisionsY.add(worldObject.getId());
                         }
                     }
@@ -252,6 +259,8 @@ public class Level {
         }
         if (mayIngoreYFlag && !equalCollisionsY.retainAll(equalCollisionsX))
             soonestEntryTime.y = 1.0;
+        if (mayIngoreXFlag && !equalCollisionsX.retainAll(equalCollisionsY))
+            soonestEntryTime.x = 1.0;
         entity.applyCollision(soonestEntryTime);
         for (ObjectEntryPair objectEntryPair : collidedThisTick) {
             objectEntryPair.worldObject.collisionEffect(entity, this, objectEntryPair.entryDirection);

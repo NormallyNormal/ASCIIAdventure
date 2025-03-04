@@ -8,13 +8,12 @@ import normallynormal.Render.DepthScreen;
 import java.util.function.Supplier;
 
 public class BouncePadRenderer extends AbstractRenderer {
-    private final Supplier<AABB> visibilityBoxSupplier;
     private final Supplier<Long> glowTimeSupplier;
 
     private static final TextCharacter[] fades = {new TextCharacter('█', TextColor.ANSI.MAGENTA_BRIGHT, TextColor.ANSI.MAGENTA), new TextCharacter('▓', TextColor.ANSI.MAGENTA_BRIGHT, TextColor.ANSI.MAGENTA), new TextCharacter('▒', TextColor.ANSI.MAGENTA_BRIGHT, TextColor.ANSI.MAGENTA), new TextCharacter('░', TextColor.ANSI.MAGENTA_BRIGHT, TextColor.ANSI.MAGENTA), new TextCharacter(' ', TextColor.ANSI.MAGENTA_BRIGHT, TextColor.ANSI.MAGENTA)};
 
     public BouncePadRenderer(Supplier<AABB> visibilityBoxSupplier, Supplier<Long> glowTimeSupplier) {
-        this.visibilityBoxSupplier = visibilityBoxSupplier;
+        super(visibilityBoxSupplier);
         this.glowTimeSupplier = glowTimeSupplier;
     }
 
