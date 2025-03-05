@@ -42,28 +42,28 @@ public class ConveyorRenderer extends AbstractRenderer {
             case LEFT:
                 for (int i = 0; i <= collisionBox.w - 1; i++) {
                     for (int j = 0; j <= collisionBox.h - 1; j++) {
-                        screen.setCharacterWithDepth((int) collisionBox.x + i, (int) collisionBox.y + j, xOffset, yOffset, 0, leftCharacters[((int) collisionBox.x + i + offset) % leftCharacters.length]);
+                        screen.setCharacterWithDepth((int) collisionBox.x + i, (int) collisionBox.y + j, xOffset, yOffset, 0, leftCharacters[(i + offset) % leftCharacters.length]);
                     }
                 }
                 break;
             case RIGHT:
                 for (int i = 0; i <= collisionBox.w - 1; i++) {
                     for (int j = 0; j <= collisionBox.h - 1; j++) {
-                        screen.setCharacterWithDepth((int) collisionBox.x + i, (int) collisionBox.y + j, xOffset, yOffset, 0, rightCharacters[Math.abs((int) collisionBox.x + i - offset) % rightCharacters.length]);
+                        screen.setCharacterWithDepth((int) collisionBox.x + i, (int) collisionBox.y + j, xOffset, yOffset, 0, rightCharacters[Math.abs(i - offset) % rightCharacters.length]);
                     }
                 }
                 break;
             case UP:
                 for (int i = 0; i <= collisionBox.w - 1; i++) {
                     for (int j = 0; j <= collisionBox.h - 1; j++) {
-                        screen.setCharacterWithDepth((int) collisionBox.x + i, (int) collisionBox.y + j, xOffset, yOffset, 0, upCharacters[((int) collisionBox.y + j + offset) % upCharacters.length]);
+                        screen.setCharacterWithDepth((int) collisionBox.x + i, (int) collisionBox.y + j, xOffset, yOffset, 0, upCharacters[(j + offset) % upCharacters.length]);
                     }
                 }
                 break;
             case DOWN:
                 for (int i = 0; i <= collisionBox.w - 1; i++) {
                     for (int j = 0; j <= collisionBox.h - 1; j++) {
-                        screen.setCharacterWithDepth((int) collisionBox.x + i, (int) collisionBox.y + j, xOffset, yOffset, 0, downCharacters[Math.abs((int) collisionBox.y + j + offset) % downCharacters.length]);
+                        screen.setCharacterWithDepth((int) collisionBox.x + i, (int) collisionBox.y + j, xOffset, yOffset, 0, downCharacters[Math.abs(j + offset) % downCharacters.length]);
                     }
                 }
                 break;

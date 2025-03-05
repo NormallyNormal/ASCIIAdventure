@@ -216,7 +216,7 @@ public class Player extends Entity implements GlowingEntity {
             boolean leftKey = input.getKeyState(Keybinds.player_left);
             Direction possibleWallJumpDirection = rightKey & !leftKey ? Direction.RIGHT : Direction.NONE;
             possibleWallJumpDirection = leftKey & !rightKey ? Direction.LEFT : possibleWallJumpDirection;
-            if (onGroundRecently(JUMP_COYOTE_TIME) && jumpAllowed) {
+            if (onGroundRecently(JUMP_COYOTE_TIME) && jumpAllowed && !bounceRecently(JUMP_COYOTE_TIME)) {
                 jumpAllowed = false;
                 velocity.y = isGravityDownward() ? -30 : 30;
                 jumpKeyReleasedInAir = false;
@@ -249,6 +249,19 @@ public class Player extends Entity implements GlowingEntity {
         super.hitGround();
     }
 
+    private static final TextCharacter CHAR_FULL = new TextCharacter('█', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT);
+    private static final TextCharacter CHAR_DARK_SHADE = new TextCharacter('▓', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT);
+    private static final TextCharacter CHAR_MEDIUM_SHADE = new TextCharacter('▒', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT);
+    private static final TextCharacter CHAR_LIGHT_SHADE = new TextCharacter('░', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT);
+    private static final TextCharacter CHAR_RIGHT_HALF = new TextCharacter('▐', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT);
+    private static final TextCharacter CHAR_LEFT_HALF = new TextCharacter('▌', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT);
+    private static final TextCharacter CHAR_LOWER_HALF = new TextCharacter('▄', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT);
+    private static final TextCharacter CHAR_UPPER_HALF = new TextCharacter('▀', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT);
+    private static final TextCharacter CHAR_BOTTOM_RIGHT = new TextCharacter('▗', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT);
+    private static final TextCharacter CHAR_BOTTOM_LEFT = new TextCharacter('▖', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT);
+    private static final TextCharacter CHAR_TOP_RIGHT = new TextCharacter('▝', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT);
+    private static final TextCharacter CHAR_TOP_LEFT = new TextCharacter('▘', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT);
+
     @Override
     public void render(DepthScreen screen, int xOffset, int yOffset) {
         Vector2 position = Vector2.add(this.position, new Vector2(0.5, 0.5));
@@ -260,28 +273,27 @@ public class Player extends Entity implements GlowingEntity {
 
         if (dead) {
             if (timeDead < 0.15)
-                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('█', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
+                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, CHAR_FULL);
             else if (timeDead < 0.3)
-                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('▓', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
+                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, CHAR_DARK_SHADE);
             else if (timeDead < 0.45)
-                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('▒', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
+                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, CHAR_MEDIUM_SHADE);
             else if (timeDead < 0.6)
-                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('░', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
-        }
-        else {
+                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, CHAR_LIGHT_SHADE);
+        } else {
             if (!half_x && !half_y) {
-                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('█', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
+                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, CHAR_FULL);
             } else if (half_x && !half_y) {
-                screen.setCharacterWithDepth((int) round_x - 1, (int) position.y, xOffset, yOffset, depth, new TextCharacter('▐', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
-                screen.setCharacterWithDepth((int) round_x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('▌', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
+                screen.setCharacterWithDepth((int) round_x - 1, (int) position.y, xOffset, yOffset, depth, CHAR_RIGHT_HALF);
+                screen.setCharacterWithDepth((int) round_x, (int) position.y, xOffset, yOffset, depth, CHAR_LEFT_HALF);
             } else if (!half_x) {
-                screen.setCharacterWithDepth((int) position.x, (int) round_y - 1, xOffset, yOffset, depth, new TextCharacter('▄', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
-                screen.setCharacterWithDepth((int) position.x, (int) round_y, xOffset, yOffset, depth, new TextCharacter('▀', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
+                screen.setCharacterWithDepth((int) position.x, (int) round_y - 1, xOffset, yOffset, depth, CHAR_LOWER_HALF);
+                screen.setCharacterWithDepth((int) position.x, (int) round_y, xOffset, yOffset, depth, CHAR_UPPER_HALF);
             } else {
-                screen.setCharacterWithDepth((int) round_x - 1, (int) round_y - 1, xOffset, yOffset, depth, new TextCharacter('▗', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
-                screen.setCharacterWithDepth((int) round_x, (int) round_y - 1, xOffset, yOffset, depth, new TextCharacter('▖', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
-                screen.setCharacterWithDepth((int) round_x - 1, (int) round_y, xOffset, yOffset, depth, new TextCharacter('▝', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
-                screen.setCharacterWithDepth((int) round_x, (int) round_y, xOffset, yOffset, depth, new TextCharacter('▘', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
+                screen.setCharacterWithDepth((int) round_x - 1, (int) round_y - 1, xOffset, yOffset, depth, CHAR_BOTTOM_RIGHT);
+                screen.setCharacterWithDepth((int) round_x, (int) round_y - 1, xOffset, yOffset, depth, CHAR_BOTTOM_LEFT);
+                screen.setCharacterWithDepth((int) round_x - 1, (int) round_y, xOffset, yOffset, depth, CHAR_TOP_RIGHT);
+                screen.setCharacterWithDepth((int) round_x, (int) round_y, xOffset, yOffset, depth, CHAR_TOP_LEFT);
             }
         }
     }
@@ -321,6 +333,7 @@ public class Player extends Entity implements GlowingEntity {
 
     @Override
     public void bounce() {
+        jumpAllowed = false;
         stopVerticalVelocityAllowed = false;
         super.bounce();
     }

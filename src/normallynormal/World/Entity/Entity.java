@@ -25,6 +25,7 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
     protected boolean dead;
     int invincibleTicks = 0;
     protected double timeSinceOnGround = Double.POSITIVE_INFINITY;
+    protected double timeSinceBounce = Double.POSITIVE_INFINITY;
 
     protected Vector2 enqueuedMovement = new Vector2(0,0);
 
@@ -51,6 +52,7 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
         collisionBox.y = position.y;
         timeSinceOnGround += timeDelta;
         timeSinceWallHit += timeDelta;
+        timeSinceBounce += timeDelta;
         invincibleTicks--;
     }
 
@@ -271,11 +273,16 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
     }
 
     public void bounce() {
+        timeSinceBounce = 0;
         bounce = true;
     }
 
     public boolean onGroundRecently(double time) {
         return timeSinceOnGround <= time;
+    }
+
+    public boolean bounceRecently(double time) {
+        return timeSinceBounce <= time;
     }
 
     public boolean hitWallRecently(double time) {
