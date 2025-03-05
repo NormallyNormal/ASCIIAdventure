@@ -36,7 +36,7 @@ public class DashParticle extends Entity {
         boolean upperHalf = position.y % 1 > 0.75;
         boolean half_y = upperHalf || position.y % 1 < 0.25;
         TextColor renderColor;
-        if (!Other.wokeMode) {
+        if (!Other.WOKE_MODE) {
             renderColor = fadeTime < 0.09 ? TextColor.ANSI.BLUE : TextColor.ANSI.BLUE_BRIGHT;
         }
         else {

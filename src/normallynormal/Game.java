@@ -21,6 +21,7 @@ import java.util.Collections;
 
 import normallynormal.Math.Direction;
 import normallynormal.Settings.Keybinds;
+import normallynormal.Settings.Other;
 import normallynormal.World.Level;
 
 public class Game {
@@ -146,7 +147,9 @@ public class Game {
 
             terminal.requestFocusInWindow();
 
-            Thread.sleep(1);
+            if (Other.REDUCE_CPU_USAGE) {
+                Thread.sleep(1);
+            }
 
             overshootFPS = Math.max(ScreenConstants.TARGET_FPS, (ScreenConstants.TARGET_FPS - fps) + ScreenConstants.TARGET_FPS);
 

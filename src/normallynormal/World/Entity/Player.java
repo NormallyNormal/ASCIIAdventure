@@ -15,16 +15,20 @@ import normallynormal.Settings.Keybinds;
 
 public class Player extends Entity implements GlowingEntity {
     private static final double JUMP_COYOTE_TIME = 0.1;
+    private static final double JUMP_BUFFER = 0.05;
     private static final double WALL_JUMP_COYOTE_TIME = 0.2;
     private static final double WALL_SLIDE_BUFFER = 0.05;
+    private static final double WALL_JUMP_DURATION = 0.2;
     private static final double DASH_COOLDOWN = 0.4;
     private static final double DASH_SPEED = 60;
     private static final double MAX_DASH_TIME = 0.25;
     private static final int RUN_SPEED = 20;
-    private static final int WALL_JUMP_SPEED = 30;
+    private static final int WALL_JUMP_HORIZONTAL_SPEED = 30;
+    private static final int WALL_JUMP_VERTICAL_SPEED = 15;
     private static final int DOUBLE_JUMP_SPEED = 20;
     private static final double DOUBLE_JUMP_WAITING_PERIOD = 0.25;
     private static final int DEFAULT_GRAVITY = 60;
+    private static final int JUMP_SPEED = 30;
 
     double timeDead;
     double jumpBuffer = 0;
@@ -76,7 +80,7 @@ public class Player extends Entity implements GlowingEntity {
                 //Return to spawnpoint
                 position = new Vector2(spawnPosition.x,spawnPosition.y);
                 //Ensure gravity is
-                setGravityMagnitude(60);
+                setGravityMagnitude(DEFAULT_GRAVITY);
                 timeDead = 0;
             }
         }
@@ -160,11 +164,11 @@ public class Player extends Entity implements GlowingEntity {
         boolean wallJumpingLeft = (isWallJumping && wallJumpDirection == Direction.LEFT);
         boolean wallJumpingRight = (isWallJumping && wallJumpDirection == Direction.RIGHT);
         if ((input.getKeyState(Keybinds.player_left) & ! wallJumpingRight) || wallJumpingLeft) {
-            instantVelocity.x += isWallJumping ? -WALL_JUMP_SPEED : -RUN_SPEED;
+            instantVelocity.x += isWallJumping ? -WALL_JUMP_HORIZONTAL_SPEED : -RUN_SPEED;
             lastHorizontalDirection = Direction.LEFT;
         }
         if ((input.getKeyState(Keybinds.player_right) & !wallJumpingLeft) || wallJumpingRight) {
-            instantVelocity.x += isWallJumping ? WALL_JUMP_SPEED : RUN_SPEED;
+            instantVelocity.x += isWallJumping ? WALL_JUMP_HORIZONTAL_SPEED : RUN_SPEED;
             lastHorizontalDirection = Direction.RIGHT;
         }
     }
@@ -197,7 +201,7 @@ public class Player extends Entity implements GlowingEntity {
             jumpAllowed = true;
         }
         if (input.getKeyState(Keybinds.player_jump)) {
-            jumpBuffer = 0.05;
+            jumpBuffer = JUMP_BUFFER;
         }
         else {
             if (stopVerticalVelocityAllowed) {
@@ -216,16 +220,16 @@ public class Player extends Entity implements GlowingEntity {
             boolean leftKey = input.getKeyState(Keybinds.player_left);
             Direction possibleWallJumpDirection = rightKey & !leftKey ? Direction.RIGHT : Direction.NONE;
             possibleWallJumpDirection = leftKey & !rightKey ? Direction.LEFT : possibleWallJumpDirection;
-            if (onGroundRecently(JUMP_COYOTE_TIME) && jumpAllowed && !bounceRecently(JUMP_COYOTE_TIME)) {
+            if (onGroundRecently(JUMP_COYOTE_TIME) && jumpAllowed && (!bounceRecently(JUMP_COYOTE_TIME) || Math.abs(velocity.y) < JUMP_SPEED)) {
                 jumpAllowed = false;
-                velocity.y = isGravityDownward() ? -30 : 30;
+                velocity.y = isGravityDownward() ? -JUMP_SPEED : JUMP_SPEED;
                 jumpKeyReleasedInAir = false;
                 stopVerticalVelocityAllowed = true;
                 canDashCharge = true;
             }
             else if (hitWallRecently(WALL_JUMP_COYOTE_TIME) && possibleWallJumpDirection == lastCollisionDirection.opposite()) {
-                velocity.y = isGravityDownward() ? -15 : 15;
-                wallJumpFixedDirectionTime = 0.2;
+                velocity.y = isGravityDownward() ? -WALL_JUMP_VERTICAL_SPEED : WALL_JUMP_VERTICAL_SPEED;
+                wallJumpFixedDirectionTime = WALL_JUMP_DURATION;
                 jumpKeyReleasedInAir = false;
                 if (lastCollisionDirection == Direction.RIGHT) {
                     wallJumpDirection = Direction.LEFT;
