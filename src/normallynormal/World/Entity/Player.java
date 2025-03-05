@@ -24,6 +24,7 @@ public class Player extends Entity implements GlowingEntity {
     private static final int WALL_JUMP_SPEED = 30;
     private static final int DOUBLE_JUMP_SPEED = 20;
     private static final double DOUBLE_JUMP_WAITING_PERIOD = 0.25;
+    private static final int DEFAULT_GRAVITY = 60;
 
     double timeDead;
     double jumpBuffer = 0;
@@ -53,7 +54,7 @@ public class Player extends Entity implements GlowingEntity {
         velocity = new Vector2(0,0);
         position = new Vector2(5.5, 5.5);
         depth = 10;
-        setGravityMagnitude(60);
+        setGravityMagnitude(DEFAULT_GRAVITY);
         collisionBox = new AABB(position.x - 0.49, position.y - 0.49, 0.98, 0.98);
         noGravity = false;
     }
@@ -72,7 +73,9 @@ public class Player extends Entity implements GlowingEntity {
             timeDead += timeDelta;
             if(timeDead > 1) {
                 dead = false;
+                //Return to spawnpoint
                 position = new Vector2(spawnPosition.x,spawnPosition.y);
+                //Ensure gravity is
                 setGravityMagnitude(60);
                 timeDead = 0;
             }
@@ -81,8 +84,13 @@ public class Player extends Entity implements GlowingEntity {
     }
 
     private void handleDashing(double timeDelta, Input input) {
-        if (input.getKeyState(Keybinds.player_dash) && !hitWallRecently(0)) {
+        //Can dash until a wall is hit
+        if (hitWallRecently(0)) {
+            dashTime = 0;
+        }
+        else if (input.getKeyState(Keybinds.player_dash)) {
             boolean madeDash = false;
+            //If the dash cooldown has expired, and we have hit a surface, try to dash in the last input direction.
             if (hasDashCharge) {
                 if (lastHorizontalDirection == Direction.LEFT && !input.getKeyState(Keybinds.player_right)) {
                     dashDirection = Direction.LEFT;
@@ -93,6 +101,7 @@ public class Player extends Entity implements GlowingEntity {
                     madeDash = true;
                 }
             }
+            //If we could dash, set our dash time to max and get rid of the dash charge.
             if (madeDash) {
                 hasDashCharge = false;
                 canDashCharge = false;
@@ -100,16 +109,17 @@ public class Player extends Entity implements GlowingEntity {
                 lastDashXPos = Integer.MIN_VALUE;
             }
         }
-        if (hitWallRecently(0)) {
-            dashTime = 0;
-        }
+        //While dashing, disable gravity for this player
         if (dashTime > 0) {
             noGravity = true;
         }
         else {
             noGravity = false;
         }
+
+        //Perform dash
         if (dashTime > 0) {
+            //Change velocity according to dash direction.
             if (dashDirection == Direction.LEFT) {
                 instantVelocity.x = -DASH_SPEED;
                 velocity.y = 0;
@@ -118,6 +128,7 @@ public class Player extends Entity implements GlowingEntity {
                 instantVelocity.x = DASH_SPEED;
                 velocity.y = 0;
             }
+            //Create a dash particle for each tile the player moves
             if (lastDashXPos != Math.floor(position.x)) {
                 if (lastDashXPos != Integer.MIN_VALUE) {
                     int particlesToCreate = (int) Math.floor(position.x) - lastDashXPos;
@@ -127,14 +138,15 @@ public class Player extends Entity implements GlowingEntity {
                 }
                 lastDashXPos = (int)Math.floor(position.x);
             }
-            standsOnSemisolid = false;
         }
+        //Dash refresh: We can start to cooldown when we've hit a solid.
         else if (!hasDashCharge && (onGroundRecently(0) || hitWallRecently(0))) {
             canDashCharge = true;
         }
         if (dashTime < -DASH_COOLDOWN && canDashCharge) {
             hasDashCharge = true;
         }
+
         dashTime -= timeDelta;
     }
 
