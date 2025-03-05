@@ -273,4 +273,12 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
     public void bounce() {
         bounce = true;
     }
+
+    public boolean onGroundRecently(double time) {
+        return timeSinceOnGround <= time;
+    }
+
+    public boolean hitWallRecently(double time) {
+        return timeSinceWallHit <= time;
+    }
 }
