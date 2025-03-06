@@ -17,6 +17,7 @@ import normallynormal.Math.Vector2;
 import normallynormal.Math.Direction;
 import normallynormal.Constants.ScreenConstants;
 import normallynormal.Math.M4th;
+import normallynormal.World.Platform.Controller.WatchingPlatformController;
 
 public class Level {
     private final List<WorldObject> worldObjects;
@@ -82,6 +83,10 @@ public class Level {
         MoveableObject mo1 = new MoveableObject(new AABB(startingLocationX + 70, startingLocationY + 33, 10, 2), currentId++);
         mo1.createBasicController(Direction.RIGHT, 30, 0.1);
         worldObjects.add(mo1);
+
+        MoveableObject wo1 = new MoveableObject(new AABB(startingLocationX + 70, startingLocationY + 30, 10, 2), currentId++);
+        wo1.setController(new WatchingPlatformController(wo1, Direction.UP, 10, 0.1));
+        worldObjects.add(wo1);
 
         worldObjects.add(new StaticObject(new AABB(startingLocationX + 106, startingLocationY + 30, 2, 5), currentId++));
         worldObjects.add(new StaticObject(new AABB(startingLocationX + 106, startingLocationY + 28, 2, 2), currentId++));

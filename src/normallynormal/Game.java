@@ -125,8 +125,9 @@ public class Game {
 
                 currentLevel.applyPostShaders(screen);
 
-                screen.drawText(0, 0, 0, 0, Integer.MAX_VALUE, "FPS: " + df.format(fps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
-                screen.drawText(0, 1, 0, 0, Integer.MAX_VALUE, "TPS: " + df.format(tps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
+                screen.drawText(0, 0, 0, 0, Integer.MAX_VALUE, Other.VERSION_STRING, TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
+                screen.drawText(0, 1, 0, 0, Integer.MAX_VALUE, "FPS: " + df.format(fps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
+                screen.drawText(0, 2, 0, 0, Integer.MAX_VALUE, "TPS: " + df.format(tps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
 
 
                 screen.refresh();

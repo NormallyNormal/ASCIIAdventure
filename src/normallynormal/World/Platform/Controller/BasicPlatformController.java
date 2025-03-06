@@ -1,6 +1,5 @@
 package normallynormal.World.Platform.Controller;
 
-import normallynormal.Math.AABB;
 import normallynormal.Math.Direction;
 import normallynormal.World.Level;
 import normallynormal.World.Platform.MoveableObject;
@@ -25,24 +24,14 @@ public class BasicPlatformController extends AbstractPlatformController {
 
     @Override
     public void process(double timeDeltaSeconds, Level level) {
-        AABB collisionBox = controlledMovableObject.getCollisionBox();
         timeSinceLastMovement += timeDeltaSeconds;
-        movedThisFrame = false;
-        if(movesNextFrame) {
-            movesNextFrame = false;
-            movedThisFrame = true;
-            if(steps > 0) {
-                if (direction.isVertical()) {
-                    collisionBox.y += direction.toMovement();
-                }
-                else {
-                    collisionBox.x += direction.toMovement();
-                }
+        if(steps > 0) {
+            boolean moved = moveIfPossible();
+            if (moved)
                 stepsMade += direction.toMovement();
-            }
         }
         if(timeSinceLastMovement >= pauseTime) {
-            movesNextFrame = true;
+            allowMoveNextTick();
             timeSinceLastMovement -= pauseTime;
             boolean overshooting = stepsMade >= steps && direction.isAnyOf(Direction.RIGHT.getValue() | Direction.DOWN.getValue());
             boolean undershooting = stepsMade <= 0 && direction.isAnyOf(Direction.LEFT.getValue() | Direction.UP.getValue());

@@ -3,7 +3,6 @@ package normallynormal.World.Platform.Controller;
 import normallynormal.Math.AABB;
 import normallynormal.Math.Direction;
 import normallynormal.Math.Vector2;
-import normallynormal.World.CollisionObject;
 import normallynormal.World.Entity.Entity;
 import normallynormal.World.Level;
 import normallynormal.World.Platform.MoveableObject;
@@ -108,5 +107,29 @@ public abstract class AbstractPlatformController {
                 break;
         }
         entity.clearMovementStep();
+    }
+
+    protected boolean isAboutToMove() {
+        return movesNextFrame;
+    }
+
+    protected void allowMoveNextTick() {
+        movesNextFrame = true;
+    }
+
+    protected boolean moveIfPossible() {
+        movedThisFrame = false;
+        if (isAboutToMove()) {
+            AABB collisionBox = controlledMovableObject.getCollisionBox();
+            if (direction.isVertical()) {
+                collisionBox.y += direction.toMovement();
+            } else {
+                collisionBox.x += direction.toMovement();
+            }
+            movesNextFrame = false;
+            movedThisFrame = true;
+            return true;
+        }
+        return false;
     }
 }
