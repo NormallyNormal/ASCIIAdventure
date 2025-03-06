@@ -129,7 +129,6 @@ public class Game {
                 screen.drawText(0, 1, 0, 0, Integer.MAX_VALUE, "FPS: " + df.format(fps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
                 screen.drawText(0, 2, 0, 0, Integer.MAX_VALUE, "TPS: " + df.format(tps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
 
-
                 screen.refresh();
 
                 fps = (float) (fps * 0.9f + 0.1f * (1f/timeSinceLastFrame));
