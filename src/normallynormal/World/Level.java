@@ -2,6 +2,8 @@ package normallynormal.World;
 
 import java.util.*;
 
+import normallynormal.Render.Renderers.AbstractRenderer;
+import normallynormal.Render.Renderers.ConnectedTextureRenderer;
 import normallynormal.Render.Renderers.RainbowRenderer;
 import normallynormal.Render.Renderers.SpikesRenderer;
 import normallynormal.Render.Shader.PostShader;
@@ -39,6 +41,9 @@ public class Level {
         player.getPosition().x = 5 + startingLocationX;
         player.getPosition().y = 34 + startingLocationY;
         player.setSpawnPosition(new Vector2(5 + startingLocationX, 34 + startingLocationY));
+//        player.getPosition().x = 5 + startingLocationX;
+//        player.getPosition().y = -25 + startingLocationY;
+//        player.setSpawnPosition(new Vector2(5 + startingLocationX, 34 + startingLocationY));
         worldObjects = new ArrayList<>();
         entities = new ArrayList<>();
         entitiesToRemove = new ArrayDeque<>();
@@ -76,7 +81,7 @@ public class Level {
         worldObjects.add(new SemisolidPlatform(new AABB(startingLocationX + 10, startingLocationY, 5, 1), currentId++));
         worldObjects.add(new SemisolidPlatform(new AABB(startingLocationX + 10, startingLocationY + -5, 5, 1), currentId++));
         worldObjects.add(new SemisolidPlatform(new AABB(startingLocationX + 10, startingLocationY + -10, 5, 1), currentId++));
-        worldObjects.add(new SemisolidPlatform(new AABB(startingLocationX, startingLocationY + -15, 120, 1), currentId++));
+        worldObjects.add(new SemisolidPlatform(new AABB(startingLocationX - 115, startingLocationY + -15, 235, 1), currentId++));
 
         worldObjects.add(new StaticHazardObject(new AABB(startingLocationX + 125, startingLocationY + 34, 110, 1), currentId++));
 
@@ -148,6 +153,18 @@ public class Level {
         worldObjects.add(new ConveyorObject(new AABB(startingLocationX + 40, startingLocationY + -25, 1, 10), currentId++, Direction.UP, 10));
         worldObjects.add(new ConveyorObject(new AABB(startingLocationX + 41, startingLocationY + -25, 20, 1), currentId++, Direction.RIGHT, 10));
         worldObjects.add(new ConveyorObject(new AABB(startingLocationX + 45, startingLocationY + -16, 20, 1), currentId++, Direction.LEFT, 10));
+
+        MoveableObject mo9 = new MoveableObject(new AABB(startingLocationX -60, startingLocationY + -20, 10, 5), currentId++);
+        mo9.createBasicController(Direction.RIGHT, 10, 0.2);
+        MoveableObject mo10 = new MoveableObject(new AABB(startingLocationX -60, startingLocationY + -25, 5, 5), currentId++);
+        mo10.createBasicController(Direction.RIGHT, 10, 0.2);
+        ConnectedTextureRenderer cr1 = new ConnectedTextureRenderer();
+        cr1.addVisibiliyBoxSupplier(mo9::getVisibilityBox);
+        cr1.addVisibiliyBoxSupplier(mo10::getVisibilityBox);
+        mo9.setRenderer(cr1);
+        mo10.setRenderer(cr1);
+        worldObjects.add(mo9);
+        worldObjects.add(mo10);
     }
 
     public void process(double timeDeltaSeconds, Input input) {

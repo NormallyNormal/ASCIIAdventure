@@ -35,6 +35,15 @@ public class AABB {
         return true;
     }
 
+    public boolean contains(double px, double py) {
+        return px >= x && px <= x + w && py >= y && py <= y + h;
+    }
+
+    public boolean contains(Vector2 vector) {
+        return contains(vector.x, vector.y);
+    }
+
+
     public double overlapArea(AABB other) {
         double xOverlap = Math.max(0, Math.min(this.x + this.w, other.x + other.w) - Math.max(this.x, other.x));
         double yOverlap = Math.max(0, Math.min(this.y + this.h, other.y + other.h) - Math.max(this.y, other.y));
@@ -58,6 +67,18 @@ public class AABB {
         bbb.w = this.w + Math.abs(velocity.x);
         bbb.h = this.h + Math.abs(velocity.y);
         return bbb;
+    }
+
+    public void expandToContain(AABB other) {
+        double minX = Math.min(this.x, other.x);
+        double minY = Math.min(this.y, other.y);
+        double maxX = Math.max(this.x + this.w, other.x + other.w);
+        double maxY = Math.max(this.y + this.h, other.y + other.h);
+
+        this.x = minX;
+        this.y = minY;
+        this.w = maxX - minX;
+        this.h = maxY - minY;
     }
 
     public Direction getNearestSide(double px, double py) {

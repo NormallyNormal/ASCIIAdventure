@@ -13,10 +13,10 @@ public class DefaultRenderer extends AbstractRenderer {
         super(visibilityBoxSupplier);
     }
 
-    private static final TextCharacter VERTICAL_BORDER = new TextCharacter('║', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK_BRIGHT);
-    private static final TextCharacter HORIZONTAL_BORDER = new TextCharacter('═', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK_BRIGHT);
-    private static final TextCharacter CORNER = new TextCharacter('◇', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK_BRIGHT);
-    private static final TextCharacter EMPTY = new TextCharacter(' ', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK_BRIGHT);
+    protected static final TextCharacter VERTICAL_BORDER = new TextCharacter('║', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK_BRIGHT);
+    protected static final TextCharacter HORIZONTAL_BORDER = new TextCharacter('═', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK_BRIGHT);
+    protected static final TextCharacter CORNER = new TextCharacter('◇', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK_BRIGHT);
+    protected static final TextCharacter EMPTY = new TextCharacter(' ', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK_BRIGHT);
 
     public void render(DepthScreen screen, int xOffset, int yOffset) {
         AABB collisionBox = visibilityBoxSupplier.get();
