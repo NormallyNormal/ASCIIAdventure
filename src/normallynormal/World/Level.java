@@ -9,6 +9,7 @@ import normallynormal.Render.Renderers.SpikesRenderer;
 import normallynormal.Render.Shader.PostShader;
 import normallynormal.World.Entity.Entity;
 import normallynormal.World.Entity.NPC;
+import normallynormal.World.Entity.Orb;
 import normallynormal.World.Entity.Player;
 import normallynormal.Input.Input;
 import normallynormal.World.Entity.Decoration.Torch;
@@ -165,21 +166,43 @@ public class Level {
         mo10.setRenderer(cr1);
         worldObjects.add(mo9);
         worldObjects.add(mo10);
+
+        for (int x = 0; x < 30; x += 5) {
+            entities.add(new Orb(startingLocationX + 28 + x, startingLocationY + 20, Orb.OrbType.DOUBLE_JUMP));
+        }
     }
 
+    final ArrayList<Entity> onScreenEntities = new ArrayList<>();
+
     public void process(double timeDeltaSeconds, Input input) {
+        runPlatformCollisions(player);
         player.process(timeDeltaSeconds, input);
         checkInsidePlatform(player);
+
+        onScreenEntities.clear();
+        onScreenEntities.add(player);
         for (Entity entity : entities) {
             entity.process(timeDeltaSeconds, input);
+            if (entity.isOnScreen()) {
+                onScreenEntities.add(entity);
+            }
         }
+        for (Entity entity1 : onScreenEntities) {
+            for (Entity entity2 : onScreenEntities) {
+                AABB bbb = entity2.getCollisionBox().createBBB(entity2.getMovementStep());
+                if (entity1 != entity2 & entity1.getCollisionBox().overlaps(bbb)) {
+                    entity1.intersectEffect(entity2, this);
+                }
+            }
+        }
+
         while (!entitiesToRemove.isEmpty()) {
             entities.remove(entitiesToRemove.pop());
         }
+
         for (WorldObject worldObject : worldObjects) {
             worldObject.process(timeDeltaSeconds, this);
         }
-        runPlatformCollisions(player);
     }
 
     private int lastRenderOffsetX = 0;

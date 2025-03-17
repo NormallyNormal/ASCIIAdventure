@@ -341,4 +341,12 @@ public class Player extends Entity implements GlowingEntity {
         stopVerticalVelocityAllowed = false;
         super.bounce();
     }
+
+    public void refreshDash() {
+        hasDashCharge = true;
+    }
+
+    public void refreshDoubleJump() {
+        extraJumps = maxExtraJumps;
+    }
 }

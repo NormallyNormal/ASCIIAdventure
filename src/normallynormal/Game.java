@@ -27,6 +27,7 @@ import normallynormal.World.Level;
 public class Game {
     public static Level currentLevel;
     public static final AABB screenBoundingBox = new AABB(0, 0, ScreenConstants.PLAY_SCREEN_WIDTH, ScreenConstants.PLAY_SCREEN_HEIGHT);
+    private static final long initialTime = System.currentTimeMillis();
 
     public static void run() throws IOException, FontFormatException, InterruptedException {
         InputStream fontStream = Game.class.getResourceAsStream("/resources/font/DejaVuSansMono.ttf");
@@ -157,5 +158,9 @@ public class Game {
             currentTime = System.nanoTime();
         }
         terminal.close();
+    }
+
+    public static int gameTime() {
+        return (int) ((System.currentTimeMillis() - initialTime) % Integer.MAX_VALUE);
     }
 }

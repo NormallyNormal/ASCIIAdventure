@@ -2,6 +2,7 @@ package normallynormal.Render.Renderers;
 
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
+import normallynormal.Game;
 import normallynormal.Math.AABB;
 import normallynormal.Render.DepthScreen;
 
@@ -22,7 +23,7 @@ public class BouncePadRenderer extends AbstractRenderer {
         long bounceTime = glowTimeSupplier.get();
         for (int i = 0; i <= collisionBox.w - 1; i++) {
             for (int j = 0; j <= collisionBox.h - 1; j++) {
-                long delta = System.currentTimeMillis() - bounceTime;
+                long delta = Game.gameTime() - bounceTime;
                 int index = Math.min((int)(delta/100), fades.length - 1);
                 screen.setCharacterWithDepth((int) collisionBox.x + i, (int) collisionBox.y + j, xOffset, yOffset, 0, fades[index]);
             }

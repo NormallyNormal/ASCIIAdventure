@@ -3,6 +3,7 @@ package normallynormal.World.Entity;
 import normallynormal.Input.Input;
 import normallynormal.World.CollisionObject;
 import normallynormal.Game;
+import normallynormal.World.Level;
 import normallynormal.World.PhysicsObject;
 import normallynormal.World.RenderObject;
 import normallynormal.Render.DepthScreen;
@@ -56,7 +57,7 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
         invincibleTicks--;
     }
 
-    public void render(DepthScreen screen) {
+    public void intersectEffect(Entity entity, Level level) {
 
     }
 

@@ -35,7 +35,7 @@ public class NPC extends Entity {
 
     @Override
     public void render(DepthScreen screen, int xOffset, int yOffset) {
-        if (System.currentTimeMillis() % 1000 < 500) {
+        if (Game.gameTime() % 1000 < 500) {
             screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('█', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
         }
         else {
