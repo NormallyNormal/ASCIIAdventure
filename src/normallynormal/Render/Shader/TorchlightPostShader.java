@@ -20,7 +20,7 @@ public class TorchlightPostShader implements PostShader {
         calculate(xOffset, yOffset, entityList, player);
         for (int x = 0; x < ScreenConstants.PLAY_SCREEN_WIDTH; x++) {
             for (int y = 0; y < ScreenConstants.PLAY_SCREEN_HEIGHT; y++) {
-                if (screenLightLevels[x][y] < 1) {
+                if (screenLightLevels[x][y] < 1 && depthScreen.getDepth(x, y) < 100) {
                     if (screenLightLevels[x][y] > 0.5) {
                         depthScreen.setCharacterWithDepth(x, y, 0, 0, depthScreen.getDepth(x, y) + 1, new TextCharacter(depthScreen.getCharacterInBuffer(x, y, 0, 0).getCharacter(), TextColor.ANSI.BLACK_BRIGHT, TextColor.ANSI.BLACK));
                     } else {

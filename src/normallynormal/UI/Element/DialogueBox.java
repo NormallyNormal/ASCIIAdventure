@@ -80,10 +80,10 @@ public class DialogueBox extends UIElement {
                 else if (j == 0 || j == 8 - 1) {
                     filler = '-';
                 }
-                screen.setCharacterWithDepth(7 + i, 3 + j, 0, 0, 0, new TextCharacter(filler, TextColor.ANSI.BLACK_BRIGHT, TextColor.ANSI.BLACK));
+                screen.setCharacterWithDepth(7 + i, 3 + j, 0, 0, 1000, new TextCharacter(filler, TextColor.ANSI.BLACK_BRIGHT, TextColor.ANSI.BLACK));
             }
         }
-        screen.drawTextAdvanced(8, 4, 0, 0, 99, colorfulText.get(stage), TextColor.ANSI.WHITE, TextColor.ANSI.BLACK, ScreenConstants.PLAY_SCREEN_WIDTH - 16 - 2, charsToDrawNum);
-        screen.drawText(ScreenConstants.PLAY_SCREEN_WIDTH - 8 - 2 - nextText.length(),9, 0, 0, 99, nextText, TextColor.ANSI.WHITE, TextColor.ANSI.BLACK);
+        screen.drawTextAdvanced(8, 4, 0, 0, 1000, colorfulText.get(stage), TextColor.ANSI.WHITE, TextColor.ANSI.BLACK, ScreenConstants.PLAY_SCREEN_WIDTH - 16 - 2, charsToDrawNum);
+        screen.drawText(ScreenConstants.PLAY_SCREEN_WIDTH - 8 - 2 - nextText.length(),9, 0, 0, 1000, nextText, TextColor.ANSI.WHITE, TextColor.ANSI.BLACK);
     }
 }

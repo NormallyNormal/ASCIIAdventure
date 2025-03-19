@@ -7,6 +7,7 @@ import normallynormal.Render.Renderers.ConnectedTextureRenderer;
 import normallynormal.Render.Renderers.RainbowRenderer;
 import normallynormal.Render.Renderers.SpikesRenderer;
 import normallynormal.Render.Shader.PostShader;
+import normallynormal.Render.Shader.TorchlightPostShader;
 import normallynormal.World.Entity.Entity;
 import normallynormal.World.Entity.NPC;
 import normallynormal.World.Entity.Orb;
@@ -36,7 +37,7 @@ public class Level {
         int startingLocationY = 1200;
 
         postShaders = new ArrayList<>();
-        //addPostShader(new TorchlightPostShader(), 0);
+        addPostShader(new TorchlightPostShader(), 0);
 
         player = new Player();
         player.getPosition().x = 5 + startingLocationX;
@@ -169,6 +170,9 @@ public class Level {
 
         for (int x = 0; x < 30; x += 5) {
             entities.add(new Orb(startingLocationX + 28 + x, startingLocationY + 20, Orb.OrbType.DOUBLE_JUMP));
+        }
+        for (int x = 0; x < 30; x += 10) {
+            entities.add(new Orb(startingLocationX + 28 + x, startingLocationY + 10, Orb.OrbType.DASH));
         }
     }
 
