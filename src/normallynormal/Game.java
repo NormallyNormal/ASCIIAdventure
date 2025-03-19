@@ -148,9 +148,9 @@ public class Game {
 
             terminal.requestFocusInWindow();
 
-            if (Other.REDUCE_CPU_USAGE) {
-                Thread.sleep(1);
-            }
+//            if (Other.REDUCE_CPU_USAGE) {
+//                Thread.sleep(1);
+//            }
 
             overshootFPS = Math.max(ScreenConstants.TARGET_FPS, (ScreenConstants.TARGET_FPS - fps) + ScreenConstants.TARGET_FPS);
 

@@ -38,7 +38,7 @@ public class ConveyorRenderer extends AbstractRenderer {
         AABB collisionBox = visibilityBoxSupplier.get();
         Direction direction = directionSupplier.get();
         double speed = speedSupplier.get();
-        int offset = (int)(((Game.gameTime() * (int)speed) / 1000));
+        int offset = (((Game.gameTime() * (int)speed) / 1000));
         switch (direction) {
             case LEFT:
                 for (int i = 0; i <= collisionBox.w - 1; i++) {
