@@ -34,7 +34,7 @@ public class Game {
         assert fontStream != null;
         Font ubuntuMono = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(14f);
         SwingTerminalFontConfiguration fontConfiguration = new SwingTerminalFontConfiguration(true, AWTTerminalFontConfiguration.BoldMode.NOTHING, ubuntuMono);
-        SwingTerminalFrame terminal = new DefaultTerminalFactory().setInitialTerminalSize(new TerminalSize(ScreenConstants.PLAY_SCREEN_WIDTH,ScreenConstants.PLAY_SCREEN_HEIGHT)).setTerminalEmulatorFontConfiguration(fontConfiguration).createSwingTerminal();
+        SwingTerminalFrame terminal = new DefaultTerminalFactory().setInitialTerminalSize(new TerminalSize(ScreenConstants.PLAY_SCREEN_WIDTH, ScreenConstants.PLAY_SCREEN_HEIGHT)).setTerminalEmulatorFontConfiguration(fontConfiguration).createSwingTerminal();
         terminal.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         terminal.setResizable(false);
 
@@ -42,6 +42,7 @@ public class Game {
         terminal.addKeyListener(input);
         terminal.requestFocusInWindow();
         terminal.setTitle("ASCII Adventure");
+        terminal.setSize(ScreenConstants.PLAY_SCREEN_WIDTH, ScreenConstants.PLAY_SCREEN_HEIGHT);
         terminal.setVisible(true);
 
         DepthScreen screen = new DepthScreen(terminal);
@@ -148,9 +149,9 @@ public class Game {
 
             terminal.requestFocusInWindow();
 
-//            if (Other.REDUCE_CPU_USAGE) {
-//                Thread.sleep(1);
-//            }
+            if (Other.REDUCE_CPU_USAGE) {
+                Thread.sleep(1);
+            }
 
             overshootFPS = Math.max(ScreenConstants.TARGET_FPS, (ScreenConstants.TARGET_FPS - fps) + ScreenConstants.TARGET_FPS);
 

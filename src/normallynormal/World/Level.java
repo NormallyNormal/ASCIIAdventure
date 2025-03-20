@@ -37,7 +37,7 @@ public class Level {
         int startingLocationY = 1200;
 
         postShaders = new ArrayList<>();
-        addPostShader(new TorchlightPostShader(), 0);
+        //addPostShader(new TorchlightPostShader(), 0);
 
         player = new Player();
         player.getPosition().x = 5 + startingLocationX;
@@ -174,6 +174,9 @@ public class Level {
         for (int x = 0; x < 30; x += 10) {
             entities.add(new Orb(startingLocationX + 28 + x, startingLocationY + 10, Orb.OrbType.DASH));
         }
+
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 130, startingLocationY - 20, 5, 1), currentId++));
+        worldObjects.add(new StaticObject(new AABB(startingLocationX + 135, startingLocationY - 20, 5, 1), currentId++));
     }
 
     final ArrayList<Entity> onScreenEntities = new ArrayList<>();

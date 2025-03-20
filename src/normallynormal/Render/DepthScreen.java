@@ -1,5 +1,6 @@
 package normallynormal.Render;
 
+import normallynormal.Constants.ScreenConstants;
 import normallynormal.UI.ColorfulText;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
@@ -16,10 +17,9 @@ public class DepthScreen extends TerminalScreen {
     boolean[][] backgroundAlpha;
     public DepthScreen(Terminal terminal) throws IOException {
         super(terminal);
-        TerminalSize terminalSize = terminal.getTerminalSize();
-        zBuffer = new int[terminalSize.getColumns()][terminalSize.getRows()];
-        written = new boolean[terminalSize.getColumns()][terminalSize.getRows()];
-        backgroundAlpha = new boolean[terminalSize.getColumns()][terminalSize.getRows()];
+        zBuffer = new int[ScreenConstants.PLAY_SCREEN_WIDTH][ScreenConstants.PLAY_SCREEN_HEIGHT];
+        written = new boolean[ScreenConstants.PLAY_SCREEN_WIDTH][ScreenConstants.PLAY_SCREEN_HEIGHT];
+        backgroundAlpha = new boolean[ScreenConstants.PLAY_SCREEN_WIDTH][ScreenConstants.PLAY_SCREEN_HEIGHT];
         fullClear();
     }
 
@@ -27,9 +27,9 @@ public class DepthScreen extends TerminalScreen {
     public synchronized TerminalSize doResizeIfNecessary() {
         TerminalSize newSize = super.doResizeIfNecessary();
         if(newSize != null) {
-            zBuffer = new int[newSize.getColumns()][newSize.getRows()];
-            written = new boolean[newSize.getColumns()][newSize.getRows()];
-            backgroundAlpha = new boolean[newSize.getColumns()][newSize.getRows()];
+            zBuffer = new int[ScreenConstants.PLAY_SCREEN_WIDTH][ScreenConstants.PLAY_SCREEN_HEIGHT];
+            written = new boolean[ScreenConstants.PLAY_SCREEN_WIDTH][ScreenConstants.PLAY_SCREEN_HEIGHT];
+            backgroundAlpha = new boolean[ScreenConstants.PLAY_SCREEN_WIDTH][ScreenConstants.PLAY_SCREEN_HEIGHT];
             fullClear();
         }
         return newSize;
@@ -87,11 +87,9 @@ public class DepthScreen extends TerminalScreen {
     public synchronized void clear() {
         for (int x = 0; x < written.length; x++) {
             for (int y = 0; y < written[0].length; y++) {
-                if (written[x][y]) {
-                    super.setCharacter(x, y, blank);
-                    zBuffer[x][y] = Integer.MIN_VALUE;
-                }
+                super.setCharacter(x, y, blank);
                 written[x][y] = false;
+                zBuffer[x][y] = Integer.MIN_VALUE;
                 backgroundAlpha[x][y] = true;
             }
         }
