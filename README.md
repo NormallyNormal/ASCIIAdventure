@@ -26,7 +26,5 @@ The torchlight shader creates lighting effects around glowing objects when enabl
 Non player characters can tell the player information.
 ### Orbs
 Refill double jump or dash abilities instantly on contact.
-## Screenshots
-![Screenshot from 2025-02-27 00-18-40](https://github.com/user-attachments/assets/1e909878-02de-4745-8da5-5eee576fc6eb)
-![Screenshot from 2025-02-27 00-19-00](https://github.com/user-attachments/assets/409c6a4f-9b44-4fc9-8f07-722831bb81f5)
-![Screenshot from 2025-02-27 00-19-19](https://github.com/user-attachments/assets/7e59963d-4f2d-4786-bc80-64a80600416d)
+## Demo
+https://github.com/user-attachments/assets/41afadf0-787b-47f9-a29c-7792dc3ff86c
