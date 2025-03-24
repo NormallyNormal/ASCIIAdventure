@@ -13,16 +13,16 @@ import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
-import java.util.Collections;
 
 import normallynormal.Math.Direction;
 import normallynormal.Settings.Keybinds;
 import normallynormal.Settings.Other;
 import normallynormal.World.Level;
+import normallynormal.World.Levels.DevLevel;
+import normallynormal.World.Levels.TutorialLevel;
 
 public class Game {
     public static Level currentLevel;
@@ -50,7 +50,7 @@ public class Game {
         screen.setCursorPosition(null);
         screen.startScreen();
 
-        currentLevel = new Level();
+        currentLevel = new DevLevel();
         long currentTime = System.nanoTime();
         long lastTime = System.nanoTime();
         double timeDeltaSeconds;

@@ -43,7 +43,6 @@ public class AABB {
         return contains(vector.x, vector.y);
     }
 
-
     public double overlapArea(AABB other) {
         double xOverlap = Math.max(0, Math.min(this.x + this.w, other.x + other.w) - Math.max(this.x, other.x));
         double yOverlap = Math.max(0, Math.min(this.y + this.h, other.y + other.h) - Math.max(this.y, other.y));
@@ -96,9 +95,9 @@ public class AABB {
         } else if (minDist == distRight) {
             return Direction.RIGHT;
         } else if (minDist == distUp) {
-            return Direction.UP;  // Closer to the top
+            return Direction.UP;
         } else {
-            return Direction.DOWN; // Closer to the bottom
+            return Direction.DOWN;
         }
     }
 
