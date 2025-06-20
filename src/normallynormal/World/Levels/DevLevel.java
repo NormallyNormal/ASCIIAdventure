@@ -5,6 +5,7 @@ import normallynormal.Math.Direction;
 import normallynormal.Math.Vector2;
 import normallynormal.Render.Renderers.ConnectedTextureRenderer;
 import normallynormal.Render.Renderers.RainbowRenderer;
+import normallynormal.Render.Shader.TorchlightPostShader;
 import normallynormal.World.Entity.Decoration.Torch;
 import normallynormal.World.Entity.NPC;
 import normallynormal.World.Entity.Orb;
@@ -41,7 +42,7 @@ public class DevLevel extends Level {
 //        worldObjects.add(new StaticHazardObject(new AABB(20, 19, 5, 1), currentId++));
 //        worldObjects.add(new MovingObject(new AABB(20, 5, 5, 5), currentId++, 10, 0, 0.4));
 //        worldObjects.add(new StaticObject(new AABB(28, 2, 5, 3), currentId++));
-
+//        postShaders.add(new TorchlightPostShader());
         worldObjects.add(new StaticObject(new AABB(startingLocationX + -120, startingLocationY + 35, 360, 5), currentId++));
         worldObjects.add(new StaticObject(new AABB(startingLocationX + -120, startingLocationY + -40, 360, 5), currentId++));
         worldObjects.add(new StaticObject(new AABB(startingLocationX + -120, startingLocationY + -35, 5, 70), currentId++));

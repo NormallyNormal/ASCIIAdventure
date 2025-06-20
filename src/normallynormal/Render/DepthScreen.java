@@ -1,6 +1,7 @@
 package normallynormal.Render;
 
 import normallynormal.Constants.ScreenConstants;
+import normallynormal.Math.Line;
 import normallynormal.UI.ColorfulText;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
@@ -9,6 +10,7 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 public class DepthScreen extends TerminalScreen {
@@ -56,6 +58,21 @@ public class DepthScreen extends TerminalScreen {
         else if(backgroundAlpha[column][row] && !transparentBackgroundFlag) {
             written[column][row] = true;
             super.setCharacter(column, row, this.getCharacterInBuffer(column, row, 0, 0).withBackgroundColor(screenCharacter.getBackgroundColor()));
+        }
+    }
+
+    public synchronized void drawLine(int column1, int row1, int column2, int row2, int xOffset, int yOffset, int depth, TextColor color) {
+        TextCharacter[] screenCharacters = {
+                new TextCharacter('○', color, TransparentColor.TRANSPARENT)
+        };
+        drawLine(column1, row1, column2, row2, xOffset, yOffset, depth, screenCharacters);
+    }
+
+    public synchronized void drawLine(int column1, int row1, int column2, int row2, int xOffset, int yOffset, int depth, TextCharacter[] screenCharacters) {
+        List<int[]> points = Line.drawLine(column1, row1, column2, row2);
+        for (int i = 0; i < points.size(); i++) {
+            int [] cur = points.get(i);
+            setCharacterWithDepth(cur[0], cur[1], xOffset, yOffset, depth, screenCharacters[i % screenCharacters.length]);
         }
     }
 

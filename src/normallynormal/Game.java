@@ -20,6 +20,7 @@ import java.text.DecimalFormat;
 import normallynormal.Math.Direction;
 import normallynormal.Settings.Keybinds;
 import normallynormal.Settings.Other;
+import normallynormal.Sound.AudioPlayer;
 import normallynormal.World.Level;
 import normallynormal.World.Levels.DevLevel;
 import normallynormal.World.Levels.TutorialLevel;
@@ -44,6 +45,8 @@ public class Game {
         terminal.setTitle("ASCII Adventure");
         terminal.setSize(ScreenConstants.PLAY_SCREEN_WIDTH, ScreenConstants.PLAY_SCREEN_HEIGHT);
         terminal.setVisible(true);
+
+        AudioPlayer.load();
 
         DepthScreen screen = new DepthScreen(terminal);
         screen.doResizeIfNecessary();
@@ -131,6 +134,8 @@ public class Game {
                 screen.drawText(0, 1, 0, 0, Integer.MAX_VALUE, "FPS: " + df.format(fps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
                 screen.drawText(0, 2, 0, 0, Integer.MAX_VALUE, "TPS: " + df.format(tps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
 
+//                Line test
+//                screen.drawLine(10, 10, 20, 18, 0,0, Integer.MAX_VALUE, TextColor.ANSI.WHITE);
                 screen.refresh();
 
                 fps = (float) (fps * 0.9f + 0.1f * (1f/timeSinceLastFrame));

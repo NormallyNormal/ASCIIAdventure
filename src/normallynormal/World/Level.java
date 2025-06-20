@@ -29,7 +29,7 @@ public class Level {
     private final Deque<Entity> entitiesToRemove;
     protected final Player player;
 
-    private final List<PostShader> postShaders;
+    protected final List<PostShader> postShaders;
 
     @SuppressWarnings("UnusedAssignment")
     public Level() {

@@ -3,6 +3,7 @@ package normallynormal.World.Entity;
 import normallynormal.Input.Input;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
+import normallynormal.Sound.AudioPlayer;
 import normallynormal.World.Entity.Particle.DashParticle;
 import normallynormal.World.Entity.Particle.ExtraJumpParticle;
 import normallynormal.Game;
@@ -226,6 +227,7 @@ public class Player extends Entity implements GlowingEntity {
                 jumpKeyReleasedInAir = false;
                 stopVerticalVelocityAllowed = true;
                 canDashCharge = true;
+                AudioPlayer.play("player.jump");
             }
             else if (hitWallRecently(WALL_JUMP_COYOTE_TIME) && possibleWallJumpDirection == lastCollisionDirection.opposite()) {
                 velocity.y = isGravityDownward() ? -WALL_JUMP_VERTICAL_SPEED : WALL_JUMP_VERTICAL_SPEED;
