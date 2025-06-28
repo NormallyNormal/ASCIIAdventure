@@ -4,6 +4,7 @@ import com.googlecode.lanterna.TextCharacter;
 import normallynormal.Math.AABB;
 import normallynormal.Math.Direction;
 import normallynormal.Render.DepthScreen;
+import normallynormal.Util.BufferedSupplier;
 
 import java.util.ArrayList;
 import java.util.function.Supplier;
@@ -11,7 +12,7 @@ import java.util.function.Supplier;
 import static normallynormal.Render.Renderers.DefaultRenderer.*;
 
 public class ConnectedTextureRenderer extends AbstractRenderer {
-    ArrayList<Supplier<AABB>> visibilityBoxSuppliers;
+    ArrayList<BufferedSupplier<AABB>> visibilityBoxSuppliers;
 
     public ConnectedTextureRenderer() {
         super(null);
@@ -19,14 +20,20 @@ public class ConnectedTextureRenderer extends AbstractRenderer {
     }
 
     public void addVisibiliyBoxSupplier(Supplier<AABB> visibilityBoxSupplier) {
-        visibilityBoxSuppliers.add(visibilityBoxSupplier);
+        visibilityBoxSuppliers.add(new BufferedSupplier<>(visibilityBoxSupplier));
+    }
+
+    public void copyForRender() {
+        for (BufferedSupplier<AABB> visibilityBoxSupplier : visibilityBoxSuppliers) {
+            visibilityBoxSupplier.buffer();
+        }
     }
 
     @Override
     public void render(DepthScreen screen, int xOffset, int yOffset) {
         AABB firstBox = visibilityBoxSuppliers.get(0).get();
         AABB broadBox = new AABB(firstBox.x, firstBox.y, firstBox.w, firstBox.h);
-        for (Supplier<AABB> visibilityBoxSupplier : visibilityBoxSuppliers) {
+        for (BufferedSupplier<AABB> visibilityBoxSupplier : visibilityBoxSuppliers) {
             broadBox.expandToContain(visibilityBoxSupplier.get());
         }
         for (int i = 0; i <= broadBox.w - 1; i++) {
@@ -42,7 +49,7 @@ public class ConnectedTextureRenderer extends AbstractRenderer {
                 boolean corners2 = false;
                 boolean corners3 = false;
                 boolean corners4 = false;
-                for (Supplier<AABB> visibilityBoxSupplier : visibilityBoxSuppliers) {
+                for (BufferedSupplier<AABB> visibilityBoxSupplier : visibilityBoxSuppliers) {
                     here = here | visibilityBoxSupplier.get().contains(x, y);
                     uphere = uphere | visibilityBoxSupplier.get().contains(x, y + Direction.UP.toMovement());
                     downhere = downhere | visibilityBoxSupplier.get().contains(x, y + Direction.DOWN.toMovement());

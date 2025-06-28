@@ -16,6 +16,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import normallynormal.Math.Direction;
 import normallynormal.Settings.Keybinds;
@@ -30,6 +31,14 @@ public class Game {
     public static final AABB screenBoundingBox = new AABB(0, 0, ScreenConstants.PLAY_SCREEN_WIDTH, ScreenConstants.PLAY_SCREEN_HEIGHT);
     private static final long initialTime = System.currentTimeMillis();
 
+    private static volatile double sharedTPS = 0;
+
+    private static int levelFrameX = 30;
+    private static int levelFrameY = 30;
+
+    private static final AtomicInteger renderXOffset = new AtomicInteger(-levelFrameX * ScreenConstants.PLAY_SCREEN_WIDTH);
+    private static final AtomicInteger renderYOffset = new AtomicInteger(-levelFrameY * ScreenConstants.PLAY_SCREEN_HEIGHT);
+
     public static void run() throws IOException, FontFormatException, InterruptedException {
         InputStream fontStream = Game.class.getResourceAsStream("/resources/font/DejaVuSansMono.ttf");
         assert fontStream != null;
@@ -41,7 +50,6 @@ public class Game {
 
         Input input = new Input();
         terminal.addKeyListener(input);
-        terminal.requestFocusInWindow();
         terminal.setTitle("ASCII Adventure");
         terminal.setSize(ScreenConstants.PLAY_SCREEN_WIDTH, ScreenConstants.PLAY_SCREEN_HEIGHT);
         terminal.setVisible(true);
@@ -54,115 +62,114 @@ public class Game {
         screen.startScreen();
 
         currentLevel = new DevLevel();
-        long currentTime = System.nanoTime();
-        long lastTime = System.nanoTime();
-        double timeDeltaSeconds;
-        double timeSinceLastFrame = 0;
-        double timeSinceLastTransitionMovement = 0;
-
-        float fps = ScreenConstants.TARGET_FPS;
-        double tps = 0;
 
         DecimalFormat df = new DecimalFormat("#.##");
 
-        boolean running = true;
-
-        int levelFrameX = 30;
-        int levelFrameY = 30;
-
-        int renderXOffset = -levelFrameX * ScreenConstants.PLAY_SCREEN_WIDTH;
-        int renderYOffset = -levelFrameY * ScreenConstants.PLAY_SCREEN_HEIGHT;
-
-        float overshootFPS = ScreenConstants.TARGET_FPS;
-        while(running) {
-            timeDeltaSeconds = (currentTime - lastTime) * 1.0e-9;
-            if (timeDeltaSeconds > 1) {
-                lastTime = currentTime;
-                continue;
-            }
-            if (timeDeltaSeconds < 0) {
-                timeDeltaSeconds = 0;
-            }
-            timeSinceLastFrame += timeDeltaSeconds;
-            timeSinceLastTransitionMovement += timeDeltaSeconds;
-
-            Direction outOfBoundsDirection = currentLevel.playerOffScreen(levelFrameX * ScreenConstants.PLAY_SCREEN_WIDTH, levelFrameY * ScreenConstants.PLAY_SCREEN_HEIGHT);
-            if(outOfBoundsDirection == Direction.NONE) {
-                currentLevel.process(timeDeltaSeconds, input);
-                timeSinceLastTransitionMovement = 0;
-            }
-            else{
-                double transitionFrequency = 1/(outOfBoundsDirection.isVertical() ? ScreenConstants.TRANSITION_SPEED_VERTICAL : ScreenConstants.TRANSITION_SPEED_HORIZONTAL);
-                if(timeSinceLastTransitionMovement > transitionFrequency) {
-                    switch(outOfBoundsDirection) {
-                        case UP, DOWN:
-                            renderYOffset -= outOfBoundsDirection.toMovement();
-                            break;
-                        case LEFT, RIGHT:
-                            renderXOffset -= outOfBoundsDirection.toMovement();
-                            break;
+        Thread physicsThread = new Thread(() -> {
+            long lastTime = System.nanoTime();
+            double tps = 0;
+            double timeSinceLastTransitionMovement = 0;
+            try {
+                while (true) {
+                    long now = System.nanoTime();
+                    double deltaSeconds = (now - lastTime) * 1.0e-9;
+                    if (deltaSeconds > 1) {
+                        lastTime = now;
+                        continue;
                     }
-                    if (renderXOffset % ScreenConstants.PLAY_SCREEN_WIDTH == 0 && renderYOffset % ScreenConstants.PLAY_SCREEN_HEIGHT == 0) {
-                        switch(outOfBoundsDirection) {
-                            case UP:
-                                levelFrameY--;
-                                break;
-                            case DOWN:
-                                levelFrameY++;
-                                break;
-                            case LEFT:
-                                levelFrameX--;
-                                break;
-                            case RIGHT:
-                                levelFrameX++;
-                                break;
+                    if (deltaSeconds < 0) deltaSeconds = 0;
+                    timeSinceLastTransitionMovement += deltaSeconds;
+
+                    Direction outOfBoundsDirection = currentLevel.playerOffScreen(levelFrameX * ScreenConstants.PLAY_SCREEN_WIDTH, levelFrameY * ScreenConstants.PLAY_SCREEN_HEIGHT);
+                    if(outOfBoundsDirection == Direction.NONE) {
+                        currentLevel.process(deltaSeconds, input);
+                        timeSinceLastTransitionMovement = 0;
+                    }
+                    else{
+                        double transitionFrequency = 1/(outOfBoundsDirection.isVertical() ? ScreenConstants.TRANSITION_SPEED_VERTICAL : ScreenConstants.TRANSITION_SPEED_HORIZONTAL);
+                        if(timeSinceLastTransitionMovement > transitionFrequency) {
+                            switch(outOfBoundsDirection) {
+                                case UP, DOWN:
+                                    renderYOffset.addAndGet(-outOfBoundsDirection.toMovement());
+                                    break;
+                                case LEFT, RIGHT:
+                                    renderXOffset .addAndGet(-outOfBoundsDirection.toMovement());
+                                    break;
+                            }
+                            if (renderXOffset.get() % ScreenConstants.PLAY_SCREEN_WIDTH == 0 && renderYOffset.get() % ScreenConstants.PLAY_SCREEN_HEIGHT == 0) {
+                                switch(outOfBoundsDirection) {
+                                    case UP:
+                                        levelFrameY--;
+                                        break;
+                                    case DOWN:
+                                        levelFrameY++;
+                                        break;
+                                    case LEFT:
+                                        levelFrameX--;
+                                        break;
+                                    case RIGHT:
+                                        levelFrameX++;
+                                        break;
+                                }
+                            }
+                            timeSinceLastTransitionMovement -= transitionFrequency;
                         }
                     }
-                    timeSinceLastTransitionMovement -= transitionFrequency;
+                    lastTime = now;
+                    tps = tps * 0.9 + 0.1 * (1 / deltaSeconds);
+                    sharedTPS = tps;
+                    if (Double.isInfinite(tps)) tps = 0;
+                    if (Other.REDUCE_CPU_USAGE) Thread.sleep(5);
                 }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
-            if(timeSinceLastFrame >= 1/overshootFPS) {
-                screenBoundingBox.x = -renderXOffset;
-                screenBoundingBox.y = -renderYOffset;
+        });
 
-                screen.clear();
-                currentLevel.render(screen, renderXOffset, renderYOffset);
+        Thread renderThread = new Thread(() -> {
+            float fps = ScreenConstants.TARGET_FPS;
+            float overshootFPS = ScreenConstants.TARGET_FPS;
+            long lastFrameTime = System.nanoTime();
+            try {
+                while (true) {
+                    long now = System.nanoTime();
+                    double deltaSeconds = (now - lastFrameTime) * 1.0e-9;
+                    if (deltaSeconds < 1.0 / overshootFPS) continue;
 
-                currentLevel.applyPostShaders(screen);
+                    screenBoundingBox.x = -renderXOffset.get();
+                    screenBoundingBox.y = -renderYOffset.get();
 
-                screen.drawText(0, 0, 0, 0, Integer.MAX_VALUE, Other.VERSION_STRING, TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
-                screen.drawText(0, 1, 0, 0, Integer.MAX_VALUE, "FPS: " + df.format(fps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
-                screen.drawText(0, 2, 0, 0, Integer.MAX_VALUE, "TPS: " + df.format(tps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
+                    screen.clear();
+                    currentLevel.render(screen, renderXOffset.get(), renderYOffset.get());
+                    currentLevel.applyPostShaders(screen);
+                    screen.drawText(0, 0, 0, 0, Integer.MAX_VALUE, Other.VERSION_STRING, TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
+                    screen.drawText(0, 1, 0, 0, Integer.MAX_VALUE, "FPS: " + df.format(fps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
+                    screen.drawText(0, 2, 0, 0, Integer.MAX_VALUE, "TPS: " + df.format(sharedTPS), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
+                    screen.refresh();
 
-//                Line test
-//                screen.drawLine(10, 10, 20, 18, 0,0, Integer.MAX_VALUE, TextColor.ANSI.WHITE);
-                screen.refresh();
+                    fps = (float) (fps * 0.9f + 0.1f * (1f / deltaSeconds));
+                    overshootFPS = Math.max(ScreenConstants.TARGET_FPS, (ScreenConstants.TARGET_FPS - fps) + ScreenConstants.TARGET_FPS);
 
-                fps = (float) (fps * 0.9f + 0.1f * (1f/timeSinceLastFrame));
-                timeSinceLastFrame -= 1/ScreenConstants.TARGET_FPS;
+                    lastFrameTime = now;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+        });
 
-            //Complementary filter
-            tps = tps * 0.9 + 0.1 * (1/timeDeltaSeconds);
-            if (Double.isInfinite(tps)) {
-                tps = 0;
-            }
+        physicsThread.start();
+        renderThread.start();
 
+        while (true) {
             if (input.getKeyState(Keybinds.exit)) {
-                running = false;
+                physicsThread.interrupt();
+                renderThread.interrupt();
+                break;
             }
-
+            Thread.sleep(100); // Don't spin too hard
             terminal.requestFocusInWindow();
-
-            if (Other.REDUCE_CPU_USAGE) {
-                Thread.sleep(1);
-            }
-
-            overshootFPS = Math.max(ScreenConstants.TARGET_FPS, (ScreenConstants.TARGET_FPS - fps) + ScreenConstants.TARGET_FPS);
-
-            lastTime = currentTime;
-            currentTime = System.nanoTime();
         }
+
         terminal.close();
     }
 

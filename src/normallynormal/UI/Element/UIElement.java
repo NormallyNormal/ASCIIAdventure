@@ -11,4 +11,6 @@ public abstract class UIElement {
     public void render(DepthScreen screen) {
 
     }
+
+    public abstract void copyForRender();
 }

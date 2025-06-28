@@ -1,6 +1,7 @@
 package normallynormal.World;
 
 import java.util.*;
+import java.util.concurrent.Semaphore;
 
 import normallynormal.Render.Renderers.AbstractRenderer;
 import normallynormal.Render.Renderers.ConnectedTextureRenderer;
@@ -24,6 +25,8 @@ import normallynormal.Math.M4th;
 import normallynormal.World.Platform.Controller.WatchingPlatformController;
 
 public class Level {
+    Semaphore copyPermit = new Semaphore(1); // logic thread releases when done
+
     protected final List<WorldObject> worldObjects;
     protected final List<Entity> entities;
     private final Deque<Entity> entitiesToRemove;
@@ -42,7 +45,9 @@ public class Level {
 
     final ArrayList<Entity> onScreenEntities = new ArrayList<>();
 
-    public void process(double timeDeltaSeconds, Input input) {
+    public synchronized void process(double timeDeltaSeconds, Input input) throws InterruptedException {
+        //Wait until rendering values are copied.
+        copyPermit.acquire();
         runPlatformCollisions(player);
         player.process(timeDeltaSeconds, input);
         checkInsidePlatform(player);
@@ -71,11 +76,27 @@ public class Level {
         for (WorldObject worldObject : worldObjects) {
             worldObject.process(timeDeltaSeconds, this);
         }
+        copyPermit.release();
     }
 
     private int lastRenderOffsetX = 0;
     private int lastRenderOffsetY = 0;
-    public void render(DepthScreen screen, int xOffset, int yOffset) {
+    public synchronized void render(DepthScreen screen, int xOffset, int yOffset) throws InterruptedException {
+        //Wait until done processing the current physics tick
+        copyPermit.acquire();
+        for (Entity entity : entities) {
+            if (entity.isOnScreen())
+                entity.copyForRender();
+        }
+        player.copyForRender();
+        for (WorldObject worldObject : worldObjects) {
+            if (worldObject.isOnScreen())
+                worldObject.copyForRender();
+        }
+
+        ArrayList<Entity> renderEntities = new ArrayList<Entity>(entities);
+        copyPermit.release();
+
         lastRenderOffsetX = xOffset;
         lastRenderOffsetY = yOffset;
         for (WorldObject worldObject : worldObjects) {
@@ -83,7 +104,7 @@ public class Level {
                 worldObject.getRenderer().render(screen, xOffset, yOffset);
         }
         player.render(screen, xOffset, yOffset);
-        for (Entity entity : entities) {
+        for (Entity entity : renderEntities) {
             if (entity.isOnScreen())
                 entity.render(screen, xOffset, yOffset);
         }

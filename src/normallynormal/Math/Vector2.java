@@ -1,6 +1,8 @@
 package normallynormal.Math;
 
-public class Vector2 {
+import normallynormal.Util.DeepCopyable;
+
+public class Vector2 implements DeepCopyable<Vector2> {
     public double x, y;
     public Vector2(double x, double y) {
         this.x = x;
@@ -94,5 +96,17 @@ public class Vector2 {
                 "x=" + x +
                 ", y=" + y +
                 '}';
+    }
+
+    @Override
+    public Vector2 deepCopy() {
+        return new Vector2(x, y);
+    }
+
+    @Override
+    public Vector2 deepCopy(Vector2 vector2) {
+        vector2.x = x;
+        vector2.y = y;
+        return vector2;
     }
 }

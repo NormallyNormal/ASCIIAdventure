@@ -5,17 +5,23 @@ import com.googlecode.lanterna.TextColor;
 import normallynormal.Game;
 import normallynormal.Math.AABB;
 import normallynormal.Render.DepthScreen;
+import normallynormal.Util.BufferedPrimitiveSupplier;
 
 import java.util.function.Supplier;
 
 public class BouncePadRenderer extends AbstractRenderer {
-    private final Supplier<Long> glowTimeSupplier;
+    private final BufferedPrimitiveSupplier<Long> glowTimeSupplier;
 
     private static final TextCharacter[] fades = {new TextCharacter('█', TextColor.ANSI.MAGENTA_BRIGHT, TextColor.ANSI.MAGENTA), new TextCharacter('▓', TextColor.ANSI.MAGENTA_BRIGHT, TextColor.ANSI.MAGENTA), new TextCharacter('▒', TextColor.ANSI.MAGENTA_BRIGHT, TextColor.ANSI.MAGENTA), new TextCharacter('░', TextColor.ANSI.MAGENTA_BRIGHT, TextColor.ANSI.MAGENTA), new TextCharacter(' ', TextColor.ANSI.MAGENTA_BRIGHT, TextColor.ANSI.MAGENTA)};
 
     public BouncePadRenderer(Supplier<AABB> visibilityBoxSupplier, Supplier<Long> glowTimeSupplier) {
         super(visibilityBoxSupplier);
-        this.glowTimeSupplier = glowTimeSupplier;
+        this.glowTimeSupplier = new BufferedPrimitiveSupplier<>(glowTimeSupplier);
+    }
+
+    public void copyForRender() {
+        glowTimeSupplier.buffer();
+        super.copyForRender();
     }
 
     public void render(DepthScreen screen, int xOffset, int yOffset) {

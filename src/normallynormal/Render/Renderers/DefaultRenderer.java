@@ -19,20 +19,20 @@ public class DefaultRenderer extends AbstractRenderer {
     protected static final TextCharacter EMPTY = new TextCharacter(' ', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK_BRIGHT);
 
     public void render(DepthScreen screen, int xOffset, int yOffset) {
-        AABB collisionBox = visibilityBoxSupplier.get();
-        for (int i = 0; i <= collisionBox.w - 1; i++) {
-            for (int j = 0; j <= collisionBox.h - 1; j++) {
+        AABB visibilityBox = visibilityBoxSupplier.get();
+        for (int i = 0; i <= visibilityBox.w - 1; i++) {
+            for (int j = 0; j <= visibilityBox.h - 1; j++) {
                 TextCharacter filler = EMPTY;
-                if (i == 0 || i == (int)collisionBox.w - 1) {
+                if (i == 0 || i == (int)visibilityBox.w - 1) {
                     filler = VERTICAL_BORDER;
-                    if (j == 0 || j == (int)collisionBox.h - 1) {
+                    if (j == 0 || j == (int)visibilityBox.h - 1) {
                         filler = CORNER;
                     }
                 }
-                else if (j == 0 || j == (int)collisionBox.h - 1) {
+                else if (j == 0 || j == (int)visibilityBox.h - 1) {
                     filler = HORIZONTAL_BORDER;
                 }
-                screen.setCharacterWithDepth((int)collisionBox.x + i, (int)collisionBox.y + j, xOffset, yOffset, 0, filler);
+                screen.setCharacterWithDepth((int)visibilityBox.x + i, (int)visibilityBox.y + j, xOffset, yOffset, 0, filler);
             }
         }
     }

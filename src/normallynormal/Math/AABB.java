@@ -1,6 +1,8 @@
 package normallynormal.Math;
 
-public class AABB {
+import normallynormal.Util.DeepCopyable;
+
+public class AABB implements DeepCopyable<AABB> {
     public double x,y,w,h;
     public AABB(double x,double y, double w, double h) {
         this.x = x;
@@ -117,5 +119,19 @@ public class AABB {
                 ", w=" + w +
                 ", h=" + h +
                 '}';
+    }
+
+    @Override
+    public AABB deepCopy() {
+        return new AABB(x, y, w, h);
+    }
+
+    @Override
+    public AABB deepCopy(AABB aabb) {
+        aabb.x = x;
+        aabb.y = y;
+        aabb.w = w;
+        aabb.h = h;
+        return aabb;
     }
 }

@@ -5,6 +5,7 @@ import com.googlecode.lanterna.TextColor;
 import normallynormal.Game;
 import normallynormal.Input.Input;
 import normallynormal.Math.M4th;
+import normallynormal.Math.Vector2;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
 import normallynormal.World.Level;
@@ -54,13 +55,23 @@ public class Orb extends Entity {
         }
     }
 
+    Vector2 render_position = position.deepCopy();
+    int render_depth = depth;
+    double render_timeUntilRefresh = timeUntilRefresh;
+    @Override
+    public void copyForRender() {
+        render_position = position.deepCopy(render_position);
+        render_depth = depth;
+        render_timeUntilRefresh = timeUntilRefresh;
+    }
+
     @Override
     public void render(DepthScreen screen, int xOffset, int yOffset) {
         if (orbType == OrbType.DASH) {
-            screen.setCharacterWithDepth((int) position.x + 1, (int) position.y + 1, xOffset, yOffset, depth, timeUntilRefresh <= 0 ? dashOrb : dashOrbEmpty);
+            screen.setCharacterWithDepth((int) render_position.x + 1, (int) render_position.y + 1, xOffset, yOffset, render_depth, render_timeUntilRefresh <= 0 ? dashOrb : dashOrbEmpty);
         }
         if (orbType == OrbType.DOUBLE_JUMP) {
-            screen.setCharacterWithDepth((int) position.x + 1, (int) position.y + 1, xOffset, yOffset, depth, timeUntilRefresh <= 0 ? doubleJumpOrb : doubleJumpOrbEmpty);
+            screen.setCharacterWithDepth((int) render_position.x + 1, (int) render_position.y + 1, xOffset, yOffset, render_depth, render_timeUntilRefresh <= 0 ? doubleJumpOrb : doubleJumpOrbEmpty);
         }
     }
 }

@@ -70,4 +70,8 @@ public abstract class WorldObject implements CollisionObject, Identifiable {
     public void setRenderer(AbstractRenderer renderer) {
         this.renderer = renderer;
     }
+
+    public void copyForRender() {
+        renderer.copyForRender();
+    };
 }

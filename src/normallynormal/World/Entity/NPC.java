@@ -2,6 +2,7 @@ package normallynormal.World.Entity;
 
 import normallynormal.Input.Input;
 import normallynormal.Math.AABB;
+import normallynormal.Math.Vector2;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
 import normallynormal.UI.Element.DialogueBox;
@@ -33,13 +34,22 @@ public class NPC extends Entity {
         }
     }
 
+    Vector2 render_position = position.deepCopy();
+    int render_depth = depth;
+    @Override
+    public void copyForRender() {
+        render_position = position.deepCopy(render_position);
+        render_depth = depth;
+        dialogueBox.copyForRender();
+    }
+
     @Override
     public void render(DepthScreen screen, int xOffset, int yOffset) {
         if (Game.gameTime() % 1000 < 500) {
-            screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('█', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
+            screen.setCharacterWithDepth((int) render_position.x, (int) render_position.y, xOffset, yOffset, render_depth, new TextCharacter('█', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
         }
         else {
-            screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('▇', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
+            screen.setCharacterWithDepth((int) render_position.x, (int) render_position.y, xOffset, yOffset, render_depth, new TextCharacter('▇', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
         }
 
         if(dbEnabled) {
