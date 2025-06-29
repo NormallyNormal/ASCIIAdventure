@@ -3,6 +3,7 @@ package normallynormal.Render.Renderers;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 import normallynormal.Game;
+import normallynormal.GameManager;
 import normallynormal.Math.AABB;
 import normallynormal.Render.DepthScreen;
 
@@ -35,7 +36,7 @@ public class RainbowRenderer extends AbstractRenderer {
         AABB collisionBox = visibilityBoxSupplier.get();
         for (int i = 0; i <= collisionBox.w - 1; i++) {
             for (int j = 0; j <= collisionBox.h - 1; j++) {
-                screen.setCharacterWithDepth((int) collisionBox.x + i, (int) collisionBox.y + j, xOffset, yOffset, 0, rainbowChars.get(((int) collisionBox.x + i + (Game.gameTime() / 100)) % rainbowChars.size()));
+                screen.setCharacterWithDepth((int) collisionBox.x + i, (int) collisionBox.y + j, xOffset, yOffset, 0, rainbowChars.get(((int) collisionBox.x + i + (GameManager.gameTime() / 100)) % rainbowChars.size()));
             }
         }
     }

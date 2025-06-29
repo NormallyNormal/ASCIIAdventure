@@ -1,5 +1,6 @@
 package normallynormal.World.Platform;
 import normallynormal.Game;
+import normallynormal.GameManager;
 import normallynormal.Render.Renderers.AbstractRenderer;
 import normallynormal.Render.Renderers.DefaultRenderer;
 import normallynormal.World.*;
@@ -60,7 +61,7 @@ public abstract class WorldObject implements CollisionObject, Identifiable {
     }
 
     public boolean isOnScreen() {
-        return visibilityBox.overlaps(Game.screenBoundingBox);
+        return visibilityBox.overlaps(GameManager.screenBoundingBox);
     }
 
     public AbstractRenderer getRenderer() {

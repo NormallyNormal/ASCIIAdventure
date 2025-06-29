@@ -1,5 +1,6 @@
 package normallynormal.World.Entity;
 
+import normallynormal.GameManager;
 import normallynormal.Input.Input;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
@@ -138,7 +139,7 @@ public class Player extends Entity implements GlowingEntity {
                 if (lastDashXPos != Integer.MIN_VALUE) {
                     int particlesToCreate = (int) Math.floor(position.x) - lastDashXPos;
                     for (int i = 0; Math.abs(i) <= Math.abs(particlesToCreate); i = particlesToCreate > 0 ? i + 1 : i - 1) {
-                        Game.currentLevel.addEntity(new DashParticle(new Vector2(this.position.x + i + 0.5, this.position.y + 0.5)));
+                        GameManager.currentLevel.addEntity(new DashParticle(new Vector2(this.position.x + i + 0.5, this.position.y + 0.5)));
                     }
                 }
                 lastDashXPos = (int)Math.floor(position.x);
@@ -181,8 +182,8 @@ public class Player extends Entity implements GlowingEntity {
             velocity.y = isGravityDownward() ? Math.min(velocity.y, -DOUBLE_JUMP_SPEED) : Math.max(velocity.y, DOUBLE_JUMP_SPEED);
             stopVerticalVelocityAllowed = false;
             hasDashCharge = false;
-            Game.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.LEFT));
-            Game.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.RIGHT));
+            GameManager.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.LEFT));
+            GameManager.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.RIGHT));
         }
     }
 

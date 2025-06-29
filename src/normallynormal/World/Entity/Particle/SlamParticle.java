@@ -1,5 +1,6 @@
 package normallynormal.World.Entity.Particle;
 
+import normallynormal.GameManager;
 import normallynormal.Input.Input;
 import normallynormal.Math.AABB;
 import normallynormal.Math.Direction;
@@ -33,7 +34,7 @@ public class SlamParticle extends Entity {
     public void process(double timeDelta, Input input) {
         fadeTime -= timeDelta;
         if (fadeTime <= 0) {
-            Game.currentLevel.removeEntity(this);
+            GameManager.currentLevel.removeEntity(this);
         }
         if (ground) {
             if (direction == Direction.LEFT) {

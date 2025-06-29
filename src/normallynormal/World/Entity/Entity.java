@@ -1,5 +1,6 @@
 package normallynormal.World.Entity;
 
+import normallynormal.GameManager;
 import normallynormal.Input.Input;
 import normallynormal.World.CollisionObject;
 import normallynormal.Game;
@@ -270,7 +271,7 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
     }
 
     public boolean isOnScreen() {
-        return collisionBox.overlaps(Game.screenBoundingBox);
+        return collisionBox.overlaps(GameManager.screenBoundingBox);
     }
 
     public void bounce() {

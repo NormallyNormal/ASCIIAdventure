@@ -2,6 +2,7 @@ package normallynormal.UI.Element;
 
 import normallynormal.Constants.ScreenConstants;
 import normallynormal.Game;
+import normallynormal.GameManager;
 import normallynormal.Input.Input;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Settings.Keybinds;
@@ -27,7 +28,7 @@ public class DialogueBox extends UIElement {
     }
 
     public void reset() {
-        stageUpdateTime = Game.gameTime();
+        stageUpdateTime = GameManager.gameTime();
         stage = 0;
         charsToDrawNum = 0;
     }
@@ -40,7 +41,7 @@ public class DialogueBox extends UIElement {
     public void process (double timeDelta, Input input) {
         hasCharsLeft = charsToDrawNum < colorfulText.get(stage).length();
         if (hasCharsLeft) {
-            charsToDrawNum = (int) (Game.gameTime() - stageUpdateTime) / (int) (timePerChar * 1000);
+            charsToDrawNum = (int) (GameManager.gameTime() - stageUpdateTime) / (int) (timePerChar * 1000);
         }
         boolean nextKeyPressed = input.getKeyState(Keybinds.dialogue_next);
         if (nextKeyPressed && !keyHeld) {
@@ -49,7 +50,7 @@ public class DialogueBox extends UIElement {
             }
             else {
                 if (stage < text.length - 1) stage++;
-                stageUpdateTime = Game.gameTime();
+                stageUpdateTime = GameManager.gameTime();
                 charsToDrawNum = 0;
             }
             keyHeld = true;
@@ -70,7 +71,7 @@ public class DialogueBox extends UIElement {
     @Override
     public void render (DepthScreen screen) {
         String nextText = KeyEvent.getKeyText(Keybinds.dialogue_next);
-        if (render_hasCharsLeft || Game.gameTime()  % 500 < 250) {
+        if (render_hasCharsLeft || GameManager.gameTime()  % 500 < 250) {
             nextText = " [" + nextText + "] ";
         }
         else {

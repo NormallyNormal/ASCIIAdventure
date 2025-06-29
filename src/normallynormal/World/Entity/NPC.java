@@ -1,5 +1,6 @@
 package normallynormal.World.Entity;
 
+import normallynormal.GameManager;
 import normallynormal.Input.Input;
 import normallynormal.Math.AABB;
 import normallynormal.Math.Vector2;
@@ -22,7 +23,7 @@ public class NPC extends Entity {
 
     @Override
     public void process(double timeDelta, Input input) {
-        if (Game.currentLevel.playerNear(this.position, 5)) {
+        if (GameManager.currentLevel.playerNear(this.position, 5)) {
             if (!dbEnabled) {
                 dialogueBox.reset();
             }
@@ -45,7 +46,7 @@ public class NPC extends Entity {
 
     @Override
     public void render(DepthScreen screen, int xOffset, int yOffset) {
-        if (Game.gameTime() % 1000 < 500) {
+        if (GameManager.gameTime() % 1000 < 500) {
             screen.setCharacterWithDepth((int) render_position.x, (int) render_position.y, xOffset, yOffset, render_depth, new TextCharacter('█', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT));
         }
         else {

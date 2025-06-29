@@ -1,5 +1,6 @@
 package normallynormal.World.Entity.Particle;
 
+import normallynormal.GameManager;
 import normallynormal.Input.Input;
 import normallynormal.Math.AABB;
 import normallynormal.Render.DepthScreen;
@@ -25,7 +26,7 @@ public class ExtraJumpParticle extends Entity {
     public void process(double timeDelta, Input input) {
         fadeTime -= timeDelta;
         if (fadeTime <= 0) {
-            Game.currentLevel.removeEntity(this);
+            GameManager.currentLevel.removeEntity(this);
         }
         if (direction == Direction.LEFT) {
             position.x -= 20 * timeDelta;
