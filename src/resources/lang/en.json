@@ -1,0 +1,10 @@
+{
+  "game.title" : "ASCII Adventure",
+  "dialog.demo_npc.1" : "Hello!",
+  "dialog.demo_npc.2" : "This is just placeholder text for the demo level to show how NPCs work.",
+  "dialog.demo_npc.3" : "Also, text can have special <RED>COLORS<DEFAULT> and <BLUE_BRIGHT>COLORS<DEFAULT>.",
+  "dialog.demo_npc.4" : "That way, an NPC could emphasize certain important things...",
+  "dialog.demo_npc.5" : "Did you know you can press up again after jumping to <GREEN>double jump<DEFAULT>?",
+  "dialog.demo_npc.6" : "You can also press shift to <BLUE_BRIGHT>dash<DEFAULT>.",
+  "dialog.demo_npc.7" : "That's all I have to say. If you keep talking to me, I'll just repeat this line again."
+}

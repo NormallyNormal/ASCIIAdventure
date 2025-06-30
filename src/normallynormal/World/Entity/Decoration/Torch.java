@@ -1,6 +1,7 @@
 package normallynormal.World.Entity.Decoration;
 
 import normallynormal.Game;
+import normallynormal.GameManager;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
 import normallynormal.World.Entity.Entity;
@@ -18,18 +19,26 @@ public class Torch extends Entity implements GlowingEntity {
 
     @Override
     public double glowRadius() {
-        return 20 + 0.5 * Math.sin(Game.gameTime() / 50.0);
+        return 20 + 0.5 * Math.sin(GameManager.gameTime() / 50.0);
+    }
+
+    Vector2 render_position = position.deepCopy();
+    int render_depth = depth;
+    @Override
+    public void copyForRender() {
+        render_position = position.deepCopy(render_position);
+        render_depth = depth;
     }
 
     @Override
     public void render(DepthScreen screen, int xOffset, int yOffset) {
-        boolean leftFlame = Game.gameTime() % 200 < 99;
-        screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('▽', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
+        boolean leftFlame = GameManager.gameTime() % 200 < 99;
+        screen.setCharacterWithDepth((int) render_position.x, (int) render_position.y, xOffset, yOffset, render_depth, new TextCharacter('▽', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
         if (leftFlame) {
-            screen.setCharacterWithDepth((int) position.x, (int) position.y - 1, xOffset, yOffset, depth, new TextCharacter('◣', TextColor.ANSI.YELLOW, TransparentColor.TRANSPARENT));
+            screen.setCharacterWithDepth((int) render_position.x, (int) render_position.y - 1, xOffset, yOffset, render_depth, new TextCharacter('◣', TextColor.ANSI.YELLOW, TransparentColor.TRANSPARENT));
         }
         else {
-            screen.setCharacterWithDepth((int) position.x, (int) position.y - 1, xOffset, yOffset, depth, new TextCharacter('◢', TextColor.ANSI.YELLOW, TransparentColor.TRANSPARENT));
+            screen.setCharacterWithDepth((int) render_position.x, (int) render_position.y - 1, xOffset, yOffset, render_depth, new TextCharacter('◢', TextColor.ANSI.YELLOW, TransparentColor.TRANSPARENT));
         }
     }
 }

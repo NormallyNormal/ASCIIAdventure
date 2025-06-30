@@ -1,5 +1,6 @@
 package normallynormal.World.Entity;
 
+import normallynormal.GameManager;
 import normallynormal.Input.Input;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
@@ -138,7 +139,7 @@ public class Player extends Entity implements GlowingEntity {
                 if (lastDashXPos != Integer.MIN_VALUE) {
                     int particlesToCreate = (int) Math.floor(position.x) - lastDashXPos;
                     for (int i = 0; Math.abs(i) <= Math.abs(particlesToCreate); i = particlesToCreate > 0 ? i + 1 : i - 1) {
-                        Game.currentLevel.addEntity(new DashParticle(new Vector2(this.position.x + i + 0.5, this.position.y + 0.5)));
+                        GameManager.currentLevel.addEntity(new DashParticle(new Vector2(this.position.x + i + 0.5, this.position.y + 0.5)));
                     }
                 }
                 lastDashXPos = (int)Math.floor(position.x);
@@ -181,8 +182,8 @@ public class Player extends Entity implements GlowingEntity {
             velocity.y = isGravityDownward() ? Math.min(velocity.y, -DOUBLE_JUMP_SPEED) : Math.max(velocity.y, DOUBLE_JUMP_SPEED);
             stopVerticalVelocityAllowed = false;
             hasDashCharge = false;
-            Game.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.LEFT));
-            Game.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.RIGHT));
+            GameManager.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.LEFT));
+            GameManager.currentLevel.addEntity(new ExtraJumpParticle(new Vector2(this.position.x + 0.5, this.position.y + 0.5), Direction.RIGHT));
         }
     }
 
@@ -268,38 +269,50 @@ public class Player extends Entity implements GlowingEntity {
     private static final TextCharacter CHAR_TOP_RIGHT = new TextCharacter('▝', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT);
     private static final TextCharacter CHAR_TOP_LEFT = new TextCharacter('▘', TextColor.ANSI.WHITE, TransparentColor.TRANSPARENT);
 
+    Vector2 render_position = position.deepCopy();
+    boolean render_dead = dead;
+    double render_timeDead = timeDead;
+    int render_depth = depth;
+
+    public void copyForRender() {
+        render_position = position.deepCopy(render_position);
+        render_dead = dead;
+        render_timeDead = timeDead;
+        render_depth = depth;
+    }
+
     @Override
     public void render(DepthScreen screen, int xOffset, int yOffset) {
-        Vector2 position = Vector2.add(this.position, new Vector2(0.5, 0.5));
-        boolean half_x = position.x % 1 > 0.75 || position.x % 1 < 0.25;
-        boolean half_y = position.y % 1 > 0.75 || position.y % 1 < 0.25;
+        Vector2 render_position = Vector2.add(this.render_position, new Vector2(0.5, 0.5));
+        boolean half_x = render_position.x % 1 > 0.75 || render_position.x % 1 < 0.25;
+        boolean half_y = render_position.y % 1 > 0.75 || render_position.y % 1 < 0.25;
 
-        double round_x = Math.round(position.x);
-        double round_y = Math.round(position.y);
+        double round_x = Math.round(render_position.x);
+        double round_y = Math.round(render_position.y);
 
-        if (dead) {
-            if (timeDead < 0.15)
-                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, CHAR_FULL);
-            else if (timeDead < 0.3)
-                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, CHAR_DARK_SHADE);
-            else if (timeDead < 0.45)
-                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, CHAR_MEDIUM_SHADE);
-            else if (timeDead < 0.6)
-                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, CHAR_LIGHT_SHADE);
+        if (render_dead) {
+            if (render_timeDead < 0.15)
+                screen.setCharacterWithDepth((int) render_position.x, (int) render_position.y, xOffset, yOffset, render_depth, CHAR_FULL);
+            else if (render_timeDead < 0.3)
+                screen.setCharacterWithDepth((int) render_position.x, (int) render_position.y, xOffset, yOffset, render_depth, CHAR_DARK_SHADE);
+            else if (render_timeDead < 0.45)
+                screen.setCharacterWithDepth((int) render_position.x, (int) render_position.y, xOffset, yOffset, render_depth, CHAR_MEDIUM_SHADE);
+            else if (render_timeDead < 0.6)
+                screen.setCharacterWithDepth((int) render_position.x, (int) render_position.y, xOffset, yOffset, render_depth, CHAR_LIGHT_SHADE);
         } else {
             if (!half_x && !half_y) {
-                screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, CHAR_FULL);
+                screen.setCharacterWithDepth((int) render_position.x, (int) render_position.y, xOffset, yOffset, render_depth, CHAR_FULL);
             } else if (half_x && !half_y) {
-                screen.setCharacterWithDepth((int) round_x - 1, (int) position.y, xOffset, yOffset, depth, CHAR_RIGHT_HALF);
-                screen.setCharacterWithDepth((int) round_x, (int) position.y, xOffset, yOffset, depth, CHAR_LEFT_HALF);
+                screen.setCharacterWithDepth((int) round_x - 1, (int) render_position.y, xOffset, yOffset, render_depth, CHAR_RIGHT_HALF);
+                screen.setCharacterWithDepth((int) round_x, (int) render_position.y, xOffset, yOffset, render_depth, CHAR_LEFT_HALF);
             } else if (!half_x) {
-                screen.setCharacterWithDepth((int) position.x, (int) round_y - 1, xOffset, yOffset, depth, CHAR_LOWER_HALF);
-                screen.setCharacterWithDepth((int) position.x, (int) round_y, xOffset, yOffset, depth, CHAR_UPPER_HALF);
+                screen.setCharacterWithDepth((int) render_position.x, (int) round_y - 1, xOffset, yOffset, render_depth, CHAR_LOWER_HALF);
+                screen.setCharacterWithDepth((int) render_position.x, (int) round_y, xOffset, yOffset, render_depth, CHAR_UPPER_HALF);
             } else {
-                screen.setCharacterWithDepth((int) round_x - 1, (int) round_y - 1, xOffset, yOffset, depth, CHAR_BOTTOM_RIGHT);
-                screen.setCharacterWithDepth((int) round_x, (int) round_y - 1, xOffset, yOffset, depth, CHAR_BOTTOM_LEFT);
-                screen.setCharacterWithDepth((int) round_x - 1, (int) round_y, xOffset, yOffset, depth, CHAR_TOP_RIGHT);
-                screen.setCharacterWithDepth((int) round_x, (int) round_y, xOffset, yOffset, depth, CHAR_TOP_LEFT);
+                screen.setCharacterWithDepth((int) round_x - 1, (int) round_y - 1, xOffset, yOffset, render_depth, CHAR_BOTTOM_RIGHT);
+                screen.setCharacterWithDepth((int) round_x, (int) round_y - 1, xOffset, yOffset, render_depth, CHAR_BOTTOM_LEFT);
+                screen.setCharacterWithDepth((int) round_x - 1, (int) round_y, xOffset, yOffset, render_depth, CHAR_TOP_RIGHT);
+                screen.setCharacterWithDepth((int) round_x, (int) round_y, xOffset, yOffset, render_depth, CHAR_TOP_LEFT);
             }
         }
     }

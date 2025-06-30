@@ -2,6 +2,7 @@ package normallynormal.UI.Element;
 
 import normallynormal.Constants.ScreenConstants;
 import normallynormal.Game;
+import normallynormal.GameManager;
 import normallynormal.Input.Input;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Settings.Keybinds;
@@ -27,7 +28,7 @@ public class DialogueBox extends UIElement {
     }
 
     public void reset() {
-        stageUpdateTime = Game.gameTime();
+        stageUpdateTime = GameManager.gameTime();
         stage = 0;
         charsToDrawNum = 0;
     }
@@ -40,7 +41,7 @@ public class DialogueBox extends UIElement {
     public void process (double timeDelta, Input input) {
         hasCharsLeft = charsToDrawNum < colorfulText.get(stage).length();
         if (hasCharsLeft) {
-            charsToDrawNum = (int) (Game.gameTime() - stageUpdateTime) / (int) (timePerChar * 1000);
+            charsToDrawNum = (int) (GameManager.gameTime() - stageUpdateTime) / (int) (timePerChar * 1000);
         }
         boolean nextKeyPressed = input.getKeyState(Keybinds.dialogue_next);
         if (nextKeyPressed && !keyHeld) {
@@ -49,7 +50,7 @@ public class DialogueBox extends UIElement {
             }
             else {
                 if (stage < text.length - 1) stage++;
-                stageUpdateTime = Game.gameTime();
+                stageUpdateTime = GameManager.gameTime();
                 charsToDrawNum = 0;
             }
             keyHeld = true;
@@ -59,10 +60,18 @@ public class DialogueBox extends UIElement {
         }
     }
 
+    boolean render_hasCharsLeft = hasCharsLeft;
+    int render_stage = stage;
+    @Override
+    public void copyForRender() {
+        render_hasCharsLeft = hasCharsLeft;
+        render_stage = stage;
+    }
+
     @Override
     public void render (DepthScreen screen) {
         String nextText = KeyEvent.getKeyText(Keybinds.dialogue_next);
-        if (hasCharsLeft || Game.gameTime()  % 500 < 250) {
+        if (render_hasCharsLeft || GameManager.gameTime()  % 500 < 250) {
             nextText = " [" + nextText + "] ";
         }
         else {
@@ -83,7 +92,7 @@ public class DialogueBox extends UIElement {
                 screen.setCharacterWithDepth(7 + i, 3 + j, 0, 0, 1000, new TextCharacter(filler, TextColor.ANSI.BLACK_BRIGHT, TextColor.ANSI.BLACK));
             }
         }
-        screen.drawTextAdvanced(8, 4, 0, 0, 1000, colorfulText.get(stage), TextColor.ANSI.WHITE, TextColor.ANSI.BLACK, ScreenConstants.PLAY_SCREEN_WIDTH - 16 - 2, charsToDrawNum);
+        screen.drawTextAdvanced(8, 4, 0, 0, 1000, colorfulText.get(render_stage), TextColor.ANSI.WHITE, TextColor.ANSI.BLACK, ScreenConstants.PLAY_SCREEN_WIDTH - 16 - 2, charsToDrawNum);
         screen.drawText(ScreenConstants.PLAY_SCREEN_WIDTH - 8 - 2 - nextText.length(),9, 0, 0, 1000, nextText, TextColor.ANSI.WHITE, TextColor.ANSI.BLACK);
     }
 }

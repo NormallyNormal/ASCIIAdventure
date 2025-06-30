@@ -11,6 +11,9 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import normallynormal.Settings.Sound;
+import org.tinylog.Logger;
+
 public class AudioPlayer {
     static Map<String, Clip> audio = new HashMap<>();
 
@@ -18,7 +21,7 @@ public class AudioPlayer {
         try {
             InputStream indexStream = Game.class.getResourceAsStream("/resources/sounds/sounds.txt");
             if (indexStream == null) {
-                System.err.println("Missing sounds.txt");
+                Logger.error("Missing sounds.txt");
                 return;
             }
 
@@ -29,7 +32,8 @@ public class AudioPlayer {
                     String key = path.replace("/", ".").replaceAll("\\.wav$", "");
                     URL audioURL = Game.class.getResource("/resources/sounds/" + path);
                     if (audioURL == null) {
-                        System.err.println("Missing: " + path);
+                        Logger.error("Missing sound: " + path);
+                        System.err.println();
                         continue;
                     }
 
@@ -37,9 +41,9 @@ public class AudioPlayer {
                     Clip clip = AudioSystem.getClip();
                     clip.open(audioStream);
                     audio.put(key, clip);
-                    System.out.println("Loaded: " + key);
+                    Logger.info("Loaded sound: " + key);
                 } catch (Exception e) {
-                    System.err.println("Failed to load " + path + ": " + e.getMessage());
+                    Logger.error("Failed to load sound: " + path + ", caused by: " + e.getMessage());
                 }
             }
         } catch (IOException e) {
@@ -51,11 +55,28 @@ public class AudioPlayer {
         Clip clip = audio.get(audioName);
         if (clip != null) {
             if (clip.isRunning()) clip.stop();
-            clip.setFramePosition(0);
-            clip.start();
+            playWithVolume(clip, getVolumeForCategory(audioName));
         } else {
             System.err.println("Audio not found: " + audioName);
         }
+    }
+
+    private static double getVolumeForCategory(String audioName) {
+        int dotIndex = audioName.indexOf('.');
+        String audioType = (dotIndex != -1) ? audioName.substring(0, dotIndex) : audioName;
+        if (audioType.equals("player")) {
+            return Sound.PLAYER_VOLUME;
+        }
+        return 1;
+    }
+
+    private static void playWithVolume(Clip clip, double volume) {
+        clip.setFramePosition(0);
+        if (volume < 0f || volume > 1f)
+            throw new IllegalArgumentException("Volume not valid: " + volume);
+        FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+        gainControl.setValue(20f * (float) Math.log10(volume));
+        clip.start();
     }
 }
 

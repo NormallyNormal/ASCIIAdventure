@@ -3,15 +3,17 @@ package normallynormal.Render.Renderers;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 import normallynormal.Game;
+import normallynormal.GameManager;
 import normallynormal.Math.AABB;
 import normallynormal.Math.Direction;
 import normallynormal.Render.DepthScreen;
+import normallynormal.Util.BufferedPrimitiveSupplier;
 
 import java.util.function.Supplier;
 
 public class ConveyorRenderer extends AbstractRenderer {
-    private final Supplier<Direction> directionSupplier;
-    private final Supplier<Double> speedSupplier;
+    private final BufferedPrimitiveSupplier<Direction> directionSupplier;
+    private final BufferedPrimitiveSupplier<Double> speedSupplier;
 
     private static final TextColor DARK_GREY = new TextColor.RGB(20, 20, 20);
     private static final TextCharacter VERTICAL_LINE = new TextCharacter('|', TextColor.ANSI.BLACK_BRIGHT, DARK_GREY);
@@ -29,8 +31,14 @@ public class ConveyorRenderer extends AbstractRenderer {
     public ConveyorRenderer(Supplier<AABB> visibilityBoxSupplier, Supplier<Direction> directionSupplier, Supplier<Double> speedSupplier) {
         super(visibilityBoxSupplier);
 
-        this.directionSupplier = directionSupplier;
-        this.speedSupplier = speedSupplier;
+        this.directionSupplier = new BufferedPrimitiveSupplier<>(directionSupplier);
+        this.speedSupplier = new BufferedPrimitiveSupplier<>(speedSupplier);
+    }
+
+    public void copyForRender() {
+        directionSupplier.buffer();
+        super.copyForRender();
+        speedSupplier.buffer();
     }
 
     @Override
@@ -38,7 +46,7 @@ public class ConveyorRenderer extends AbstractRenderer {
         AABB collisionBox = visibilityBoxSupplier.get();
         Direction direction = directionSupplier.get();
         double speed = speedSupplier.get();
-        int offset = (((Game.gameTime() * (int)speed) / 1000));
+        int offset = (((GameManager.gameTime() * (int)speed) / 1000));
         switch (direction) {
             case LEFT:
                 for (int i = 0; i <= collisionBox.w - 1; i++) {

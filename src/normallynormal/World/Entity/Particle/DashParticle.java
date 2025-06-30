@@ -1,5 +1,6 @@
 package normallynormal.World.Entity.Particle;
 
+import normallynormal.GameManager;
 import normallynormal.Input.Input;
 import normallynormal.Math.AABB;
 import normallynormal.Render.DepthScreen;
@@ -25,27 +26,58 @@ public class DashParticle extends Entity {
     public void process(double timeDelta, Input input) {
         fadeTime -= timeDelta;
         if (fadeTime <= 0) {
-            Game.currentLevel.removeEntity(this);
+            GameManager.currentLevel.removeEntity(this);
         }
     }
+
+    private Vector2 render_position = position.deepCopy();
+    private double render_fadeTime;
+    private int render_depth;
+    public void copyForRender() {
+        render_position = position.deepCopy(render_position);
+        render_fadeTime = fadeTime;
+        render_depth = depth;
+    }
+
 
     TextColor[] wokeColors = {TextColor.ANSI.CYAN_BRIGHT, TextColor.ANSI.MAGENTA_BRIGHT, TextColor.ANSI.WHITE};
     TextColor[] prideColors = {TextColor.ANSI.RED, TextColor.ANSI.RED_BRIGHT, TextColor.ANSI.YELLOW_BRIGHT, TextColor.ANSI.GREEN, TextColor.ANSI.BLUE_BRIGHT, TextColor.ANSI.MAGENTA};
     @Override
     public void render(DepthScreen screen, int xOffset, int yOffset) {
-        boolean upperHalf = position.y % 1 > 0.75;
-        boolean half_y = upperHalf || position.y % 1 < 0.25;
+        boolean upperHalf = render_position.y % 1 > 0.75;
+        boolean half_y = upperHalf || render_position.y % 1 < 0.25;
+
         TextColor renderColor;
         if (!Other.WOKE_MODE) {
-            renderColor = fadeTime < 0.09 ? TextColor.ANSI.BLUE : TextColor.ANSI.BLUE_BRIGHT;
-        }
-        else {
-            renderColor = prideColors[(int)(position.x/2) % 6];
-        }
-        if (half_y) {
-            screen.setCharacterWithDepth((int) position.x, upperHalf ? (int) position.y : (int) position.y - 1, xOffset, yOffset, depth, new TextCharacter('ˍ', renderColor, TransparentColor.TRANSPARENT));
+            renderColor = render_fadeTime < 0.09
+                    ? TextColor.ANSI.BLUE
+                    : TextColor.ANSI.BLUE_BRIGHT;
         } else {
-            screen.setCharacterWithDepth((int) position.x, (int) position.y, xOffset, yOffset, depth, new TextCharacter('-', renderColor, TransparentColor.TRANSPARENT));
+            renderColor = prideColors[(int)(render_position.x / 2) % 6];
+        }
+
+        int drawY = upperHalf
+                ? (int) render_position.y
+                : (int) render_position.y - 1;
+
+        if (half_y) {
+            screen.setCharacterWithDepth(
+                    (int) render_position.x,
+                    drawY,
+                    xOffset,
+                    yOffset,
+                    render_depth,
+                    new TextCharacter('ˍ', renderColor, TransparentColor.TRANSPARENT)
+            );
+        } else {
+            screen.setCharacterWithDepth(
+                    (int) render_position.x,
+                    (int) render_position.y,
+                    xOffset,
+                    yOffset,
+                    render_depth,
+                    new TextCharacter('-', renderColor, TransparentColor.TRANSPARENT)
+            );
         }
     }
 }

@@ -3,7 +3,6 @@ package normallynormal.Input;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class Input implements KeyListener {
     private final HashMap<Integer, Boolean> keyState;
