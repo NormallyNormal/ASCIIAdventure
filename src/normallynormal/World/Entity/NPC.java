@@ -10,9 +10,10 @@ import normallynormal.UI.Element.DialogueBox;
 import normallynormal.Game;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
+import normallynormal.UI.LanguageManager;
 
 public class NPC extends Entity {
-    DialogueBox dialogueBox = new DialogueBox(new String[]{"Hello!", "This is just placeholder text for the demo level to show how NPCs work.", "Also, text can have special <RED>COLORS<DEFAULT> and <BLUE_BRIGHT>COLORS<DEFAULT>.", "That way, an NPC could emphasize certain important things...", "Did you know you can press up again after jumping to <GREEN>double jump<DEFAULT>?", "You can also press shift to <BLUE_BRIGHT>dash<DEFAULT>.", "That's all I have to say. If you keep talking to me, I'll just repeat this line again."});
+    DialogueBox dialogueBox = new DialogueBox(new String[]{LanguageManager.get("dialog.demo_npc.1"), LanguageManager.get("dialog.demo_npc.2"), LanguageManager.get("dialog.demo_npc.3"), LanguageManager.get("dialog.demo_npc.4"), LanguageManager.get("dialog.demo_npc.5"), LanguageManager.get("dialog.demo_npc.6"), LanguageManager.get("dialog.demo_npc.7")});
     boolean dbEnabled = false;
 
     public NPC(int x, int y) {

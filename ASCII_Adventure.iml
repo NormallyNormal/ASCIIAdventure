@@ -10,5 +10,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="googlecode.lanterna" level="project" />
+    <orderEntry type="library" name="google.code.gson" level="project" />
+    <orderEntry type="library" name="tinylog.jboss" level="project" />
+    <orderEntry type="library" name="tinylog.impl" level="project" />
   </component>
 </module>

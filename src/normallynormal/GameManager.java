@@ -9,7 +9,9 @@ import normallynormal.Constants.ScreenConstants;
 import normallynormal.Input.Input;
 import normallynormal.Math.AABB;
 import normallynormal.Render.DepthScreen;
+import normallynormal.Settings.Other;
 import normallynormal.Sound.AudioPlayer;
+import normallynormal.UI.LanguageManager;
 import normallynormal.World.Level;
 import normallynormal.World.Levels.DevLevel;
 
@@ -41,15 +43,14 @@ public class GameManager {
     public static void prepareScreen() throws IOException, FontFormatException {
         InputStream fontStream = Game.class.getResourceAsStream("/resources/font/DejaVuSansMono.ttf");
         assert fontStream != null;
-        Font ubuntuMono = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(20f);
+        Font ubuntuMono = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Other.TEXT_SIZE);
         SwingTerminalFontConfiguration fontConfiguration = new SwingTerminalFontConfiguration(true, AWTTerminalFontConfiguration.BoldMode.NOTHING, ubuntuMono);
         terminal = new DefaultTerminalFactory().setInitialTerminalSize(new TerminalSize(ScreenConstants.PLAY_SCREEN_WIDTH, ScreenConstants.PLAY_SCREEN_HEIGHT)).setTerminalEmulatorFontConfiguration(fontConfiguration).createSwingTerminal();
         terminal.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         terminal.setResizable(false);
 
-
         terminal.addKeyListener(input);
-        terminal.setTitle("ASCII Adventure");
+        terminal.setTitle("Loading...");
         terminal.setSize(ScreenConstants.PLAY_SCREEN_WIDTH, ScreenConstants.PLAY_SCREEN_HEIGHT);
         terminal.setVisible(true);
 
@@ -61,7 +62,9 @@ public class GameManager {
 
     public static void prepareGame() {
         AudioPlayer.load();
+        LanguageManager.loadLanguage(Other.LANGUAGE_CODE);
         currentLevel = new DevLevel();
+        terminal.setTitle(LanguageManager.get("game.title"));
     }
 
     public static int gameTime() {
