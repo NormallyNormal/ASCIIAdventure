@@ -13,5 +13,6 @@
     <orderEntry type="library" name="google.code.gson" level="project" />
     <orderEntry type="library" name="tinylog.jboss" level="project" />
     <orderEntry type="library" name="tinylog.impl" level="project" />
+    <orderEntry type="library" name="jinput-2.0.10" level="project" />
   </component>
 </module>
