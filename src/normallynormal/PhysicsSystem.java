@@ -12,6 +12,7 @@ public class PhysicsSystem implements Runnable{
         double timeSinceLastTransitionMovement = 0;
         try {
             while (true) {
+                GameManager.controllerInput.poll();
                 long now = System.nanoTime();
                 double deltaSeconds = (now - lastTime) * 1.0e-9;
                 if (deltaSeconds > 1) {

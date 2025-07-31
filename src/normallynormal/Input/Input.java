@@ -28,6 +28,10 @@ public class Input implements KeyListener {
         keyState.put(keyCode, false);
     }
 
+    public void manualKeyPressed(int keyCode, boolean state) {
+        keyState.put(keyCode, state);
+    }
+
     public boolean getKeyState(int keyCode) {
         return keyState.get(keyCode) != null ? keyState.get(keyCode) : false;
     }

@@ -11,6 +11,8 @@
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/tinylog/tinylog-api/2.6.2/tinylog-api-2.6.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/tinylog/tinylog-impl/2.8.0-M1/tinylog-impl-2.8.0-M1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/tinylog/tinylog-api/2.8.0-M1/tinylog-api-2.8.0-M1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/jinput-2.0.10-natives-all.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/jinput-2.0.10.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

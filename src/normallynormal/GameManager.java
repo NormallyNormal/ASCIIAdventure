@@ -7,6 +7,7 @@ import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import normallynormal.Constants.ScreenConstants;
 import normallynormal.Input.Input;
+import normallynormal.Input.InputControllerWrapper;
 import normallynormal.Math.AABB;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Settings.Other;
@@ -35,6 +36,7 @@ public class GameManager {
     static final AtomicInteger renderYOffset = new AtomicInteger(-levelFrameY * ScreenConstants.PLAY_SCREEN_HEIGHT);
 
     static final Input input = new Input();
+    static final InputControllerWrapper controllerInput = new InputControllerWrapper(input);
 
     static DepthScreen screen;
 
