@@ -126,6 +126,7 @@ public class Level {
                     }
                     else {
                         Direction dir = worldObject.getCollisionBox().getNearestSide(entity.getCollisionBox().center());
+                        entity.clearMovementStep(dir.toMovementVector());
                         switch (dir) {
                             case UP:
                                 entity.getPosition().y = Math.nextDown(worldObject.getCollisionBox().y - entity.getCollisionBox().h);

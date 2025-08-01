@@ -38,7 +38,6 @@ public class InputControllerWrapper {
             EventQueue queue = controllers[i].getEventQueue();
             while (queue.getNextEvent(event)) {
                 Component comp = event.getComponent();
-                //Logger.info("Controller button pressed: " + comp.getName() + " " + comp.getPollData());
                 for (Integer inputVal : map.getInputs(new ControllerInput(comp.getName(), comp.getPollData()))) {
                     input.manualKeyPressed(inputVal, comp.getPollData() != 0.0f);
                 }

@@ -9,6 +9,7 @@ import normallynormal.World.Platform.MoveableObject;
 
 public abstract class AbstractPlatformController {
     Direction direction;
+    Direction lastMovementDirection;
     boolean movesNextFrame = false;
     boolean movedThisFrame = false;
 
@@ -34,12 +35,14 @@ public abstract class AbstractPlatformController {
                     }
                 }
             } else if (!collisionDirection.isVertical() && movedThisFrame && entity.getPosition().y + entity.getCollisionBox().h > collisionBox.y && entity.getPosition().y < collisionBox.y + collisionBox.h) {
-                pushEntityHorizontally(entity);
+                if (entity.getCollisionBox().overlaps(controlledMovableObject.getCollisionBox()))
+                    pushEntityHorizontally(entity);
             }
         }
         else if (movedThisFrame) {
             if (entity.getPosition().x + entity.getCollisionBox().w > collisionBox.x && entity.getPosition().x < collisionBox.x + collisionBox.w) {
-                pushEntityVertically(entity);
+                if (entity.getCollisionBox().overlaps(controlledMovableObject.getCollisionBox()))
+                    pushEntityVertically(entity);
             }
         }
     }
@@ -48,7 +51,7 @@ public abstract class AbstractPlatformController {
         AABB collisionBox = controlledMovableObject.getCollisionBox();
         double newPos = entity.getPosition().x;
         boolean apply = false;
-        switch (direction) {
+        switch (lastMovementDirection) {
             case LEFT:
 //                if (entity.getPosition().x <= collisionBox.x + entity.getMovementStep().x) {
                 newPos = Math.nextDown(collisionBox.x - entity.getCollisionBox().w);
@@ -63,7 +66,7 @@ public abstract class AbstractPlatformController {
                 break;
         }
         if (apply) {
-            if (entity.getMovementStep().magnitudeSquared() < 0.9) {
+            if (entity.getMovementStep().magnitudeSquared() < 1) {
                 entity.clearMovementStep();
             }
             else {
@@ -96,7 +99,7 @@ public abstract class AbstractPlatformController {
 
     private void pushEntityVertically(Entity entity) {
         AABB collisionBox = controlledMovableObject.getCollisionBox();
-        switch (direction) {
+        switch (lastMovementDirection) {
             case UP:
                 if (entity.getPosition().y < collisionBox.y + collisionBox.h)
                     entity.getPosition().y = Math.nextDown(collisionBox.y - entity.getCollisionBox().h);
@@ -119,6 +122,7 @@ public abstract class AbstractPlatformController {
 
     protected boolean moveIfPossible() {
         movedThisFrame = false;
+        lastMovementDirection = direction;
         if (isAboutToMove()) {
             AABB collisionBox = controlledMovableObject.getCollisionBox();
             if (direction.isVertical()) {
