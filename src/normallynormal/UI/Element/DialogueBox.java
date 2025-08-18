@@ -25,6 +25,7 @@ public class DialogueBox extends UIElement {
         for(String s : text) {
             colorfulText.add(new ColorfulText(s));
         }
+        super.copyForRender();
     }
 
     public void reset() {

@@ -3,18 +3,10 @@ package normallynormal.World;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 
-import normallynormal.Render.Renderers.AbstractRenderer;
-import normallynormal.Render.Renderers.ConnectedTextureRenderer;
-import normallynormal.Render.Renderers.RainbowRenderer;
-import normallynormal.Render.Renderers.SpikesRenderer;
 import normallynormal.Render.Shader.PostShader;
-import normallynormal.Render.Shader.TorchlightPostShader;
 import normallynormal.World.Entity.Entity;
-import normallynormal.World.Entity.NPC;
-import normallynormal.World.Entity.Orb;
 import normallynormal.World.Entity.Player;
 import normallynormal.Input.Input;
-import normallynormal.World.Entity.Decoration.Torch;
 import normallynormal.World.Platform.*;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Math.AABB;
@@ -22,7 +14,6 @@ import normallynormal.Math.Vector2;
 import normallynormal.Math.Direction;
 import normallynormal.Constants.ScreenConstants;
 import normallynormal.Math.M4th;
-import normallynormal.World.Platform.Controller.WatchingPlatformController;
 
 public class Level {
     Semaphore copyPermit = new Semaphore(1); // logic thread releases when done
@@ -34,7 +25,6 @@ public class Level {
 
     protected final List<PostShader> postShaders;
 
-    @SuppressWarnings("UnusedAssignment")
     public Level() {
         postShaders = new ArrayList<>();
         player = new Player();
