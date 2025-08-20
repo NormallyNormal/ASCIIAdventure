@@ -2,7 +2,6 @@ package normallynormal;
 import java.awt.*;
 import java.io.IOException;
 
-import normallynormal.Settings.Keybinds;
 import normallynormal.Util.SleepBlocker;
 
 public class Game {

@@ -3,10 +3,8 @@ package normallynormal.Render.Shader;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 import normallynormal.Constants.ScreenConstants;
-import normallynormal.Math.M4th;
 import normallynormal.Render.DepthScreen;
 import normallynormal.World.Entity.Entity;
-import normallynormal.World.Entity.GlowingEntity;
 import normallynormal.World.Entity.Player;
 import normallynormal.World.Platform.WorldObject;
 

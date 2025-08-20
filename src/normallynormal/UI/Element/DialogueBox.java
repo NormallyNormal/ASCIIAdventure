@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DialogueBox extends UIBase {
-    private String[] text;
-    private List<ColorfulText> colorfulText = new ArrayList<>();
+    private final String[] text;
+    private final List<ColorfulText> colorfulText = new ArrayList<>();
     private int stage = 0;
     private long stageUpdateTime = 0;
 

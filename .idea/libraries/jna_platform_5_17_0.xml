@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="jna-platform-5.17.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Documents/Java Libs/jna-platform-5.17.0.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/Java Libs/jna-platform-jpms-5.17.0.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/Java Libs/jna-5.17.0.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/Java Libs/jna-jpms-5.17.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

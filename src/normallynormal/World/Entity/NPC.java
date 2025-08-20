@@ -7,7 +7,6 @@ import normallynormal.Math.Vector2;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
 import normallynormal.UI.Element.DialogueBox;
-import normallynormal.Game;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 import normallynormal.UI.LanguageManager;

@@ -16,7 +16,7 @@ public class Slider extends UIComponent {
     float min;
     float value;
     int sliderWidth = 22;
-    int sliderPos = 0;
+    int sliderPos;
     boolean asPercent;
 
     public Slider(int x, int y, String label, float max, float min, int initalValue) {

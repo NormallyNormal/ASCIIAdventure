@@ -4,8 +4,6 @@ import com.googlecode.lanterna.TextColor;
 import normallynormal.Constants.ScreenConstants;
 import normallynormal.Render.Shader.DarkenShader;
 import normallynormal.Settings.Other;
-import normallynormal.UI.Element.Box;
-import normallynormal.UI.Settings.SettingsMenu;
 
 import java.text.DecimalFormat;
 

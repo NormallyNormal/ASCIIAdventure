@@ -39,9 +39,6 @@ public class Input implements KeyListener {
     }
 
     public boolean wasKeyJustPressed(int keyCode) {
-        if (getKeyState(keyCode)) {
-            int x = 1;
-        }
         return getKeyState(keyCode) && !prevKeyState.getOrDefault(keyCode, false);
     }
 
