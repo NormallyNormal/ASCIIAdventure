@@ -2,12 +2,16 @@ package normallynormal;
 
 import com.googlecode.lanterna.TextColor;
 import normallynormal.Constants.ScreenConstants;
+import normallynormal.Render.Shader.DarkenShader;
 import normallynormal.Settings.Other;
+import normallynormal.UI.Element.Box;
+import normallynormal.UI.Settings.SettingsMenu;
 
 import java.text.DecimalFormat;
 
 public class RenderSystem implements Runnable {
     DecimalFormat df = new DecimalFormat("#.##");
+    DarkenShader darkenShader = new DarkenShader();
 
     @Override
     public void run() {
@@ -26,9 +30,18 @@ public class RenderSystem implements Runnable {
                 GameManager.screen.clear();
                 GameManager.currentLevel.render(GameManager.screen, GameManager.renderXOffset.get(), GameManager.renderYOffset.get());
                 GameManager.currentLevel.applyPostShaders(GameManager.screen);
-                GameManager.screen.drawText(0, 0, 0, 0, Integer.MAX_VALUE, Other.VERSION_STRING, TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
-                GameManager.screen.drawText(0, 1, 0, 0, Integer.MAX_VALUE, "FPS: " + df.format(fps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
-                GameManager.screen.drawText(0, 2, 0, 0, Integer.MAX_VALUE, "TPS: " + df.format(GameManager.sharedTPS), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
+
+                if(GameManager.paused.get()) {
+                    darkenShader.apply(GameManager.screen, 0, 0, null, null, null);
+                    GameManager.settingsMenu.render(GameManager.screen);
+                }
+
+                if(Other.DEBUG) {
+                    GameManager.screen.drawText(0, 0, 0, 0, Integer.MAX_VALUE, Other.VERSION_STRING, TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
+                    GameManager.screen.drawText(0, 1, 0, 0, Integer.MAX_VALUE, "FPS: " + df.format(fps), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
+                    GameManager.screen.drawText(0, 2, 0, 0, Integer.MAX_VALUE, "TPS: " + df.format(GameManager.sharedTPS), TextColor.ANSI.WHITE, TextColor.ANSI.BLUE);
+                }
+
                 GameManager.screen.refresh();
 
                 fps = (float) (fps * 0.9f + 0.1f * (1f / deltaSeconds));

@@ -42,7 +42,6 @@ public class NPC extends Entity {
     public void copyForRender() {
         render_position = position.deepCopy(render_position);
         render_depth = depth;
-        dialogueBox.copyForRender();
     }
 
     @Override

@@ -3,11 +3,11 @@ import java.awt.*;
 import java.io.IOException;
 
 import normallynormal.Settings.Keybinds;
+import normallynormal.Util.SleepBlocker;
 
 public class Game {
-
-
     public static void run() throws IOException, FontFormatException, InterruptedException {
+        SleepBlocker.preventSleep();
         GameManager.prepareScreen();
         GameManager.prepareGame();
 
@@ -18,7 +18,7 @@ public class Game {
         renderThread.start();
 
         while (true) {
-            if (GameManager.input.getKeyState(Keybinds.exit)) {
+            if (false) {
                 physicsThread.interrupt();
                 renderThread.interrupt();
                 break;
@@ -28,5 +28,6 @@ public class Game {
         }
 
         GameManager.terminal.close();
+        SleepBlocker.allowSleep();
     }
 }

@@ -1,7 +1,6 @@
 package normallynormal.UI.Element;
 
 import normallynormal.Constants.ScreenConstants;
-import normallynormal.Game;
 import normallynormal.GameManager;
 import normallynormal.Input.Input;
 import normallynormal.Render.DepthScreen;
@@ -14,7 +13,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DialogueBox extends UIElement {
+public class DialogueBox extends UIBase {
     private String[] text;
     private List<ColorfulText> colorfulText = new ArrayList<>();
     private int stage = 0;
@@ -25,7 +24,6 @@ public class DialogueBox extends UIElement {
         for(String s : text) {
             colorfulText.add(new ColorfulText(s));
         }
-        super.copyForRender();
     }
 
     public void reset() {
@@ -61,18 +59,10 @@ public class DialogueBox extends UIElement {
         }
     }
 
-    boolean render_hasCharsLeft = hasCharsLeft;
-    int render_stage = stage;
-    @Override
-    public void copyForRender() {
-        render_hasCharsLeft = hasCharsLeft;
-        render_stage = stage;
-    }
-
     @Override
     public void render (DepthScreen screen) {
         String nextText = KeyEvent.getKeyText(Keybinds.dialogue_next);
-        if (render_hasCharsLeft || GameManager.gameTime()  % 500 < 250) {
+        if (hasCharsLeft || GameManager.gameTime()  % 500 < 250) {
             nextText = " [" + nextText + "] ";
         }
         else {
@@ -93,7 +83,7 @@ public class DialogueBox extends UIElement {
                 screen.setCharacterWithDepth(7 + i, 3 + j, 0, 0, 1000, new TextCharacter(filler, TextColor.ANSI.BLACK_BRIGHT, TextColor.ANSI.BLACK));
             }
         }
-        screen.drawTextAdvanced(8, 4, 0, 0, 1000, colorfulText.get(render_stage), TextColor.ANSI.WHITE, TextColor.ANSI.BLACK, ScreenConstants.PLAY_SCREEN_WIDTH - 16 - 2, charsToDrawNum);
+        screen.drawTextAdvanced(8, 4, 0, 0, 1000, colorfulText.get(stage), TextColor.ANSI.WHITE, TextColor.ANSI.BLACK, ScreenConstants.PLAY_SCREEN_WIDTH - 16 - 2, charsToDrawNum);
         screen.drawText(ScreenConstants.PLAY_SCREEN_WIDTH - 8 - 2 - nextText.length(),9, 0, 0, 1000, nextText, TextColor.ANSI.WHITE, TextColor.ANSI.BLACK);
     }
 }

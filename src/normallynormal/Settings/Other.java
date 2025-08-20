@@ -6,4 +6,5 @@ public class Other {
     public static final String VERSION_STRING = "1.5.0-alpha";
     public static float TEXT_SIZE = 14f;
     public static String LANGUAGE_CODE = "en";
+    public static boolean DEBUG = true;
 }
