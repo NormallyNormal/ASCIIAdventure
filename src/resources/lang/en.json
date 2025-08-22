@@ -4,6 +4,14 @@
   "settings.enabled" : "Enabled",
   "settings.disabled" : "Disabled",
 
+  "settings.resume" : "Resume",
+  "settings.quit" : "Quit",
+
+  "settings.audio_settings" : "Audio",
+  "settings.visual_settings" : "Visuals",
+  "settings.input_settings" : "Input",
+  "settings.other_settings" : "Other",
+
   "dialog.demo_npc.1" : "Hello!",
   "dialog.demo_npc.2" : "This is just placeholder text for the demo level to show how NPCs work.",
   "dialog.demo_npc.3" : "Also, text can have special <RED>COLORS<DEFAULT> and <BLUE_BRIGHT>COLORS<DEFAULT>.",

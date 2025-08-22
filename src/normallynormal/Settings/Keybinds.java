@@ -15,6 +15,7 @@ public class Keybinds {
     public static int ui_down = KeyEvent.VK_DOWN;
     public static int ui_left = KeyEvent.VK_LEFT;
     public static int ui_right = KeyEvent.VK_RIGHT;
+    public static int ui_select = KeyEvent.VK_ENTER;
 
     public static int dialogue_next = KeyEvent.VK_ENTER;
 }

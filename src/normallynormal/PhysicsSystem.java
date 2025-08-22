@@ -31,10 +31,10 @@ public class PhysicsSystem implements Runnable{
                     continue;
                 }
                 if (deltaSeconds < 0) deltaSeconds = 0;
-                timeSinceLastTransitionMovement += deltaSeconds;
 
                 Direction outOfBoundsDirection = GameManager.currentLevel.playerOffScreen(GameManager.levelFrameX * ScreenConstants.PLAY_SCREEN_WIDTH, GameManager.levelFrameY * ScreenConstants.PLAY_SCREEN_HEIGHT);
                 if (!GameManager.paused.get()) {
+                    timeSinceLastTransitionMovement += deltaSeconds;
                     if (outOfBoundsDirection == Direction.NONE) {
                         GameManager.currentLevel.process(deltaSeconds, GameManager.input);
                         timeSinceLastTransitionMovement = 0;
@@ -70,7 +70,7 @@ public class PhysicsSystem implements Runnable{
                     }
                 }
                 else {
-                    GameManager.settingsMenu.process(deltaSeconds, GameManager.input);
+                    GameManager.pause.process(deltaSeconds, GameManager.input);
                 }
                 GameManager.input.update();
                 lastTime = now;

@@ -31,7 +31,7 @@ public class RenderSystem implements Runnable {
 
                 if(GameManager.paused.get()) {
                     darkenShader.apply(GameManager.screen, 0, 0, null, null, null);
-                    GameManager.settingsMenu.render(GameManager.screen);
+                    GameManager.pause.render(GameManager.screen);
                 }
 
                 if(Other.DEBUG) {

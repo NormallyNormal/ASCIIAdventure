@@ -14,7 +14,8 @@ import normallynormal.Settings.Other;
 import normallynormal.Sound.AudioPlayer;
 import normallynormal.UI.Element.Box;
 import normallynormal.UI.LanguageManager;
-import normallynormal.UI.Settings.SettingsMenu;
+import normallynormal.UI.Settings.PauseMenu;
+import normallynormal.UI.Settings.PauseParent;
 import normallynormal.World.Level;
 import normallynormal.World.Levels.DevLevel;
 
@@ -27,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameManager {
     public static Level currentLevel;
-    static AtomicBoolean paused = new AtomicBoolean(false);
+    public static AtomicBoolean paused = new AtomicBoolean(false);
     public static final AABB screenBoundingBox = new AABB(0, 0, ScreenConstants.PLAY_SCREEN_WIDTH, ScreenConstants.PLAY_SCREEN_HEIGHT);
     private static final long initialTime = System.currentTimeMillis();
 
@@ -43,7 +44,7 @@ public class GameManager {
     static final InputControllerWrapper controllerInput = new InputControllerWrapper(input);
 
     static DepthScreen screen;
-    static Box settingsMenu = new SettingsMenu();
+    public static PauseParent pause;
 
     static SwingTerminalFrame terminal;
 
@@ -70,6 +71,7 @@ public class GameManager {
     public static void prepareGame() {
         AudioPlayer.load();
         LanguageManager.loadLanguage(Other.LANGUAGE_CODE);
+        pause = new PauseParent();
         currentLevel = new DevLevel();
         terminal.setTitle(LanguageManager.get("game.title"));
     }

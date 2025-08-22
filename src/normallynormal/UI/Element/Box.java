@@ -17,6 +17,10 @@ public class Box extends UIComponent {
         this.setPos(new Vector2(x, y));
     }
 
+    public void reset() {
+        selectedChild = 0;
+    }
+
     protected static final TextCharacter VERTICAL_BORDER =
             new TextCharacter('│', TextColor.ANSI.BLACK, TextColor.ANSI.BLACK_BRIGHT);
     protected static final TextCharacter HORIZONTAL_BORDER =
@@ -68,10 +72,10 @@ public class Box extends UIComponent {
     @Override
     public void process(double timeDelta, Input input) {
         int old = selectedChild;
-        if (input.wasKeyJustPressed(Keybinds.ui_down) && selectedChild > 0) {
+        if (input.wasKeyJustPressed(Keybinds.ui_up) && selectedChild > 0) {
             selectedChild--;
         }
-        else if (input.wasKeyJustPressed(Keybinds.ui_up) && selectedChild < childCount() - 1) {
+        else if (input.wasKeyJustPressed(Keybinds.ui_down) && selectedChild < childCount() - 1) {
             selectedChild++;
         }
         if (selectedChild < childCount()) {

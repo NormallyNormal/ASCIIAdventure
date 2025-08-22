@@ -15,7 +15,7 @@ public class UIComponent extends UIBase {
 
     public boolean highlighted = false;
     protected TextColor textColor = TextColor.ANSI.WHITE;
-    protected TextColor highlightColor = TextColor.ANSI.BLUE_BRIGHT;
+    protected TextColor highlightColor = TextColor.ANSI.BLUE;
 
     public void setParent(UIComponent parent, boolean autoZ) {
         this.parent = parent;

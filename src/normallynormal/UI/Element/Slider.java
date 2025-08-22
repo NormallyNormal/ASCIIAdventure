@@ -2,11 +2,13 @@ package normallynormal.UI.Element;
 
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
+import normallynormal.Input.Input;
 import normallynormal.Math.M4th;
 import normallynormal.Math.Vector2;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
 
+import normallynormal.Settings.Keybinds;
 import org.tinylog.Logger;
 
 public class Slider extends UIComponent {
@@ -26,6 +28,19 @@ public class Slider extends UIComponent {
         this.min = min;
         this.value = initalValue;
         this.sliderPos = (int)M4th.clamp((value - min) / (max - min), min, max);
+    }
+
+    @Override
+    public void process(double timeDelta, Input input) {
+        if (!highlighted) {
+            return;
+        }
+        if (input.wasKeyJustPressed(Keybinds.ui_left)) {
+            sliderPos = (int)M4th.clamp(sliderPos - 1, 0, sliderWidth - 3);
+        }
+        if (input.wasKeyJustPressed(Keybinds.ui_right)) {
+            sliderPos = (int)M4th.clamp(sliderPos + 1, 0, sliderWidth - 3);
+        }
     }
 
     @Override
