@@ -4,8 +4,8 @@
 
 
   "settings" : "Settings",
-  "settings.enabled" : "Enabled",
-  "settings.disabled" : "Disabled",
+  "settings.enabled" : "On",
+  "settings.disabled" : "Off",
 
   "settings.resume" : "Resume",
   "settings.quit" : "Save and Quit",
@@ -18,8 +18,11 @@
 
   "settings.visual_settings" : "Visuals",
   "settings.visual_settings.font_size" : "Font Size",
+  "settings.visual_settings.fps" : "Max FPS",
 
   "settings.input_settings" : "Input",
+  "settings.input_settings.keyboard" : "Keyboard",
+  "settings.input_settings.controller" : "Controller",
 
   "settings.other_settings" : "Other",
   "settings.other_settings.language" : "Language",
@@ -27,9 +30,9 @@
   "settings.other_settings.woke_mode.none" : "None",
   "settings.other_settings.woke_mode.gay" : "Gay",
   "settings.other_settings.woke_mode.trans" : "Trans",
+  "settings.other_settings.debug" : "Debug Stats",
 
 
-  "dialogue" : "Dialogue",
 
   "dialogue.demo_npc.1" : "Hello!",
   "dialogue.demo_npc.2" : "This is just placeholder text for the demo level to show how NPCs work.",
@@ -37,10 +40,5 @@
   "dialogue.demo_npc.4" : "That way, an NPC could emphasize certain important things...",
   "dialogue.demo_npc.5" : "Did you know you can press up again after jumping to <GREEN>double jump<DEFAULT>?",
   "dialogue.demo_npc.6" : "You can also press shift to <BLUE_BRIGHT>dash<DEFAULT>.",
-  "dialogue.demo_npc.7" : "That's all I have to say. If you keep talking to me, I'll just repeat this line again.",
-
-
-
-
-  "end" : "end"
+  "dialogue.demo_npc.7" : "That's all I have to say. If you keep talking to me, I'll just repeat this line again."
 }

@@ -18,7 +18,11 @@ public class InputControllerWrapper {
         bindControllerInput("x", 1.0f, Keybinds.player_right);
         bindControllerInput("x", -1.0f, Keybinds.player_left);
         bindControllerInput("y", 1.0f, Keybinds.player_down);
+        bindControllerInput("y", 1.0f, Keybinds.ui_down);
+        bindControllerInput("y", -1.0f, Keybinds.ui_up);
         bindControllerInput("B", 1.0f, Keybinds.dialogue_next);
+        bindControllerInput("B", 1.0f, Keybinds.ui_select);
+        bindControllerInput("Start", 1.0f, Keybinds.pause);
     }
 
     public void bindControllerInput(String name, float onValue, int keycode) {

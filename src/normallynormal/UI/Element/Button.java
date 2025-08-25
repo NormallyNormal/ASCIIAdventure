@@ -42,8 +42,8 @@ public class Button extends UIComponent{
         TextCharacter left = new TextCharacter('[', textColor, backgroundColor);
         TextCharacter right = new TextCharacter(']', textColor, backgroundColor);
 
-        screen.setCharacterWithDepth((int)pos.x, (int)pos.y, (int)offset.x + labelWidth/2 - label.length()/2 - 1, (int)offset.y, getZOrder(), left);
-        screen.drawText((int)pos.x, (int)pos.y, (int)offset.x + labelWidth/2 - label.length()/2, (int)offset.y, getZOrder(), maxLabel, textColor, backgroundColor);
-        screen.setCharacterWithDepth((int)pos.x, (int)pos.y, (int)offset.x + labelWidth/2 + (label.length()-1)/2 + 1, (int)offset.y, getZOrder(), right);
+        screen.setCharacterWithDepth((int)pos.x, (int)pos.y, (int)offset.x + labelWidth/2 - label.length()/2, (int)offset.y, getZOrder(), left);
+        screen.drawText((int)pos.x, (int)pos.y, (int)offset.x + labelWidth/2 - label.length()/2 + 1, (int)offset.y, getZOrder(), maxLabel, textColor, backgroundColor);
+        screen.setCharacterWithDepth((int)pos.x, (int)pos.y, (int)offset.x + labelWidth/2 + (label.length()+1)/2 + 1, (int)offset.y, getZOrder(), right);
     }
 }
