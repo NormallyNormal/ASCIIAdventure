@@ -15,6 +15,6 @@ public class InputMenu extends Box {
 
     @Override
     public void addElements() {
-
+        addChild(new Button(1, 1, LanguageManager.get("settings.back"), PauseManager.pauseMenu));
     }
 }

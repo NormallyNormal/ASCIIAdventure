@@ -8,7 +8,8 @@
   "settings.disabled" : "Disabled",
 
   "settings.resume" : "Resume",
-  "settings.quit" : "Quit",
+  "settings.quit" : "Save and Quit",
+
   "settings.back" : "Back",
 
   "settings.audio_settings" : "Audio",
@@ -16,9 +17,16 @@
   "settings.audio_settings.sfx" : "Sound Effects",
 
   "settings.visual_settings" : "Visuals",
-  "settings.input_settings" : "Input",
-  "settings.other_settings" : "Other",
+  "settings.visual_settings.font_size" : "Font Size",
 
+  "settings.input_settings" : "Input",
+
+  "settings.other_settings" : "Other",
+  "settings.other_settings.language" : "Language",
+  "settings.other_settings.woke_mode" : "Woke Mode",
+  "settings.other_settings.woke_mode.none" : "None",
+  "settings.other_settings.woke_mode.gay" : "Gay",
+  "settings.other_settings.woke_mode.trans" : "Trans",
 
 
   "dialogue" : "Dialogue",

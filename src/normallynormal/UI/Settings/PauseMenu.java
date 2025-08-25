@@ -16,10 +16,10 @@ public class PauseMenu extends Box {
     @Override
     public void addElements() {
         addChild(new Button(1, 1, LanguageManager.get("settings.audio_settings"), PauseManager.audioMenu));
-        addChild(new Button(1, 2, LanguageManager.get("settings.visual_settings"), null));
-        addChild(new Button(1, 3, LanguageManager.get("settings.input_settings"), null));
-        addChild(new Button(1, 4, LanguageManager.get("settings.other_settings"), null));
+        addChild(new Button(1, 2, LanguageManager.get("settings.visual_settings"), PauseManager.visualMenu));
+        addChild(new Button(1, 3, LanguageManager.get("settings.input_settings"), PauseManager.inputMenu));
+        addChild(new Button(1, 4, LanguageManager.get("settings.other_settings"), PauseManager.otherMenu));
         addChild(new Button(1, 6, LanguageManager.get("settings.resume"), null));
-        addChild(new Button(1, 7, LanguageManager.get("settings.quit"), null));
+        addChild(new Button(1, 7, LanguageManager.get("settings.quit"), PauseManager.quit));
     }
 }

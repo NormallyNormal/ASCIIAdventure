@@ -76,4 +76,8 @@ public class GameManager {
     public static int gameTime() {
         return (int) ((System.currentTimeMillis() - initialTime) % Integer.MAX_VALUE);
     }
+
+    public static void quit() {
+        System.exit(0);
+    }
 }

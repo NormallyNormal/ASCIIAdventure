@@ -26,6 +26,9 @@ public class Slider extends UIComponent {
         this.label = label;
         this.max = max;
         this.min = min;
+        if (initialValue < min || initialValue > max) {
+            throw new IllegalArgumentException("defaultSelection outside range.");
+        }
         this.value = 100;
         this.sliderPos = (int)(M4th.clamp((value - min) / (max - min), 0, 1) * (sliderWidth - 3));
     }

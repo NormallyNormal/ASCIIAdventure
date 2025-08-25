@@ -14,6 +14,12 @@ public class PauseManager {
     static Box visualMenu = new VisualMenu();
     static Box inputMenu = new InputMenu();
     static Box otherMenu = new OtherMenu();
+    static Box quit = new Box(0, 0, 0, 0) {
+        @Override
+        public void addElements() {
+
+        }
+    };
 
     public static void initialize() {
         currentMenu = pauseMenu;
@@ -37,10 +43,13 @@ public class PauseManager {
     public static void showMenu(Box show) {
         currentMenu.reset();
         currentMenu = show;
-        if (currentMenu == null) {
+        if (show == null) {
             GameManager.paused.set(false);
             Logger.info("Unpaused");
             currentMenu = pauseMenu;
+        }
+        else if (show == quit) {
+            GameManager.quit();
         }
     }
 
