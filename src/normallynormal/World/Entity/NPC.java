@@ -12,7 +12,7 @@ import com.googlecode.lanterna.TextColor;
 import normallynormal.UI.LanguageManager;
 
 public class NPC extends Entity {
-    DialogueBox dialogueBox = new DialogueBox(new String[]{LanguageManager.get("dialog.demo_npc.1"), LanguageManager.get("dialog.demo_npc.2"), LanguageManager.get("dialog.demo_npc.3"), LanguageManager.get("dialog.demo_npc.4"), LanguageManager.get("dialog.demo_npc.5"), LanguageManager.get("dialog.demo_npc.6"), LanguageManager.get("dialog.demo_npc.7")});
+    DialogueBox dialogueBox = new DialogueBox(new String[]{LanguageManager.get("dialogue.demo_npc.1"), LanguageManager.get("dialogue.demo_npc.2"), LanguageManager.get("dialogue.demo_npc.3"), LanguageManager.get("dialogue.demo_npc.4"), LanguageManager.get("dialogue.demo_npc.5"), LanguageManager.get("dialogue.demo_npc.6"), LanguageManager.get("dialogue.demo_npc.7")});
     boolean dbEnabled = false;
 
     public NPC(int x, int y) {

@@ -4,6 +4,7 @@ import normallynormal.Constants.ScreenConstants;
 import normallynormal.Math.Direction;
 import normallynormal.Settings.Keybinds;
 import normallynormal.Settings.Other;
+import normallynormal.UI.Settings.PauseManager;
 import org.tinylog.Logger;
 
 public class PhysicsSystem implements Runnable{
@@ -19,6 +20,7 @@ public class PhysicsSystem implements Runnable{
                     if (GameManager.paused.get()) {
                         Logger.info("Unpaused");
                     } else {
+                        PauseManager.showMenu();
                         Logger.info("Paused");
                     }
                     GameManager.paused.set(!GameManager.paused.get());
@@ -70,7 +72,7 @@ public class PhysicsSystem implements Runnable{
                     }
                 }
                 else {
-                    GameManager.pause.process(deltaSeconds, GameManager.input);
+                    PauseManager.process(deltaSeconds, GameManager.input);
                 }
                 GameManager.input.update();
                 lastTime = now;

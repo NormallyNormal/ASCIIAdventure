@@ -1,24 +1,38 @@
 {
   "game.title" : "ASCII Adventure",
 
+
+
+  "settings" : "Settings",
   "settings.enabled" : "Enabled",
   "settings.disabled" : "Disabled",
 
   "settings.resume" : "Resume",
   "settings.quit" : "Quit",
+  "settings.back" : "Back",
 
   "settings.audio_settings" : "Audio",
+  "settings.audio_settings.music" : "Music",
+  "settings.audio_settings.sfx" : "Sound Effects",
+
   "settings.visual_settings" : "Visuals",
   "settings.input_settings" : "Input",
   "settings.other_settings" : "Other",
 
-  "dialog.demo_npc.1" : "Hello!",
-  "dialog.demo_npc.2" : "This is just placeholder text for the demo level to show how NPCs work.",
-  "dialog.demo_npc.3" : "Also, text can have special <RED>COLORS<DEFAULT> and <BLUE_BRIGHT>COLORS<DEFAULT>.",
-  "dialog.demo_npc.4" : "That way, an NPC could emphasize certain important things...",
-  "dialog.demo_npc.5" : "Did you know you can press up again after jumping to <GREEN>double jump<DEFAULT>?",
-  "dialog.demo_npc.6" : "You can also press shift to <BLUE_BRIGHT>dash<DEFAULT>.",
-  "dialog.demo_npc.7" : "That's all I have to say. If you keep talking to me, I'll just repeat this line again.",
+
+
+  "dialogue" : "Dialogue",
+
+  "dialogue.demo_npc.1" : "Hello!",
+  "dialogue.demo_npc.2" : "This is just placeholder text for the demo level to show how NPCs work.",
+  "dialogue.demo_npc.3" : "Also, text can have special <RED>COLORS<DEFAULT> and <BLUE_BRIGHT>COLORS<DEFAULT>.",
+  "dialogue.demo_npc.4" : "That way, an NPC could emphasize certain important things...",
+  "dialogue.demo_npc.5" : "Did you know you can press up again after jumping to <GREEN>double jump<DEFAULT>?",
+  "dialogue.demo_npc.6" : "You can also press shift to <BLUE_BRIGHT>dash<DEFAULT>.",
+  "dialogue.demo_npc.7" : "That's all I have to say. If you keep talking to me, I'll just repeat this line again.",
+
+
+
 
   "end" : "end"
 }

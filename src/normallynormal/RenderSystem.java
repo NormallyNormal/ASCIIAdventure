@@ -4,6 +4,7 @@ import com.googlecode.lanterna.TextColor;
 import normallynormal.Constants.ScreenConstants;
 import normallynormal.Render.Shader.DarkenShader;
 import normallynormal.Settings.Other;
+import normallynormal.UI.Settings.PauseManager;
 
 import java.text.DecimalFormat;
 
@@ -31,7 +32,7 @@ public class RenderSystem implements Runnable {
 
                 if(GameManager.paused.get()) {
                     darkenShader.apply(GameManager.screen, 0, 0, null, null, null);
-                    GameManager.pause.render(GameManager.screen);
+                    PauseManager.render(GameManager.screen);
                 }
 
                 if(Other.DEBUG) {

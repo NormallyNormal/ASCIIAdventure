@@ -12,10 +12,8 @@ import normallynormal.Math.AABB;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Settings.Other;
 import normallynormal.Sound.AudioPlayer;
-import normallynormal.UI.Element.Box;
 import normallynormal.UI.LanguageManager;
-import normallynormal.UI.Settings.PauseMenu;
-import normallynormal.UI.Settings.PauseParent;
+import normallynormal.UI.Settings.PauseManager;
 import normallynormal.World.Level;
 import normallynormal.World.Levels.DevLevel;
 
@@ -44,7 +42,6 @@ public class GameManager {
     static final InputControllerWrapper controllerInput = new InputControllerWrapper(input);
 
     static DepthScreen screen;
-    public static PauseParent pause;
 
     static SwingTerminalFrame terminal;
 
@@ -71,7 +68,7 @@ public class GameManager {
     public static void prepareGame() {
         AudioPlayer.load();
         LanguageManager.loadLanguage(Other.LANGUAGE_CODE);
-        pause = new PauseParent();
+        PauseManager.initialize();
         currentLevel = new DevLevel();
         terminal.setTitle(LanguageManager.get("game.title"));
     }

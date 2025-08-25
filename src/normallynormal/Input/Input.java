@@ -14,35 +14,35 @@ public class Input implements KeyListener {
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {
+    public synchronized void keyTyped(KeyEvent e) {
         // Unused!
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
+    public synchronized void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
         keyState.put(keyCode, true);
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
+    public synchronized void keyReleased(KeyEvent e) {
         int keyCode = e.getKeyCode();
         keyState.put(keyCode, false);
     }
 
-    public void manualKeyPressed(int keyCode, boolean state) {
+    public synchronized void manualKeyPressed(int keyCode, boolean state) {
         keyState.put(keyCode, state);
     }
 
-    public boolean getKeyState(int keyCode) {
+    public synchronized boolean getKeyState(int keyCode) {
         return keyState.getOrDefault(keyCode, false);
     }
 
-    public boolean wasKeyJustPressed(int keyCode) {
+    public synchronized boolean wasKeyJustPressed(int keyCode) {
         return getKeyState(keyCode) && !prevKeyState.getOrDefault(keyCode, false);
     }
 
-    public void update() {
+    public synchronized void update() {
         prevKeyState.clear();
         prevKeyState.putAll(keyState);
     }

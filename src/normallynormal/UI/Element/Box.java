@@ -8,7 +8,7 @@ import normallynormal.Math.Vector2;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Settings.Keybinds;
 
-public class Box extends UIComponent {
+public abstract class Box extends UIComponent {
     protected AABB aabb;
     int selectedChild = 0;
 
@@ -18,6 +18,7 @@ public class Box extends UIComponent {
     }
 
     public void reset() {
+        if (childCount() > selectedChild) getChild(selectedChild).highlighted = false;
         selectedChild = 0;
     }
 
@@ -81,7 +82,9 @@ public class Box extends UIComponent {
         if (selectedChild < childCount()) {
             getChild(selectedChild).process(timeDelta, input);
         }
-        if (old != selectedChild) getChild(old).highlighted = false;
-        getChild(selectedChild).highlighted = true;
+        if (childCount() > old && old != selectedChild) getChild(old).highlighted = false;
+        if (childCount() > selectedChild) getChild(selectedChild).highlighted = true;
     }
+
+    public abstract void addElements();
 }
