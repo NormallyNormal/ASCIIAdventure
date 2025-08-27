@@ -1,8 +1,8 @@
 package normallynormal;
 
 import normallynormal.Constants.ScreenConstants;
+import normallynormal.Input.Input;
 import normallynormal.Math.Direction;
-import normallynormal.Settings.Keybinds;
 import normallynormal.Settings.Other;
 import normallynormal.UI.Settings.PauseManager;
 import org.tinylog.Logger;
@@ -15,8 +15,7 @@ public class PhysicsSystem implements Runnable{
         double timeSinceLastTransitionMovement = 0;
         try {
             while (true) {
-                GameManager.controllerInput.poll();
-                if (GameManager.input.wasKeyJustPressed(Keybinds.pause)) {
+                if (GameManager.input.wasInputJustPressed(Input.PAUSE)) {
                     if (GameManager.paused.get()) {
                         Logger.info("Unpaused");
                     } else {
@@ -81,8 +80,6 @@ public class PhysicsSystem implements Runnable{
                 if (Double.isInfinite(tps)) tps = 0;
                 if (Other.REDUCE_CPU_USAGE) Thread.sleep(5);
             }
-        } catch (InterruptedException e) {
-            return;
         } catch (Exception e) {
             e.printStackTrace();
         }

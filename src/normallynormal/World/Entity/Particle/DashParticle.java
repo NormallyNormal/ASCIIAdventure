@@ -1,13 +1,12 @@
 package normallynormal.World.Entity.Particle;
 
 import normallynormal.GameManager;
-import normallynormal.Input.Input;
+import normallynormal.Input.InputHandler;
 import normallynormal.Math.AABB;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
 import normallynormal.Settings.Other;
 import normallynormal.World.Entity.Entity;
-import normallynormal.Game;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 import normallynormal.Math.Vector2;
@@ -23,7 +22,7 @@ public class DashParticle extends Entity {
     }
 
     @Override
-    public void process(double timeDelta, Input input) {
+    public void process(double timeDelta, InputHandler input) {
         fadeTime -= timeDelta;
         if (fadeTime <= 0) {
             GameManager.currentLevel.removeEntity(this);

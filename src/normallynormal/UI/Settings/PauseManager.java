@@ -1,7 +1,7 @@
 package normallynormal.UI.Settings;
 
 import normallynormal.GameManager;
-import normallynormal.Input.Input;
+import normallynormal.Input.InputHandler;
 import normallynormal.Render.DepthScreen;
 import normallynormal.UI.Element.Box;
 import org.tinylog.Logger;
@@ -35,7 +35,7 @@ public class PauseManager {
             currentMenu.render(screen);
     }
 
-    public static void process(double timeDelta, Input input) {
+    public static void process(double timeDelta, InputHandler input) {
         if (currentMenu != null)
             currentMenu.process(timeDelta, input);
     }

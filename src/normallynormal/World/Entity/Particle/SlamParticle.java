@@ -1,14 +1,13 @@
 package normallynormal.World.Entity.Particle;
 
 import normallynormal.GameManager;
-import normallynormal.Input.Input;
+import normallynormal.Input.InputHandler;
 import normallynormal.Math.AABB;
 import normallynormal.Math.Direction;
 import normallynormal.Math.Vector2;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
 import normallynormal.World.Entity.Entity;
-import normallynormal.Game;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 
@@ -31,7 +30,7 @@ public class SlamParticle extends Entity {
     }
 
     @Override
-    public void process(double timeDelta, Input input) {
+    public void process(double timeDelta, InputHandler input) {
         fadeTime -= timeDelta;
         if (fadeTime <= 0) {
             GameManager.currentLevel.removeEntity(this);

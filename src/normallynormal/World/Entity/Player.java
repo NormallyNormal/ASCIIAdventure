@@ -2,18 +2,17 @@ package normallynormal.World.Entity;
 
 import normallynormal.GameManager;
 import normallynormal.Input.Input;
+import normallynormal.Input.InputHandler;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
 import normallynormal.Sound.AudioPlayer;
 import normallynormal.World.Entity.Particle.DashParticle;
 import normallynormal.World.Entity.Particle.ExtraJumpParticle;
-import normallynormal.Game;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 import normallynormal.Math.Vector2;
 import normallynormal.Math.AABB;
 import normallynormal.Math.Direction;
-import normallynormal.Settings.Keybinds;
 
 public class Player extends Entity implements GlowingEntity {
     private static final double JUMP_COYOTE_TIME = 0.1;
@@ -66,7 +65,7 @@ public class Player extends Entity implements GlowingEntity {
     }
 
     @Override
-    public void process(double timeDelta, Input input) {
+    public void process(double timeDelta, InputHandler input) {
         if (!dead) {
             handleWallSliding(timeDelta, input);
             handleJumping(timeDelta, input);
@@ -89,20 +88,20 @@ public class Player extends Entity implements GlowingEntity {
         super.process(timeDelta, input);
     }
 
-    private void handleDashing(double timeDelta, Input input) {
+    private void handleDashing(double timeDelta, InputHandler input) {
         //Can dash until a wall is hit
         if (hitWallRecently(0)) {
             dashTime = 0;
         }
-        else if (input.getKeyState(Keybinds.player_dash)) {
+        else if (input.getInputState(Input.PLAYER_DASH)) {
             boolean madeDash = false;
             //If the dash cooldown has expired, and we have hit a surface, try to dash in the last input direction.
             if (hasDashCharge) {
-                if (lastHorizontalDirection == Direction.LEFT && !input.getKeyState(Keybinds.player_right)) {
+                if (lastHorizontalDirection == Direction.LEFT && !input.getInputState(Input.PLAYER_RIGHT)) {
                     dashDirection = Direction.LEFT;
                     madeDash = true;
                 }
-                if (lastHorizontalDirection == Direction.RIGHT && !input.getKeyState(Keybinds.player_left)) {
+                if (lastHorizontalDirection == Direction.RIGHT && !input.getInputState(Input.PLAYER_LEFT)) {
                     dashDirection = Direction.RIGHT;
                     madeDash = true;
                 }
@@ -156,27 +155,27 @@ public class Player extends Entity implements GlowingEntity {
         dashTime -= timeDelta;
     }
 
-    private void handleSemisolid(double timeDelta, Input input) {
-        standsOnSemisolid = !input.getKeyState(Keybinds.player_down);
+    private void handleSemisolid(double timeDelta, InputHandler input) {
+        standsOnSemisolid = !input.getInputState(Input.PLAYER_DOWN);
     }
 
-    private void handleLeftRightMovement(double timeDelta, Input input) {
+    private void handleLeftRightMovement(double timeDelta, InputHandler input) {
         boolean isWallJumping = wallJumpFixedDirectionTime > 0;
         wallJumpFixedDirectionTime -= timeDelta;
         boolean wallJumpingLeft = (isWallJumping && wallJumpDirection == Direction.LEFT);
         boolean wallJumpingRight = (isWallJumping && wallJumpDirection == Direction.RIGHT);
-        if ((input.getKeyState(Keybinds.player_left) & ! wallJumpingRight) || wallJumpingLeft) {
+        if ((input.getInputState(Input.PLAYER_LEFT) & ! wallJumpingRight) || wallJumpingLeft) {
             instantVelocity.x += isWallJumping ? -WALL_JUMP_HORIZONTAL_SPEED : -RUN_SPEED;
             lastHorizontalDirection = Direction.LEFT;
         }
-        if ((input.getKeyState(Keybinds.player_right) & !wallJumpingLeft) || wallJumpingRight) {
+        if ((input.getInputState(Input.PLAYER_RIGHT) & !wallJumpingLeft) || wallJumpingRight) {
             instantVelocity.x += isWallJumping ? WALL_JUMP_HORIZONTAL_SPEED : RUN_SPEED;
             lastHorizontalDirection = Direction.RIGHT;
         }
     }
 
-    private void handleDoubleJumping(double timeDelta, Input input) {
-        if (!onGroundRecently(DOUBLE_JUMP_WAITING_PERIOD) && extraJumps > 0 && input.getKeyState(Keybinds.player_jump) && !hitWallRecently(WALL_JUMP_COYOTE_TIME) && jumpKeyReleasedInAir && !isDashing()) {
+    private void handleDoubleJumping(double timeDelta, InputHandler input) {
+        if (!onGroundRecently(DOUBLE_JUMP_WAITING_PERIOD) && extraJumps > 0 && input.getInputState(Input.PLAYER_JUMP) && !hitWallRecently(WALL_JUMP_COYOTE_TIME) && jumpKeyReleasedInAir && !isDashing()) {
             extraJumps--;
             jumpKeyReleasedInAir = false;
             velocity.y = isGravityDownward() ? Math.min(velocity.y, -DOUBLE_JUMP_SPEED) : Math.max(velocity.y, DOUBLE_JUMP_SPEED);
@@ -187,7 +186,7 @@ public class Player extends Entity implements GlowingEntity {
         }
     }
 
-    private void handleWallSliding(double timeDelta, Input input) {
+    private void handleWallSliding(double timeDelta, InputHandler input) {
         if (hitWallRecently(WALL_SLIDE_BUFFER)) {
             if (velocity.y > 5 && isGravityDownward()) {
                 velocity.y = 5;
@@ -198,11 +197,11 @@ public class Player extends Entity implements GlowingEntity {
         }
     }
 
-    private void handleJumping(double timeDelta, Input input) {
+    private void handleJumping(double timeDelta, InputHandler input) {
         if (onGroundRecently(0)) {
             jumpAllowed = true;
         }
-        if (input.getKeyState(Keybinds.player_jump)) {
+        if (input.getInputState(Input.PLAYER_JUMP)) {
             jumpBuffer = JUMP_BUFFER;
         }
         else {
@@ -218,8 +217,8 @@ public class Player extends Entity implements GlowingEntity {
         }
         if (jumpBuffer > 0) {
             jumpBuffer -= timeDelta;
-            boolean rightKey = input.getKeyState(Keybinds.player_right);
-            boolean leftKey = input.getKeyState(Keybinds.player_left);
+            boolean rightKey = input.getInputState(Input.PLAYER_RIGHT);
+            boolean leftKey = input.getInputState(Input.PLAYER_LEFT);
             Direction possibleWallJumpDirection = rightKey & !leftKey ? Direction.RIGHT : Direction.NONE;
             possibleWallJumpDirection = leftKey & !rightKey ? Direction.LEFT : possibleWallJumpDirection;
             if (onGroundRecently(JUMP_COYOTE_TIME) && jumpAllowed && (!bounceRecently(JUMP_COYOTE_TIME) || Math.abs(velocity.y) < JUMP_SPEED)) {

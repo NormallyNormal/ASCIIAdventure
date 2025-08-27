@@ -2,9 +2,7 @@ package normallynormal.World.Entity;
 
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
-import normallynormal.Game;
-import normallynormal.Input.Input;
-import normallynormal.Math.M4th;
+import normallynormal.Input.InputHandler;
 import normallynormal.Math.Vector2;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
@@ -37,7 +35,7 @@ public class Orb extends Entity {
     }
 
     @Override
-    public void process(double timeDelta, Input input) {
+    public void process(double timeDelta, InputHandler input) {
         super.process(timeDelta, input);
         timeUntilRefresh -= timeDelta;
     }

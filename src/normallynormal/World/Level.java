@@ -6,7 +6,7 @@ import java.util.concurrent.Semaphore;
 import normallynormal.Render.Shader.PostShader;
 import normallynormal.World.Entity.Entity;
 import normallynormal.World.Entity.Player;
-import normallynormal.Input.Input;
+import normallynormal.Input.InputHandler;
 import normallynormal.World.Platform.*;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Math.AABB;
@@ -35,7 +35,7 @@ public class Level {
 
     final ArrayList<Entity> onScreenEntities = new ArrayList<>();
 
-    public synchronized void process(double timeDeltaSeconds, Input input) throws InterruptedException {
+    public synchronized void process(double timeDeltaSeconds, InputHandler input) throws InterruptedException {
         //Wait until rendering values are copied.
         copyPermit.acquire();
         runPlatformCollisions(player);

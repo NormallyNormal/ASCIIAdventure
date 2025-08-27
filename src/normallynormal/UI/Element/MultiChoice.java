@@ -3,11 +3,10 @@ package normallynormal.UI.Element;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 import normallynormal.Input.Input;
-import normallynormal.Math.M4th;
+import normallynormal.Input.InputHandler;
 import normallynormal.Math.Vector2;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
-import normallynormal.Settings.Keybinds;
 import org.tinylog.Logger;
 
 public class MultiChoice extends UIComponent {
@@ -28,14 +27,14 @@ public class MultiChoice extends UIComponent {
     }
 
     @Override
-    public void process(double timeDelta, Input input) {
+    public void process(double timeDelta, InputHandler input) {
         if (!highlighted) {
             return;
         }
-        if (input.wasKeyJustPressed(Keybinds.ui_left)) {
+        if (input.wasInputJustPressed(Input.UI_LEFT)) {
             selected = (selected - 1 + options.length) % options.length;
         }
-        if (input.wasKeyJustPressed(Keybinds.ui_right)) {
+        if (input.wasInputJustPressed(Input.UI_RIGHT)) {
             selected = (selected + 1) % options.length;
         }
     }

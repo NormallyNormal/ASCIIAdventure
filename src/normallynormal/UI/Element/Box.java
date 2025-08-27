@@ -3,10 +3,10 @@ package normallynormal.UI.Element;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 import normallynormal.Input.Input;
+import normallynormal.Input.InputHandler;
 import normallynormal.Math.AABB;
 import normallynormal.Math.Vector2;
 import normallynormal.Render.DepthScreen;
-import normallynormal.Settings.Keybinds;
 
 public abstract class Box extends UIComponent {
     protected AABB aabb;
@@ -71,12 +71,12 @@ public abstract class Box extends UIComponent {
     }
 
     @Override
-    public void process(double timeDelta, Input input) {
+    public void process(double timeDelta, InputHandler input) {
         int old = selectedChild;
-        if (input.wasKeyJustPressed(Keybinds.ui_up) && selectedChild > 0) {
+        if (input.wasInputJustPressed(Input.UI_UP) && selectedChild > 0) {
             selectedChild--;
         }
-        else if (input.wasKeyJustPressed(Keybinds.ui_down) && selectedChild < childCount() - 1) {
+        else if (input.wasInputJustPressed(Input.UI_DOWN) && selectedChild < childCount() - 1) {
             selectedChild++;
         }
         if (selectedChild < childCount()) {

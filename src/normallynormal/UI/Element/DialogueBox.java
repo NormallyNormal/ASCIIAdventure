@@ -3,8 +3,8 @@ package normallynormal.UI.Element;
 import normallynormal.Constants.ScreenConstants;
 import normallynormal.GameManager;
 import normallynormal.Input.Input;
+import normallynormal.Input.InputHandler;
 import normallynormal.Render.DepthScreen;
-import normallynormal.Settings.Keybinds;
 import normallynormal.UI.ColorfulText;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
@@ -37,12 +37,12 @@ public class DialogueBox extends UIBase {
     int charsToDrawNum = 0;
     boolean hasCharsLeft = false;
     @Override
-    public void process (double timeDelta, Input input) {
+    public void process (double timeDelta, InputHandler input) {
         hasCharsLeft = charsToDrawNum < colorfulText.get(stage).length();
         if (hasCharsLeft) {
             charsToDrawNum = (int) (GameManager.gameTime() - stageUpdateTime) / (int) (timePerChar * 1000);
         }
-        boolean nextKeyPressed = input.getKeyState(Keybinds.dialogue_next);
+        boolean nextKeyPressed = input.getInputState(Input.DIALOGUE_NEXT);
         if (nextKeyPressed && !keyHeld) {
             if (hasCharsLeft) {
                 charsToDrawNum = colorfulText.get(stage).length();
@@ -61,7 +61,7 @@ public class DialogueBox extends UIBase {
 
     @Override
     public void render (DepthScreen screen) {
-        String nextText = KeyEvent.getKeyText(Keybinds.dialogue_next);
+        String nextText = "EnterChangeThis";
         if (hasCharsLeft || GameManager.gameTime()  % 500 < 250) {
             nextText = " [" + nextText + "] ";
         }

@@ -17,16 +17,8 @@ public class Game {
         renderThread.start();
 
         while (true) {
-            if (false) {
-                physicsThread.interrupt();
-                renderThread.interrupt();
-                break;
-            }
             Thread.sleep(100); // Don't spin too hard
             GameManager.terminal.requestFocusInWindow();
         }
-
-        GameManager.terminal.close();
-        SleepBlocker.allowSleep();
     }
 }

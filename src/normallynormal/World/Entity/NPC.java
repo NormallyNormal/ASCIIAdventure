@@ -1,7 +1,7 @@
 package normallynormal.World.Entity;
 
 import normallynormal.GameManager;
-import normallynormal.Input.Input;
+import normallynormal.Input.InputHandler;
 import normallynormal.Math.AABB;
 import normallynormal.Math.Vector2;
 import normallynormal.Render.DepthScreen;
@@ -22,7 +22,7 @@ public class NPC extends Entity {
     }
 
     @Override
-    public void process(double timeDelta, Input input) {
+    public void process(double timeDelta, InputHandler input) {
         if (GameManager.currentLevel.playerNear(this.position, 5)) {
             if (!dbEnabled) {
                 dialogueBox.reset();

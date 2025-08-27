@@ -2,12 +2,11 @@ package normallynormal.UI.Element;
 
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
-import normallynormal.GameManager;
 import normallynormal.Input.Input;
+import normallynormal.Input.InputHandler;
 import normallynormal.Math.Vector2;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
-import normallynormal.Settings.Keybinds;
 import normallynormal.UI.Settings.PauseManager;
 import org.tinylog.Logger;
 
@@ -23,8 +22,8 @@ public class Button extends UIComponent{
     }
 
     @Override
-    public void process(double timeDelta, Input input) {
-        if (input.wasKeyJustPressed(Keybinds.ui_select)) {
+    public void process(double timeDelta, InputHandler input) {
+        if (input.wasInputJustPressed(Input.UI_SELECT)) {
             PauseManager.showMenu(show);
         }
     }

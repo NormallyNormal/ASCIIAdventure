@@ -1,13 +1,11 @@
 package normallynormal.World.Entity;
 
 import normallynormal.GameManager;
-import normallynormal.Input.Input;
+import normallynormal.Input.InputHandler;
 import normallynormal.World.CollisionObject;
-import normallynormal.Game;
 import normallynormal.World.Level;
 import normallynormal.World.PhysicsObject;
 import normallynormal.World.RenderObject;
-import normallynormal.Render.DepthScreen;
 import normallynormal.Math.Vector2;
 import normallynormal.Math.AABB;
 import normallynormal.Math.Direction;
@@ -36,7 +34,7 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
 
     protected boolean bounce;
 
-    public void process(double timeDelta, Input input) {
+    public void process(double timeDelta, InputHandler input) {
         position.add(movementStep);
         if (!noGravity) {
             velocity.add(Vector2.multiply(gravity, timeDelta));

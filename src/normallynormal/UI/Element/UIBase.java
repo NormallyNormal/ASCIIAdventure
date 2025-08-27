@@ -1,15 +1,12 @@
 package normallynormal.UI.Element;
 
-import normallynormal.Input.Input;
-import normallynormal.Math.Vector2;
+import normallynormal.Input.InputHandler;
 import normallynormal.Render.DepthScreen;
-
-import java.util.List;
 
 public abstract class UIBase {
 
 
-    public void process(double timeDelta, Input input) {
+    public void process(double timeDelta, InputHandler input) {
 
     }
 
