@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ASCII Adventure" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="Main" />
+    <option name="VM_PARAMETERS" value="-Djava.library.path=$PROJECT_DIR$/jinput-natives" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <module name="ASCII_Adventure" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
