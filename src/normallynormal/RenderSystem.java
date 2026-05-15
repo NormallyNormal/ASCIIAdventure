@@ -1,12 +1,12 @@
 package normallynormal;
 
 import com.googlecode.lanterna.TextColor;
-import normallynormal.Constants.ScreenConstants;
 import normallynormal.Render.Shader.DarkenShader;
 import normallynormal.Settings.Other;
 import normallynormal.UI.Settings.PauseManager;
 
 import java.text.DecimalFormat;
+import java.util.concurrent.locks.LockSupport;
 
 public class RenderSystem implements Runnable {
     DecimalFormat df = new DecimalFormat("#.##");
@@ -14,14 +14,24 @@ public class RenderSystem implements Runnable {
 
     @Override
     public void run() {
-        float fps = ScreenConstants.TARGET_FPS;
-        float overshootFPS = ScreenConstants.TARGET_FPS;
+        float fps = Other.TARGET_FPS;
         long lastFrameTime = System.nanoTime();
+        long nextDeadline = lastFrameTime;
         try {
             while (true) {
+                long frameNanos = (long) (1_000_000_000.0 / Other.TARGET_FPS);
                 long now = System.nanoTime();
+                long remaining = nextDeadline - now;
+                if (remaining > 0) {
+                    LockSupport.parkNanos(remaining);
+                    continue;
+                }
+                // If we fell more than a few frames behind, drop catch-up to avoid death spirals.
+                if (-remaining > frameNanos * 5) nextDeadline = now;
+                nextDeadline += frameNanos;
+
                 double deltaSeconds = (now - lastFrameTime) * 1.0e-9;
-                if (deltaSeconds < 1.0 / overshootFPS) continue;
+                lastFrameTime = now;
 
                 GameManager.screenBoundingBox.x = -GameManager.renderXOffset.get();
                 GameManager.screenBoundingBox.y = -GameManager.renderYOffset.get();
@@ -43,13 +53,8 @@ public class RenderSystem implements Runnable {
 
                 GameManager.screen.refresh();
 
-                fps = (float) (fps * 0.9f + 0.1f * (1f / deltaSeconds));
-                overshootFPS = Math.max(ScreenConstants.TARGET_FPS, (ScreenConstants.TARGET_FPS - fps) + ScreenConstants.TARGET_FPS);
-
-                lastFrameTime = now;
+                if (deltaSeconds > 0) fps = (float) (fps * 0.9f + 0.1f * (1f / deltaSeconds));
             }
-        } catch (InterruptedException e) {
-            return;
         } catch (Exception e) {
             e.printStackTrace();
         }

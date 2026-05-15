@@ -13,4 +13,8 @@ public abstract class UIBase {
     public void render(DepthScreen screen) {
 
     }
+
+    public void onDeselected() {
+
+    }
 }

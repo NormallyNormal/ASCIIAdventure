@@ -1,6 +1,7 @@
 package normallynormal.UI.Settings;
 
 import normallynormal.Constants.ScreenConstants;
+import normallynormal.Settings.Sound;
 import normallynormal.UI.Element.Box;
 import normallynormal.UI.Element.Button;
 import normallynormal.UI.Element.Slider;
@@ -16,8 +17,12 @@ public class AudioMenu extends Box {
 
     @Override
     public void addElements() {
-        addChild(new Slider(1, 1, LanguageManager.get("settings.audio_settings.music"), 100, 0, 100, true));
-        addChild(new Slider(1, 2, LanguageManager.get("settings.audio_settings.sfx"), 100, 0, 100, true));
+        addChild(new Slider(1, 1, LanguageManager.get("settings.audio_settings.music"), 100, 0,
+                (float)(Sound.MUSIC_VOLUME * 100), true,
+                value -> Sound.MUSIC_VOLUME = value / 100.0));
+        addChild(new Slider(1, 2, LanguageManager.get("settings.audio_settings.sfx"), 100, 0,
+                (float)(Sound.SFX_VOLUME * 100), true,
+                value -> Sound.SFX_VOLUME = value / 100.0));
 
         addChild(new Button(1, 4, LanguageManager.get("settings.back"), PauseManager.pauseMenu));
     }

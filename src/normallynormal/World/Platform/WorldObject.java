@@ -64,6 +64,13 @@ public abstract class WorldObject implements CollisionObject, Identifiable {
         return visibilityBox.overlaps(GameManager.screenBoundingBox);
     }
 
+    private volatile boolean renderOnScreen;
+
+    /** On-screen flag captured at last {@link #copyForRender()}; used by the render thread. */
+    public boolean isRenderOnScreen() {
+        return renderOnScreen;
+    }
+
     public AbstractRenderer getRenderer() {
         return renderer;
     }
@@ -74,5 +81,6 @@ public abstract class WorldObject implements CollisionObject, Identifiable {
 
     public void copyForRender() {
         renderer.copyForRender();
-    };
+        renderOnScreen = isOnScreen();
+    }
 }

@@ -1,6 +1,5 @@
 package normallynormal.World.Entity.Decoration;
 
-import normallynormal.Game;
 import normallynormal.GameManager;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
@@ -22,23 +21,22 @@ public class Torch extends Entity implements GlowingEntity {
         return 20 + 0.5 * Math.sin(GameManager.gameTime() / 50.0);
     }
 
-    Vector2 render_position = position.deepCopy();
-    int render_depth = depth;
-    @Override
-    public void copyForRender() {
-        render_position = position.deepCopy(render_position);
-        render_depth = depth;
+    private record State(double posX, double posY, int depth, boolean onScreen) implements RenderState {
+        @Override
+        public void render(DepthScreen screen, int xOffset, int yOffset) {
+            boolean leftFlame = GameManager.gameTime() % 200 < 99;
+            screen.setCharacterWithDepth((int) posX, (int) posY, xOffset, yOffset, depth, new TextCharacter('▽', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
+            if (leftFlame) {
+                screen.setCharacterWithDepth((int) posX, (int) posY - 1, xOffset, yOffset, depth, new TextCharacter('◣', TextColor.ANSI.YELLOW, TransparentColor.TRANSPARENT));
+            }
+            else {
+                screen.setCharacterWithDepth((int) posX, (int) posY - 1, xOffset, yOffset, depth, new TextCharacter('◢', TextColor.ANSI.YELLOW, TransparentColor.TRANSPARENT));
+            }
+        }
     }
 
     @Override
-    public void render(DepthScreen screen, int xOffset, int yOffset) {
-        boolean leftFlame = GameManager.gameTime() % 200 < 99;
-        screen.setCharacterWithDepth((int) render_position.x, (int) render_position.y, xOffset, yOffset, render_depth, new TextCharacter('▽', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
-        if (leftFlame) {
-            screen.setCharacterWithDepth((int) render_position.x, (int) render_position.y - 1, xOffset, yOffset, render_depth, new TextCharacter('◣', TextColor.ANSI.YELLOW, TransparentColor.TRANSPARENT));
-        }
-        else {
-            screen.setCharacterWithDepth((int) render_position.x, (int) render_position.y - 1, xOffset, yOffset, render_depth, new TextCharacter('◢', TextColor.ANSI.YELLOW, TransparentColor.TRANSPARENT));
-        }
+    public void copyForRender() {
+        renderState = new State(position.x, position.y, depth, isOnScreen());
     }
 }

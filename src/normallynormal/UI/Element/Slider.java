@@ -11,6 +11,8 @@ import normallynormal.Render.TransparentColor;
 
 import org.tinylog.Logger;
 
+import java.util.function.Consumer;
+
 public class Slider extends UIComponent {
     String label;
     int labelWidth = 20;
@@ -20,8 +22,17 @@ public class Slider extends UIComponent {
     int sliderWidth = 22;
     int sliderPos;
     boolean asPercent = false;
+    private Consumer<Float> onChange;
 
     public Slider(int x, int y, String label, float max, float min, float initialValue) {
+        this(x, y, label, max, min, initialValue, false, null);
+    }
+
+    public Slider(int x, int y, String label, float max, float min, float initialValue, boolean asPercent) {
+        this(x, y, label, max, min, initialValue, asPercent, null);
+    }
+
+    public Slider(int x, int y, String label, float max, float min, float initialValue, boolean asPercent, Consumer<Float> onChange) {
         pos = new Vector2(x, y);
         this.label = label;
         this.max = max;
@@ -29,13 +40,10 @@ public class Slider extends UIComponent {
         if (initialValue < min || initialValue > max) {
             throw new IllegalArgumentException("defaultSelection outside range.");
         }
-        this.value = 100;
+        this.value = initialValue;
         this.sliderPos = (int)(M4th.clamp((value - min) / (max - min), 0, 1) * (sliderWidth - 3));
-    }
-
-    public Slider(int x, int y, String label, float max, float min, float initialValue, boolean asPercent) {
-        this(x, y, label, max, min, initialValue);
         this.asPercent = asPercent;
+        this.onChange = onChange;
     }
 
     @Override
@@ -45,11 +53,14 @@ public class Slider extends UIComponent {
         }
         if (input.wasInputJustPressed(Input.UI_LEFT)) {
             sliderPos = (int)M4th.clamp(sliderPos - 1, 0, sliderWidth - 3);
+            this.value = (float) sliderPos/(sliderWidth - 3) * (max - min) + min;
+            if (onChange != null) onChange.accept(value);
         }
         if (input.wasInputJustPressed(Input.UI_RIGHT)) {
             sliderPos = (int)M4th.clamp(sliderPos + 1, 0, sliderWidth - 3);
+            this.value = (float) sliderPos/(sliderWidth - 3) * (max - min) + min;
+            if (onChange != null) onChange.accept(value);
         }
-        this.value = (float) sliderPos/(sliderWidth - 3) * (max - min) + min;
     }
 
     @Override

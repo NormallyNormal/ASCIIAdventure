@@ -51,54 +51,45 @@ public class SlamParticle extends Entity {
         }
     }
 
-    private Vector2 render_position = position.deepCopy();
-    private boolean render_ground;
-    private double render_fadeTime;
-    private Direction render_direction;
-    private boolean render_downward;
-    private int render_depth;
+    private record State(double posX, double posY, int depth, boolean onScreen,
+                         double fadeTime, Direction direction, boolean ground, boolean downward) implements RenderState {
+        @Override
+        public void render(DepthScreen screen, int xOffset, int yOffset) {
+            TextColor renderColor;
+            if (ground) {
+                renderColor = fadeTime < 0.10 ? TextColor.ANSI.BLACK_BRIGHT : TextColor.ANSI.WHITE;
+            } else {
+                renderColor = fadeTime < 0.07
+                        ? TextColor.ANSI.RED
+                        : fadeTime < 0.12
+                        ? TextColor.ANSI.RED_BRIGHT
+                        : TextColor.ANSI.WHITE;
+            }
 
-    public void copyForRender() {
-        render_position = position.deepCopy(render_position);
-        render_ground = ground;
-        render_fadeTime = fadeTime;
-        render_direction = direction;
-        render_downward = downward;
-        render_depth = depth;
+            char character;
+            if (downward) {
+                character = (direction == Direction.LEFT)
+                        ? (ground ? '◣' : '\\')
+                        : (ground ? '◢' : '/');
+            } else {
+                character = (direction == Direction.LEFT)
+                        ? (ground ? '◤' : '/')
+                        : (ground ? '◥' : '\\');
+            }
+
+            screen.setCharacterWithDepth(
+                    (int) posX,
+                    (int) posY,
+                    xOffset,
+                    yOffset,
+                    depth,
+                    new TextCharacter(character, renderColor, TransparentColor.TRANSPARENT)
+            );
+        }
     }
 
     @Override
-    public void render(DepthScreen screen, int xOffset, int yOffset) {
-        TextColor renderColor;
-        if (render_ground) {
-            renderColor = render_fadeTime < 0.10 ? TextColor.ANSI.BLACK_BRIGHT : TextColor.ANSI.WHITE;
-        } else {
-            renderColor = render_fadeTime < 0.07
-                    ? TextColor.ANSI.RED
-                    : render_fadeTime < 0.12
-                    ? TextColor.ANSI.RED_BRIGHT
-                    : TextColor.ANSI.WHITE;
-        }
-
-        char character;
-        if (render_downward) {
-            character = (render_direction == Direction.LEFT)
-                    ? (render_ground ? '◣' : '\\')
-                    : (render_ground ? '◢' : '/');
-        } else {
-            character = (render_direction == Direction.LEFT)
-                    ? (render_ground ? '◤' : '/')
-                    : (render_ground ? '◥' : '\\');
-        }
-
-        screen.setCharacterWithDepth(
-                (int) render_position.x,
-                (int) render_position.y,
-                xOffset,
-                yOffset,
-                render_depth,
-                new TextCharacter(character, renderColor, TransparentColor.TRANSPARENT)
-        );
+    public void copyForRender() {
+        renderState = new State(position.x, position.y, depth, isOnScreen(), fadeTime, direction, ground, downward);
     }
-
 }

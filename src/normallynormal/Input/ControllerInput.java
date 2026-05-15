@@ -19,6 +19,11 @@ public record ControllerInput(String button, float value) implements Comparable<
         return other.button.equals(this.button);
     }
 
+    public String getDisplayText() {
+        if (value < 0) return button + "-";
+        return button;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof ControllerInput)) {

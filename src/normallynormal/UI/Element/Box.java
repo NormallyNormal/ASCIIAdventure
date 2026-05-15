@@ -18,7 +18,10 @@ public abstract class Box extends UIComponent {
     }
 
     public void reset() {
-        if (childCount() > selectedChild) getChild(selectedChild).highlighted = false;
+        if (childCount() > selectedChild) {
+            getChild(selectedChild).highlighted = false;
+            getChild(selectedChild).onDeselected();
+        }
         selectedChild = 0;
     }
 
@@ -82,7 +85,10 @@ public abstract class Box extends UIComponent {
         if (selectedChild < childCount()) {
             getChild(selectedChild).process(timeDelta, input);
         }
-        if (childCount() > old && old != selectedChild) getChild(old).highlighted = false;
+        if (childCount() > old && old != selectedChild) {
+            getChild(old).highlighted = false;
+            getChild(old).onDeselected();
+        }
         if (childCount() > selectedChild) getChild(selectedChild).highlighted = true;
     }
 

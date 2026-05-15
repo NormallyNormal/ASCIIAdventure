@@ -29,54 +29,43 @@ public class DashParticle extends Entity {
         }
     }
 
-    private Vector2 render_position = position.deepCopy();
-    private double render_fadeTime;
-    private int render_depth;
-    public void copyForRender() {
-        render_position = position.deepCopy(render_position);
-        render_fadeTime = fadeTime;
-        render_depth = depth;
+    private static final TextColor[] WOKE_COLORS = {TextColor.ANSI.CYAN_BRIGHT, TextColor.ANSI.MAGENTA_BRIGHT, TextColor.ANSI.WHITE};
+    private static final TextColor[] PRIDE_COLORS = {TextColor.ANSI.RED, TextColor.ANSI.RED_BRIGHT, TextColor.ANSI.YELLOW_BRIGHT, TextColor.ANSI.GREEN, TextColor.ANSI.BLUE_BRIGHT, TextColor.ANSI.MAGENTA};
+
+    private record State(double posX, double posY, int depth, boolean onScreen, double fadeTime) implements RenderState {
+        @Override
+        public void render(DepthScreen screen, int xOffset, int yOffset) {
+            boolean upperHalf = posY % 1 > 0.75;
+            boolean half_y = upperHalf || posY % 1 < 0.25;
+
+            TextColor renderColor;
+            if (Other.WOKE_MODE == 0) {
+                renderColor = fadeTime < 0.09
+                        ? TextColor.ANSI.BLUE
+                        : TextColor.ANSI.BLUE_BRIGHT;
+            } else if (Other.WOKE_MODE == 2) {
+                renderColor = WOKE_COLORS[(int) posX % 3];
+            } else {
+                renderColor = PRIDE_COLORS[(int) (posX / 2) % 6];
+            }
+
+            int drawY = upperHalf ? (int) posY : (int) posY - 1;
+
+            char ch = half_y ? 'ˍ' : '-';
+            int drawTargetY = half_y ? drawY : (int) posY;
+            screen.setCharacterWithDepth(
+                    (int) posX,
+                    drawTargetY,
+                    xOffset,
+                    yOffset,
+                    depth,
+                    new TextCharacter(ch, renderColor, TransparentColor.TRANSPARENT)
+            );
+        }
     }
 
-
-    TextColor[] wokeColors = {TextColor.ANSI.CYAN_BRIGHT, TextColor.ANSI.MAGENTA_BRIGHT, TextColor.ANSI.WHITE};
-    TextColor[] prideColors = {TextColor.ANSI.RED, TextColor.ANSI.RED_BRIGHT, TextColor.ANSI.YELLOW_BRIGHT, TextColor.ANSI.GREEN, TextColor.ANSI.BLUE_BRIGHT, TextColor.ANSI.MAGENTA};
     @Override
-    public void render(DepthScreen screen, int xOffset, int yOffset) {
-        boolean upperHalf = render_position.y % 1 > 0.75;
-        boolean half_y = upperHalf || render_position.y % 1 < 0.25;
-
-        TextColor renderColor;
-        if (!Other.WOKE_MODE) {
-            renderColor = render_fadeTime < 0.09
-                    ? TextColor.ANSI.BLUE
-                    : TextColor.ANSI.BLUE_BRIGHT;
-        } else {
-            renderColor = prideColors[(int)(render_position.x / 2) % 6];
-        }
-
-        int drawY = upperHalf
-                ? (int) render_position.y
-                : (int) render_position.y - 1;
-
-        if (half_y) {
-            screen.setCharacterWithDepth(
-                    (int) render_position.x,
-                    drawY,
-                    xOffset,
-                    yOffset,
-                    render_depth,
-                    new TextCharacter('ˍ', renderColor, TransparentColor.TRANSPARENT)
-            );
-        } else {
-            screen.setCharacterWithDepth(
-                    (int) render_position.x,
-                    (int) render_position.y,
-                    xOffset,
-                    yOffset,
-                    render_depth,
-                    new TextCharacter('-', renderColor, TransparentColor.TRANSPARENT)
-            );
-        }
+    public void copyForRender() {
+        renderState = new State(position.x, position.y, depth, isOnScreen(), fadeTime);
     }
 }

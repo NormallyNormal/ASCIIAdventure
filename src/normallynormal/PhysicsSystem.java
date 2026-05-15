@@ -3,34 +3,46 @@ package normallynormal;
 import normallynormal.Constants.ScreenConstants;
 import normallynormal.Input.Input;
 import normallynormal.Math.Direction;
-import normallynormal.Settings.Other;
 import normallynormal.UI.Settings.PauseManager;
 import org.tinylog.Logger;
 
+import java.util.concurrent.locks.LockSupport;
+
 public class PhysicsSystem implements Runnable{
+    private static final double PHYSICS_HZ = 240.0;
+    private static final long PHYSICS_TICK_NANOS = (long) (1_000_000_000.0 / PHYSICS_HZ);
+
     @Override
     public void run() {
         long lastTime = System.nanoTime();
+        long nextDeadline = lastTime + PHYSICS_TICK_NANOS;
         double tps = 0;
         double timeSinceLastTransitionMovement = 0;
         try {
             while (true) {
-                if (GameManager.input.wasInputJustPressed(Input.PAUSE)) {
-                    if (GameManager.paused.get()) {
-                        Logger.info("Unpaused");
-                    } else {
-                        PauseManager.showMenu();
-                        Logger.info("Paused");
-                    }
-                    GameManager.paused.set(!GameManager.paused.get());
-
-                }
                 long now = System.nanoTime();
-                double deltaSeconds = (now - lastTime) * 1.0e-9;
-                if (deltaSeconds > 1) {
-                    lastTime = now;
+                long remaining = nextDeadline - now;
+                if (remaining > 0) {
+                    LockSupport.parkNanos(remaining);
                     continue;
                 }
+                if (-remaining > PHYSICS_TICK_NANOS * 5) nextDeadline = now;
+                nextDeadline += PHYSICS_TICK_NANOS;
+
+                if (GameManager.input.wasInputJustPressed(Input.PAUSE)) {
+                    boolean nowPaused = !GameManager.paused.get();
+                    GameManager.paused.set(nowPaused);
+                    if (nowPaused) {
+                        PauseManager.showMenu();
+                        Logger.info("Paused");
+                    } else {
+                        Logger.info("Unpaused");
+                    }
+                }
+
+                double deltaSeconds = (now - lastTime) * 1.0e-9;
+                lastTime = now;
+                if (deltaSeconds > 1) continue;
                 if (deltaSeconds < 0) deltaSeconds = 0;
 
                 Direction outOfBoundsDirection = GameManager.currentLevel.playerOffScreen(GameManager.levelFrameX * ScreenConstants.PLAY_SCREEN_WIDTH, GameManager.levelFrameY * ScreenConstants.PLAY_SCREEN_HEIGHT);
@@ -74,11 +86,9 @@ public class PhysicsSystem implements Runnable{
                     PauseManager.process(deltaSeconds, GameManager.input);
                 }
                 GameManager.input.update();
-                lastTime = now;
-                tps = tps * 0.9 + 0.1 * (1 / deltaSeconds);
-                GameManager.sharedTPS = tps;
+                if (deltaSeconds > 0) tps = tps * 0.9 + 0.1 * (1 / deltaSeconds);
                 if (Double.isInfinite(tps)) tps = 0;
-                if (Other.REDUCE_CPU_USAGE) Thread.sleep(5);
+                GameManager.sharedTPS = tps;
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -4,6 +4,7 @@ import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 import normallynormal.GameManager;
 import normallynormal.Input.BoundInput;
+import normallynormal.Input.ControllerInput;
 import normallynormal.Input.Input;
 import normallynormal.Input.InputHandler;
 import normallynormal.Math.Vector2;
@@ -11,9 +12,7 @@ import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
 import normallynormal.UI.LanguageManager;
 
-import java.awt.event.KeyEvent;
-
-public class KeyChoice extends UIComponent {
+public class ControllerChoice extends UIComponent {
     String label;
     int labelWidth = 20;
     int choiceWidth = 22;
@@ -23,7 +22,7 @@ public class KeyChoice extends UIComponent {
     private int skipFrames = 0;
     private InputHandler lastInputHandler;
 
-    public KeyChoice(int x, int y, String label, Input boundInput) {
+    public ControllerChoice(int x, int y, String label, Input boundInput) {
         pos = new Vector2(x, y);
         this.label = label;
         this.boundInput = boundInput;
@@ -33,7 +32,7 @@ public class KeyChoice extends UIComponent {
     public void onDeselected() {
         if (capturing && lastInputHandler != null) {
             capturing = false;
-            lastInputHandler.stopKeyCapture();
+            lastInputHandler.stopControllerCapture();
             lastInputHandler.setInputState(Input.UI_SELECT, false);
         }
     }
@@ -46,7 +45,7 @@ public class KeyChoice extends UIComponent {
         if (!highlighted) {
             if (capturing) {
                 capturing = false;
-                input.stopKeyCapture();
+                input.stopControllerCapture();
                 input.setInputState(Input.UI_SELECT, false);
             }
             return;
@@ -55,23 +54,21 @@ public class KeyChoice extends UIComponent {
         if (capturing) {
             if (skipFrames > 0) {
                 skipFrames--;
-                input.pollCapturedKey(); // discard any key from the triggering Enter press
+                input.pollCapturedController();
                 return;
             }
-            Integer key = input.pollCapturedKey();
-            if (key != null) {
-                if (key != KeyEvent.VK_ESCAPE && bound != null) {
-                    bound.setSingleKeybind(key);
-                }
+            ControllerInput ci = input.pollCapturedController();
+            if (ci != null) {
+                if (bound != null) bound.setSingleControllerBind(ci);
                 capturing = false;
-                input.stopKeyCapture();
+                input.stopControllerCapture();
                 input.setInputState(Input.UI_SELECT, false);
             }
         } else {
             if (input.wasInputJustPressed(Input.UI_SELECT)) {
                 capturing = true;
                 skipFrames = 1;
-                input.startKeyCapture();
+                input.startControllerCapture();
             }
         }
     }
@@ -85,12 +82,14 @@ public class KeyChoice extends UIComponent {
         screen.drawText((int)pos.x, (int)pos.y, (int)offset.x, (int)offset.y, getZOrder(), displayLabel, textColor, backgroundColor);
 
         BoundInput bound = GameManager.input.getBoundInput(boundInput);
-        String keyText = capturing ? LanguageManager.get("settings.input_settings.keyboard.awaiting") : (bound != null ? bound.getKeybindText() : LanguageManager.get("settings.input_settings.keyboard.unbound"));
-        String clampedKey = keyText.substring(0, Math.min(choiceWidth - 2, keyText.length()));
+        String bindText = capturing
+                ? LanguageManager.get("settings.input_settings.controller.awaiting")
+                : (bound != null ? bound.getControllerBindText() : LanguageManager.get("settings.input_settings.controller.unbound"));
+        String clamped = bindText.substring(0, Math.min(choiceWidth - 2, bindText.length()));
 
         screen.setCharacterWithDepth((int)pos.x, (int)pos.y, (int)offset.x + labelWidth, (int)offset.y, getZOrder(),
                 new TextCharacter('[', textColor, backgroundColor));
-        screen.drawText((int)pos.x, (int)pos.y, (int)offset.x + labelWidth + 1, (int)offset.y, getZOrder(), clampedKey, textColor, backgroundColor);
+        screen.drawText((int)pos.x, (int)pos.y, (int)offset.x + labelWidth + 1, (int)offset.y, getZOrder(), clamped, textColor, backgroundColor);
         screen.setCharacterWithDepth((int)pos.x, (int)pos.y, (int)offset.x + labelWidth + choiceWidth - 1, (int)offset.y, getZOrder(),
                 new TextCharacter(']', textColor, backgroundColor));
     }

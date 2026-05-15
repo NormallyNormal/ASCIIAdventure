@@ -45,7 +45,8 @@ public class TorchlightPostShader implements PostShader {
 
     private static void entityCircle(int x, int y, int xOffset, int yOffset, Entity entity) {
         if (entity instanceof GlowingEntity) {
-            double radius = M4th.screenDistance(entity.getPosition().x + xOffset - x, entity.getPosition().y + yOffset - y);
+            normallynormal.Math.Vector2 pos = entity.getRenderPosition();
+            double radius = M4th.screenDistance(pos.x + xOffset - x, pos.y + yOffset - y);
             double brightRadius = ((GlowingEntity) entity).glowRadius();
             if(x < 0 || x >= ScreenConstants.PLAY_SCREEN_WIDTH || y < 0 || y >= ScreenConstants.PLAY_SCREEN_HEIGHT) {
                 return;

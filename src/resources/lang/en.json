@@ -22,7 +22,16 @@
 
   "settings.input_settings" : "Input",
   "settings.input_settings.keyboard" : "Keyboard",
+  "settings.input_settings.keyboard.jump" : "Jump",
+  "settings.input_settings.keyboard.left" : "Move Left",
+  "settings.input_settings.keyboard.right" : "Move Right",
+  "settings.input_settings.keyboard.down" : "Move Down",
+  "settings.input_settings.keyboard.dash" : "Dash",
+  "settings.input_settings.keyboard.awaiting" : "Press key...",
+  "settings.input_settings.keyboard.unbound" : "None",
   "settings.input_settings.controller" : "Controller",
+  "settings.input_settings.controller.awaiting" : "Press button...",
+  "settings.input_settings.controller.unbound" : "None",
 
   "settings.other_settings" : "Other",
   "settings.other_settings.language" : "Language",

@@ -1,8 +1,10 @@
 package normallynormal.Input;
 
+import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class BoundInput {
     private final Set<Integer> keybinds = new TreeSet<>();
@@ -64,5 +66,33 @@ public class BoundInput {
         keybinds.addAll(defaultKeybinds);
         controllerBinds.clear();
         controllerBinds.addAll(defaultControllerBinds);
+    }
+
+    public void setSingleKeybind(int keyCode) {
+        keybinds.clear();
+        keybinds.add(keyCode);
+    }
+
+    public void setSingleControllerBind(ControllerInput ci) {
+        controllerBinds.clear();
+        controllerBinds.add(ci);
+    }
+
+    public String getKeybindText() {
+        if (keybinds.isEmpty()) return "None";
+        return keybinds.stream().map(KeyEvent::getKeyText).collect(Collectors.joining(", "));
+    }
+
+    public String getControllerBindText() {
+        if (controllerBinds.isEmpty()) return "None";
+        return controllerBinds.stream().map(ControllerInput::getDisplayText).collect(Collectors.joining(", "));
+    }
+
+    public Set<Integer> getKeybinds() {
+        return keybinds;
+    }
+
+    public Set<ControllerInput> getControllerBinds() {
+        return controllerBinds;
     }
 }

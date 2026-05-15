@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 public class BufferedSupplier<T extends DeepCopyable<T>> {
     private final Supplier<T> supplier;
-    private T bufferedValue;
+    private volatile T bufferedValue;
 
     public BufferedSupplier(Supplier<T> supplier) {
         this.supplier = supplier;

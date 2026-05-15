@@ -13,6 +13,8 @@ public class PauseManager {
     static Box audioMenu = new AudioMenu();
     static Box visualMenu = new VisualMenu();
     static Box inputMenu = new InputMenu();
+    static Box keyboardMenu = new KeyboardMenu();
+    static Box controllerMenu = new ControllerMenu();
     static Box otherMenu = new OtherMenu();
     static Box quit = new Box(0, 0, 0, 0) {
         @Override
@@ -27,6 +29,8 @@ public class PauseManager {
         audioMenu.addElements();
         visualMenu.addElements();
         inputMenu.addElements();
+        keyboardMenu.addElements();
+        controllerMenu.addElements();
         otherMenu.addElements();
     }
 

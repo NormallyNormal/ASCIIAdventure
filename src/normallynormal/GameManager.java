@@ -10,6 +10,7 @@ import normallynormal.Input.InputHandler;
 import normallynormal.Math.AABB;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Settings.Other;
+import normallynormal.Settings.SettingsManager;
 import normallynormal.Sound.AudioPlayer;
 import normallynormal.UI.LanguageManager;
 import normallynormal.UI.Settings.PauseManager;
@@ -38,7 +39,7 @@ public class GameManager {
     static final AtomicInteger renderXOffset = new AtomicInteger(-levelFrameX * ScreenConstants.PLAY_SCREEN_WIDTH);
     static final AtomicInteger renderYOffset = new AtomicInteger(-levelFrameY * ScreenConstants.PLAY_SCREEN_HEIGHT);
 
-    static final InputHandler input = new InputHandler();
+    public static final InputHandler input = new InputHandler();
 
     static DepthScreen screen;
 
@@ -71,6 +72,8 @@ public class GameManager {
         currentLevel = new DevLevel();
         terminal.setTitle(LanguageManager.get("game.title"));
         input.loadInputBinds();
+        SettingsManager.loadKeybinds(input);
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> SettingsManager.save(input)));
     }
 
     public static int gameTime() {

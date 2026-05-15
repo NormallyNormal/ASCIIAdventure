@@ -2,6 +2,7 @@ package normallynormal.World.Entity;
 
 import normallynormal.GameManager;
 import normallynormal.Input.InputHandler;
+import normallynormal.Render.DepthScreen;
 import normallynormal.World.CollisionObject;
 import normallynormal.World.Level;
 import normallynormal.World.PhysicsObject;
@@ -11,6 +12,42 @@ import normallynormal.Math.AABB;
 import normallynormal.Math.Direction;
 
 public abstract class Entity implements CollisionObject, PhysicsObject, RenderObject {
+    /**
+     * Immutable per-entity render snapshot. Each Entity subclass defines its own record that
+     * implements this and carries the fields needed to draw the entity. The entity holds a
+     * {@code volatile RenderState renderState} which the physics thread reassigns at end of
+     * each tick (via {@link #copyForRender()}); the render thread reads it lock-free.
+     */
+    public interface RenderState {
+        double posX();
+        double posY();
+        int depth();
+        boolean onScreen();
+        void render(DepthScreen screen, int xOffset, int yOffset);
+    }
+
+    protected volatile RenderState renderState;
+
+    @Override
+    public final void render(DepthScreen screen, int xOffset, int yOffset) {
+        RenderState state = renderState;
+        if (state != null) state.render(screen, xOffset, yOffset);
+    }
+
+    @Override
+    public final boolean isRenderOnScreen() {
+        RenderState state = renderState;
+        return state != null && state.onScreen();
+    }
+
+    /** Render-time position (from last snapshot). Used by PostShaders that need to read positions
+     *  off the render thread without racing physics. Returns physics position as a fallback if no
+     *  snapshot has been published yet. */
+    public Vector2 getRenderPosition() {
+        RenderState state = renderState;
+        if (state == null) return position.deepCopy();
+        return new Vector2(state.posX(), state.posY());
+    }
     protected Vector2 position = new Vector2(0, 0);
     protected int depth;
     protected Vector2 velocity = new Vector2(0, 0);
@@ -20,6 +57,12 @@ public abstract class Entity implements CollisionObject, PhysicsObject, RenderOb
     private Direction gravityDirection = Direction.DOWN;
     private Vector2 gravity = new Vector2(0, 0);
     protected boolean noGravity = true;
+
+    public boolean isPhysicsEnabled() {
+        return physicsEnabled;
+    }
+
+    protected boolean physicsEnabled = false;
     protected AABB collisionBox = new AABB(0,0, 0 ,0);
     protected boolean standsOnSemisolid = true;
     protected boolean dead;

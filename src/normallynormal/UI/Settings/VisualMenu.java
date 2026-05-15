@@ -1,6 +1,7 @@
 package normallynormal.UI.Settings;
 
 import normallynormal.Constants.ScreenConstants;
+import normallynormal.Settings.Other;
 import normallynormal.UI.Element.Box;
 import normallynormal.UI.Element.Button;
 import normallynormal.UI.Element.MultiChoice;
@@ -11,8 +12,7 @@ public class VisualMenu extends Box {
     private static final int height = 6;
 
     private final static String[] refreshRates = {"30","50","60","72","75","85","100","120","144","165","170","180","200","240","280","300","360","390","480"};
-
-    private final static String[] fontSizes = new String[] {"8", "10", "12", "14", "16", "18", "20", "24", "28", "32", "36", "40", "48"};
+    private final static String[] fontSizes = {"8","10","12","14","16","18","20","24","28","32","36","40","48"};
 
     public VisualMenu() {
         super(ScreenConstants.PLAY_SCREEN_WIDTH/2 - width/2, ScreenConstants.PLAY_SCREEN_HEIGHT/2 - height/2, 44, height);
@@ -20,8 +20,20 @@ public class VisualMenu extends Box {
 
     @Override
     public void addElements() {
-        addChild(new MultiChoice(1,1, LanguageManager.get("settings.visual_settings.font_size"), fontSizes, 3));
-        addChild(new MultiChoice(1,2, LanguageManager.get("settings.visual_settings.fps"), refreshRates, 2));
+        int fontIndex = findIndex(fontSizes, String.valueOf((int) Other.TEXT_SIZE), 3);
+        int fpsIndex = findIndex(refreshRates, String.valueOf((int) Other.TARGET_FPS), 2);
+
+        addChild(new MultiChoice(1, 1, LanguageManager.get("settings.visual_settings.font_size"), fontSizes, fontIndex,
+                idx -> Other.TEXT_SIZE = Float.parseFloat(fontSizes[idx])));
+        addChild(new MultiChoice(1, 2, LanguageManager.get("settings.visual_settings.fps"), refreshRates, fpsIndex,
+                idx -> Other.TARGET_FPS = Float.parseFloat(refreshRates[idx])));
         addChild(new Button(1, 4, LanguageManager.get("settings.back"), PauseManager.pauseMenu));
+    }
+
+    private static int findIndex(String[] options, String value, int fallback) {
+        for (int i = 0; i < options.length; i++) {
+            if (options[i].equals(value)) return i;
+        }
+        return fallback;
     }
 }

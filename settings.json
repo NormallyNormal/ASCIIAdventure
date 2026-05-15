@@ -1,0 +1,144 @@
+{
+  "sound": {
+    "musicVolume": 0.263157901763916,
+    "sfxVolume": 0.05
+  },
+  "visual": {
+    "textSize": 14.0,
+    "targetFPS": 60.0
+  },
+  "other": {
+    "languageCode": "en",
+    "debug": true,
+    "wokeMode": 0
+  },
+  "keybinds": {
+    "PAUSE": [
+      27
+    ],
+    "UI_UP": [
+      38
+    ],
+    "UI_DOWN": [
+      40
+    ],
+    "UI_RIGHT": [
+      39
+    ],
+    "UI_LEFT": [
+      37
+    ],
+    "UI_SELECT": [
+      10
+    ],
+    "DIALOGUE_NEXT": [
+      10
+    ],
+    "PLAYER_JUMP": [
+      32,
+      38
+    ],
+    "PLAYER_LEFT": [
+      37
+    ],
+    "PLAYER_RIGHT": [
+      39
+    ],
+    "PLAYER_DOWN": [
+      40
+    ],
+    "PLAYER_DASH": [
+      16
+    ]
+  },
+  "controllerBinds": {
+    "PAUSE": [
+      {
+        "button": "Select",
+        "value": 1.0
+      }
+    ],
+    "UI_UP": [
+      {
+        "button": "y",
+        "value": -1.0
+      }
+    ],
+    "UI_DOWN": [
+      {
+        "button": "y",
+        "value": 1.0
+      }
+    ],
+    "UI_RIGHT": [
+      {
+        "button": "x",
+        "value": 1.0
+      }
+    ],
+    "UI_LEFT": [
+      {
+        "button": "x",
+        "value": -1.0
+      }
+    ],
+    "UI_SELECT": [
+      {
+        "button": "A",
+        "value": 1.0
+      },
+      {
+        "button": "B",
+        "value": 1.0
+      }
+    ],
+    "DIALOGUE_NEXT": [
+      {
+        "button": "Start",
+        "value": 1.0
+      }
+    ],
+    "PLAYER_JUMP": [
+      {
+        "button": "A",
+        "value": 1.0
+      },
+      {
+        "button": "B",
+        "value": 1.0
+      },
+      {
+        "button": "y",
+        "value": -1.0
+      }
+    ],
+    "PLAYER_LEFT": [
+      {
+        "button": "x",
+        "value": -1.0
+      }
+    ],
+    "PLAYER_RIGHT": [
+      {
+        "button": "x",
+        "value": 1.0
+      }
+    ],
+    "PLAYER_DOWN": [
+      {
+        "button": "y",
+        "value": 1.0
+      }
+    ],
+    "PLAYER_DASH": [
+      {
+        "button": "X",
+        "value": 1.0
+      },
+      {
+        "button": "Y",
+        "value": 1.0
+      }
+    ]
+  }
+}

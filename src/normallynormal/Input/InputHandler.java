@@ -14,6 +14,11 @@ public class InputHandler implements KeyListener {
     private final HashMap<Input, Boolean> prevInputState;
 
     private final List<BoundInput> boundInputs = new ArrayList<>();
+    private volatile boolean capturingKey = false;
+    private volatile Integer capturedKey = null;
+    private volatile boolean capturingController = false;
+    private volatile ControllerInput capturedController = null;
+    private static final float CONTROLLER_CAPTURE_THRESHOLD = 0.5f;
 
     public InputHandler() {
         this.prevInputState = new HashMap<>();
@@ -48,6 +53,10 @@ public class InputHandler implements KeyListener {
     @Override
     public synchronized void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
+        if (capturingKey) {
+            capturedKey = keyCode;
+            return;
+        }
         for (BoundInput boundInput : boundInputs) {
             if (boundInput.hasKeybind(keyCode)) {
                 inputState.put(boundInput.getDestination(), true);
@@ -57,6 +66,7 @@ public class InputHandler implements KeyListener {
 
     @Override
     public synchronized void keyReleased(KeyEvent e) {
+        if (capturingKey) return;
         int keyCode = e.getKeyCode();
         for (BoundInput boundInput : boundInputs) {
             if (boundInput.hasKeybind(keyCode)) {
@@ -77,6 +87,45 @@ public class InputHandler implements KeyListener {
         return getInputState(inputDestination) && !prevInputState.getOrDefault(inputDestination, false);
     }
 
+    public synchronized void startKeyCapture() {
+        capturedKey = null;
+        capturingKey = true;
+    }
+
+    public synchronized Integer pollCapturedKey() {
+        Integer key = capturedKey;
+        capturedKey = null;
+        return key;
+    }
+
+    public synchronized void stopKeyCapture() {
+        capturingKey = false;
+        capturedKey = null;
+    }
+
+    public synchronized void startControllerCapture() {
+        capturedController = null;
+        capturingController = true;
+    }
+
+    public synchronized ControllerInput pollCapturedController() {
+        ControllerInput ci = capturedController;
+        capturedController = null;
+        return ci;
+    }
+
+    public synchronized void stopControllerCapture() {
+        capturingController = false;
+        capturedController = null;
+    }
+
+    public BoundInput getBoundInput(Input input) {
+        for (BoundInput boundInput : boundInputs) {
+            if (boundInput.getDestination() == input) return boundInput;
+        }
+        return null;
+    }
+
     public synchronized void update() {
         prevInputState.clear();
         prevInputState.putAll(inputState);
@@ -90,7 +139,15 @@ public class InputHandler implements KeyListener {
             EventQueue queue = controller.getEventQueue();
             while (queue.getNextEvent(event)) {
                 Component comp = event.getComponent();
-                ControllerInput thisInput = new ControllerInput(comp.getName(), comp.getPollData());
+                float pollData = comp.getPollData();
+                ControllerInput thisInput = new ControllerInput(comp.getName(), pollData);
+                if (capturingController) {
+                    if (capturedController == null && Math.abs(pollData) > CONTROLLER_CAPTURE_THRESHOLD) {
+                        float normalized = pollData > 0 ? 1.0f : -1.0f;
+                        capturedController = new ControllerInput(comp.getName(), normalized);
+                    }
+                    continue;
+                }
                 for (BoundInput boundInput : boundInputs) {
                     if (boundInput.hasControllerButton(thisInput)) {
                         setInputState(boundInput.getDestination(), boundInput.hasControllerInput(thisInput));

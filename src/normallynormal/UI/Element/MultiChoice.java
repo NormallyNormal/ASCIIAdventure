@@ -9,14 +9,21 @@ import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
 import org.tinylog.Logger;
 
+import java.util.function.Consumer;
+
 public class MultiChoice extends UIComponent {
     String label;
     int labelWidth = 20;
     String[] options;
     int optionsWidth = 22;
     int selected = 0;
+    private Consumer<Integer> onChange;
 
     public MultiChoice(int x, int y, String label, String[] options, int defaultSelection) {
+        this(x, y, label, options, defaultSelection, null);
+    }
+
+    public MultiChoice(int x, int y, String label, String[] options, int defaultSelection, Consumer<Integer> onChange) {
         pos = new Vector2(x, y);
         this.label = label;
         this.options = options;
@@ -24,6 +31,7 @@ public class MultiChoice extends UIComponent {
             throw new IllegalArgumentException("defaultSelection outside range.");
         }
         selected = defaultSelection;
+        this.onChange = onChange;
     }
 
     @Override
@@ -33,9 +41,11 @@ public class MultiChoice extends UIComponent {
         }
         if (input.wasInputJustPressed(Input.UI_LEFT)) {
             selected = (selected - 1 + options.length) % options.length;
+            if (onChange != null) onChange.accept(selected);
         }
         if (input.wasInputJustPressed(Input.UI_RIGHT)) {
             selected = (selected + 1) % options.length;
+            if (onChange != null) onChange.accept(selected);
         }
     }
 
