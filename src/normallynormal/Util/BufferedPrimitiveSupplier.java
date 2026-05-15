@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 public class BufferedPrimitiveSupplier<T> {
     private final Supplier<T> supplier;
-    private T bufferedValue;
+    private volatile T bufferedValue;
 
     public BufferedPrimitiveSupplier(Supplier<T> supplier) {
         this.supplier = supplier;

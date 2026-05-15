@@ -1,38 +1,18 @@
 package normallynormal.Input;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.HashMap;
+public enum Input {
+    PAUSE,
+    UI_UP,
+    UI_DOWN,
+    UI_RIGHT,
+    UI_LEFT,
+    UI_SELECT,
 
-public class Input implements KeyListener {
-    private final HashMap<Integer, Boolean> keyState;
+    DIALOGUE_NEXT,
 
-    public Input() {
-        keyState = new HashMap<>();
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-        // Unused!
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        int keyCode = e.getKeyCode();
-        keyState.put(keyCode, true);
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        int keyCode = e.getKeyCode();
-        keyState.put(keyCode, false);
-    }
-
-    public void manualKeyPressed(int keyCode, boolean state) {
-        keyState.put(keyCode, state);
-    }
-
-    public boolean getKeyState(int keyCode) {
-        return keyState.get(keyCode) != null ? keyState.get(keyCode) : false;
-    }
+    PLAYER_JUMP,
+    PLAYER_LEFT,
+    PLAYER_RIGHT,
+    PLAYER_DOWN,
+    PLAYER_DASH,
 }

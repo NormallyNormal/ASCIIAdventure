@@ -2,10 +2,7 @@ package normallynormal.World.Entity;
 
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
-import normallynormal.Game;
-import normallynormal.Input.Input;
-import normallynormal.Math.M4th;
-import normallynormal.Math.Vector2;
+import normallynormal.Input.InputHandler;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
 import normallynormal.World.Level;
@@ -37,7 +34,7 @@ public class Orb extends Entity {
     }
 
     @Override
-    public void process(double timeDelta, Input input) {
+    public void process(double timeDelta, InputHandler input) {
         super.process(timeDelta, input);
         timeUntilRefresh -= timeDelta;
     }
@@ -55,23 +52,21 @@ public class Orb extends Entity {
         }
     }
 
-    Vector2 render_position = position.deepCopy();
-    int render_depth = depth;
-    double render_timeUntilRefresh = timeUntilRefresh;
-    @Override
-    public void copyForRender() {
-        render_position = position.deepCopy(render_position);
-        render_depth = depth;
-        render_timeUntilRefresh = timeUntilRefresh;
+    private record State(double posX, double posY, int depth, boolean onScreen,
+                         OrbType orbType, double timeUntilRefresh) implements RenderState {
+        @Override
+        public void render(DepthScreen screen, int xOffset, int yOffset) {
+            if (orbType == OrbType.DASH) {
+                screen.setCharacterWithDepth((int) posX + 1, (int) posY + 1, xOffset, yOffset, depth, timeUntilRefresh <= 0 ? dashOrb : dashOrbEmpty);
+            }
+            if (orbType == OrbType.DOUBLE_JUMP) {
+                screen.setCharacterWithDepth((int) posX + 1, (int) posY + 1, xOffset, yOffset, depth, timeUntilRefresh <= 0 ? doubleJumpOrb : doubleJumpOrbEmpty);
+            }
+        }
     }
 
     @Override
-    public void render(DepthScreen screen, int xOffset, int yOffset) {
-        if (orbType == OrbType.DASH) {
-            screen.setCharacterWithDepth((int) render_position.x + 1, (int) render_position.y + 1, xOffset, yOffset, render_depth, render_timeUntilRefresh <= 0 ? dashOrb : dashOrbEmpty);
-        }
-        if (orbType == OrbType.DOUBLE_JUMP) {
-            screen.setCharacterWithDepth((int) render_position.x + 1, (int) render_position.y + 1, xOffset, yOffset, render_depth, render_timeUntilRefresh <= 0 ? doubleJumpOrb : doubleJumpOrbEmpty);
-        }
+    public void copyForRender() {
+        renderState = new State(position.x, position.y, depth, isOnScreen(), orbType, timeUntilRefresh);
     }
 }

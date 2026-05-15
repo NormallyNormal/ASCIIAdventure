@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="jna-platform-5.17.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/jinput-natives/jna-platform-5.17.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jinput-natives/jna-platform-jpms-5.17.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jinput-natives/jna-5.17.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jinput-natives/jna-jpms-5.17.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

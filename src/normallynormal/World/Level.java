@@ -1,20 +1,11 @@
 package normallynormal.World;
 
 import java.util.*;
-import java.util.concurrent.Semaphore;
 
-import normallynormal.Render.Renderers.AbstractRenderer;
-import normallynormal.Render.Renderers.ConnectedTextureRenderer;
-import normallynormal.Render.Renderers.RainbowRenderer;
-import normallynormal.Render.Renderers.SpikesRenderer;
 import normallynormal.Render.Shader.PostShader;
-import normallynormal.Render.Shader.TorchlightPostShader;
 import normallynormal.World.Entity.Entity;
-import normallynormal.World.Entity.NPC;
-import normallynormal.World.Entity.Orb;
 import normallynormal.World.Entity.Player;
-import normallynormal.Input.Input;
-import normallynormal.World.Entity.Decoration.Torch;
+import normallynormal.Input.InputHandler;
 import normallynormal.World.Platform.*;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Math.AABB;
@@ -22,10 +13,20 @@ import normallynormal.Math.Vector2;
 import normallynormal.Math.Direction;
 import normallynormal.Constants.ScreenConstants;
 import normallynormal.Math.M4th;
-import normallynormal.World.Platform.Controller.WatchingPlatformController;
 
 public class Level {
-    Semaphore copyPermit = new Semaphore(1); // logic thread releases when done
+    /**
+     * Immutable snapshot of the level state for rendering. Built by the physics thread at the end of
+     * each tick and published via the volatile {@link #snapshot} field; consumed by the render thread.
+     * Entity and WorldObject references are live, but their render-relevant state is captured in
+     * their own volatile RenderState fields (see {@link Entity#copyForRender()}).
+     */
+    public record LevelSnapshot(
+            Player player,
+            List<Entity> entities,
+            List<WorldObject> worldObjects,
+            List<PostShader> postShaders
+    ) {}
 
     protected final List<WorldObject> worldObjects;
     protected final List<Entity> entities;
@@ -34,7 +35,8 @@ public class Level {
 
     protected final List<PostShader> postShaders;
 
-    @SuppressWarnings("UnusedAssignment")
+    private volatile LevelSnapshot snapshot;
+
     public Level() {
         postShaders = new ArrayList<>();
         player = new Player();
@@ -45,9 +47,7 @@ public class Level {
 
     final ArrayList<Entity> onScreenEntities = new ArrayList<>();
 
-    public synchronized void process(double timeDeltaSeconds, Input input) throws InterruptedException {
-        //Wait until rendering values are copied.
-        copyPermit.acquire();
+    public void process(double timeDeltaSeconds, InputHandler input) {
         runPlatformCollisions(player);
         player.process(timeDeltaSeconds, input);
         checkInsidePlatform(player);
@@ -55,7 +55,13 @@ public class Level {
         onScreenEntities.clear();
         onScreenEntities.add(player);
         for (Entity entity : entities) {
+            if (entity.isPhysicsEnabled()) {
+                runPlatformCollisions(entity);
+            }
             entity.process(timeDeltaSeconds, input);
+            if (entity.isPhysicsEnabled()) {
+                checkInsidePlatform(entity);
+            }
             if (entity.isOnScreen()) {
                 onScreenEntities.add(entity);
             }
@@ -76,43 +82,61 @@ public class Level {
         for (WorldObject worldObject : worldObjects) {
             worldObject.process(timeDeltaSeconds, this);
         }
-        copyPermit.release();
+
+        publishSnapshot();
+    }
+
+    /**
+     * Builds an immutable snapshot of the level state for rendering. Called by the physics thread
+     * at the end of each tick. Each entity / worldObject captures its own render-relevant state
+     * into its volatile RenderState field via copyForRender() before the snapshot is published.
+     */
+    private void publishSnapshot() {
+        player.copyForRender();
+        for (Entity entity : entities) {
+            entity.copyForRender();
+        }
+        for (WorldObject worldObject : worldObjects) {
+            worldObject.copyForRender();
+        }
+        snapshot = new LevelSnapshot(
+                player,
+                List.copyOf(entities),
+                List.copyOf(worldObjects),
+                List.copyOf(postShaders)
+        );
+    }
+
+    public LevelSnapshot getSnapshot() {
+        return snapshot;
     }
 
     private int lastRenderOffsetX = 0;
     private int lastRenderOffsetY = 0;
-    public synchronized void render(DepthScreen screen, int xOffset, int yOffset) throws InterruptedException {
-        //Wait until done processing the current physics tick
-        copyPermit.acquire();
-        for (Entity entity : entities) {
-            if (entity.isOnScreen())
-                entity.copyForRender();
-        }
-        player.copyForRender();
-        for (WorldObject worldObject : worldObjects) {
-            if (worldObject.isOnScreen())
-                worldObject.copyForRender();
-        }
 
-        ArrayList<Entity> renderEntities = new ArrayList<Entity>(entities);
-        copyPermit.release();
+    public void render(DepthScreen screen, int xOffset, int yOffset) {
+        LevelSnapshot snap = snapshot;
+        if (snap == null) return;
 
         lastRenderOffsetX = xOffset;
         lastRenderOffsetY = yOffset;
-        for (WorldObject worldObject : worldObjects) {
-            if (worldObject.isOnScreen())
+
+        for (WorldObject worldObject : snap.worldObjects()) {
+            if (worldObject.isRenderOnScreen())
                 worldObject.getRenderer().render(screen, xOffset, yOffset);
         }
-        player.render(screen, xOffset, yOffset);
-        for (Entity entity : renderEntities) {
-            if (entity.isOnScreen())
+        snap.player().render(screen, xOffset, yOffset);
+        for (Entity entity : snap.entities()) {
+            if (entity.isRenderOnScreen())
                 entity.render(screen, xOffset, yOffset);
         }
     }
 
     public void applyPostShaders(DepthScreen screen) {
-        for (PostShader shader : postShaders) {
-            shader.apply(screen, lastRenderOffsetX, lastRenderOffsetY, entities, worldObjects, player);
+        LevelSnapshot snap = snapshot;
+        if (snap == null) return;
+        for (PostShader shader : snap.postShaders()) {
+            shader.apply(screen, lastRenderOffsetX, lastRenderOffsetY, snap.entities(), snap.worldObjects(), snap.player());
         }
     }
 
@@ -239,5 +263,9 @@ public class Level {
 
     public boolean playerNear(Vector2 position, double radius) {
         return M4th.screenDistanceSquared(position, player.getPosition()) < radius * radius;
+    }
+
+    public Vector2 getPlayerPosition() {
+        return player.getPosition();
     }
 }

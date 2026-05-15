@@ -1,14 +1,13 @@
 package normallynormal.World.Entity.Particle;
 
 import normallynormal.GameManager;
-import normallynormal.Input.Input;
+import normallynormal.Input.InputHandler;
 import normallynormal.Math.AABB;
 import normallynormal.Render.DepthScreen;
 import normallynormal.Render.TransparentColor;
 import normallynormal.World.Entity.Entity;
 import normallynormal.Math.Vector2;
 import normallynormal.Math.Direction;
-import normallynormal.Game;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 
@@ -23,7 +22,7 @@ public class ExtraJumpParticle extends Entity {
     }
 
     @Override
-    public void process(double timeDelta, Input input) {
+    public void process(double timeDelta, InputHandler input) {
         fadeTime -= timeDelta;
         if (fadeTime <= 0) {
             GameManager.currentLevel.removeEntity(this);
@@ -36,35 +35,24 @@ public class ExtraJumpParticle extends Entity {
         }
     }
 
-    private double render_fadeTime;
-    private Direction render_direction;
-    private Vector2 render_position = position.deepCopy(); // assumes mutable
-    private int render_depth;
-
-    public void copyForRender() {
-        render_fadeTime = fadeTime;
-        render_direction = direction;
-        render_position = position.deepCopy(render_position);
-        render_depth = depth;
+    private record State(double posX, double posY, int depth, boolean onScreen, double fadeTime, Direction direction) implements RenderState {
+        @Override
+        public void render(DepthScreen screen, int xOffset, int yOffset) {
+            TextColor renderColor = fadeTime < 0.12 ? TextColor.ANSI.GREEN : TextColor.ANSI.GREEN_BRIGHT;
+            char character = (direction == Direction.LEFT) ? '[' : ']';
+            screen.setCharacterWithDepth(
+                    (int) posX,
+                    (int) posY,
+                    xOffset,
+                    yOffset,
+                    depth,
+                    new TextCharacter(character, renderColor, TransparentColor.TRANSPARENT)
+            );
+        }
     }
-
 
     @Override
-    public void render(DepthScreen screen, int xOffset, int yOffset) {
-        TextColor renderColor = render_fadeTime < 0.12
-                ? TextColor.ANSI.GREEN
-                : TextColor.ANSI.GREEN_BRIGHT;
-
-        char character = (render_direction == Direction.LEFT) ? '[' : ']';
-
-        screen.setCharacterWithDepth(
-                (int) render_position.x,
-                (int) render_position.y,
-                xOffset,
-                yOffset,
-                render_depth,
-                new TextCharacter(character, renderColor, TransparentColor.TRANSPARENT)
-        );
+    public void copyForRender() {
+        renderState = new State(position.x, position.y, depth, isOnScreen(), fadeTime, direction);
     }
-
 }

@@ -34,6 +34,10 @@ public class M4th {
         return Math.max(min, Math.min(max, value));
     }
 
+    public static long clamp(long value, long min, long max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
     public static double capMagnitude(double a, double b) {
         b = Math.abs(b);
         if (a < 0) {

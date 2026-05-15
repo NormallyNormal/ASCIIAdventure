@@ -65,7 +65,7 @@ public class AudioPlayer {
         int dotIndex = audioName.indexOf('.');
         String audioType = (dotIndex != -1) ? audioName.substring(0, dotIndex) : audioName;
         if (audioType.equals("player")) {
-            return Sound.PLAYER_VOLUME;
+            return Sound.SFX_VOLUME;
         }
         return 1;
     }

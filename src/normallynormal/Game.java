@@ -2,31 +2,27 @@ package normallynormal;
 import java.awt.*;
 import java.io.IOException;
 
-import normallynormal.Settings.Keybinds;
+import javax.swing.Timer;
+
+import normallynormal.Settings.SettingsManager;
+import normallynormal.Util.SleepBlocker;
 
 public class Game {
-
-
-    public static void run() throws IOException, FontFormatException, InterruptedException {
+    public static void run() throws IOException, FontFormatException {
+        SleepBlocker.preventSleep();
+        SettingsManager.load();
         GameManager.prepareScreen();
         GameManager.prepareGame();
 
-        Thread physicsThread = new Thread(new PhysicsSystem());
-        Thread renderThread = new Thread(new RenderSystem());
+        Thread physicsThread = new Thread(new PhysicsSystem(), "physics");
+        Thread renderThread = new Thread(new RenderSystem(), "render");
 
         physicsThread.start();
         renderThread.start();
 
-        while (true) {
-            if (GameManager.input.getKeyState(Keybinds.exit)) {
-                physicsThread.interrupt();
-                renderThread.interrupt();
-                break;
-            }
-            Thread.sleep(100); // Don't spin too hard
-            GameManager.terminal.requestFocusInWindow();
-        }
-
-        GameManager.terminal.close();
+        // Focus needs to be re-requested periodically; one-shot requests are not enough on this setup.
+        Timer focusPoll = new Timer(100, e -> GameManager.terminal.requestFocusInWindow());
+        focusPoll.setRepeats(true);
+        focusPoll.start();
     }
 }
