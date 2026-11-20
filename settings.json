@@ -1,7 +1,7 @@
 {
   "sound": {
-    "musicVolume": 0.263157901763916,
-    "sfxVolume": 0.05
+    "musicVolume": 0.21052631378173828,
+    "sfxVolume": 0.05263157844543457
   },
   "visual": {
     "textSize": 14.0,
@@ -9,7 +9,7 @@
   },
   "other": {
     "languageCode": "en",
-    "debug": true,
+    "debug": false,
     "wokeMode": 0
   },
   "keybinds": {

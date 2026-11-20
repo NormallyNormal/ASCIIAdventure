@@ -33,7 +33,7 @@ public class Button extends UIComponent{
         Vector2 offset = getOffset();
         String maxLabel = label.substring(0, Math.min(labelWidth, label.length()));
         if (label.length() != maxLabel.length()) {
-            Logger.error("Slider label is too long for length " + labelWidth + ": " + label);
+            Logger.error("Button label is too long for length " + labelWidth + ": " + label);
             label = maxLabel;
         }
 

@@ -79,6 +79,12 @@ public class PhysicsSystem implements Runnable{
                                 }
                             }
                             timeSinceLastTransitionMovement -= transitionFrequency;
+                            // process() is skipped during transitions, so refresh the render snapshot
+                            // here against the new screen bounds; otherwise entities/platforms in the
+                            // incoming screen keep stale off-screen flags and pop in when it ends.
+                            GameManager.screenBoundingBox.x = -GameManager.renderXOffset.get();
+                            GameManager.screenBoundingBox.y = -GameManager.renderYOffset.get();
+                            GameManager.currentLevel.publishSnapshot();
                         }
                     }
                 }

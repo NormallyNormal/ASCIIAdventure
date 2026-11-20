@@ -16,7 +16,7 @@ import normallynormal.UI.LanguageManager;
 import normallynormal.UI.Settings.PauseManager;
 import normallynormal.Util.SleepBlocker;
 import normallynormal.World.Level;
-import normallynormal.World.Levels.DevLevel;
+import normallynormal.World.Levels.LoadedLevel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -69,7 +69,7 @@ public class GameManager {
         AudioPlayer.load();
         LanguageManager.loadLanguage(Other.LANGUAGE_CODE);
         PauseManager.initialize();
-        currentLevel = new DevLevel();
+        currentLevel = LoadedLevel.load("/resources/levels/dev_level.alf");
         terminal.setTitle(LanguageManager.get("game.title"));
         input.loadInputBinds();
         SettingsManager.loadKeybinds(input);
