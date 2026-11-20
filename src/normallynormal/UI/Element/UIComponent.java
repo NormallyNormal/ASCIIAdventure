@@ -69,4 +69,9 @@ public class UIComponent extends UIBase {
     protected UIComponent getChild(int idx) {
         return children.get(idx);
     }
+
+
+    public void clearChildren() {
+        children.clear();
+    }
 }

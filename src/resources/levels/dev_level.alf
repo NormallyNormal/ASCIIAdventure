@@ -1,0 +1,117 @@
+# ASCII Level Format (.alf)
+#
+# Syntax
+#   - '#' starts a comment line. Blank lines are ignored.
+#   - Sections are ALL_CAPS lines: META, POST_SHADERS, WORLD_OBJECTS, ENTITIES.
+#   - Each item is `type key:value key:value ...`. Order of keys does not matter.
+#   - Lines starting with '-' attach a child to the item above: a controller, a renderer,
+#     or `-repeat count:<n> dx:<d> dy:<d>`, which expands the item (children included)
+#     into n copies, each offset by (dx, dy) from the last. Child order does not matter.
+#     Named items (id:) cannot repeat, since names must be unique.
+#   - Values: numbers (parsed as double, cast where an int is needed), true/false,
+#     and bare words. Quotes are only for strings containing spaces.
+#   - Unknown types or keys are errors.
+#
+# Positions
+#   - All x/y values, including spawn, are relative to `origin`.
+#
+# Optional keys on any item
+#   - id:<name>      names the item so other items can reference it (e.g. a button
+#                    with target:<name>). Unnamed items get numeric ids on load.
+#   - group:<name>   on a -renderer line: items with the same group share one renderer.
+
+META
+format v:1
+origin x:3600 y:1200
+spawn x:5 y:34
+
+POST_SHADERS
+# torchlight
+
+WORLD_OBJECTS
+# Outer walls
+static x:-120 y:35 w:360 h:5
+static x:-120 y:-40 w:360 h:5
+static x:-120 y:-35 w:5 h:70
+static x:235 y:-35 w:5 h:70
+
+# Semisolid ladder (9 platforms, 5 apart, going up) and the long upper floor
+semisolid x:10 y:30 w:5 h:1
+-repeat count:9 dy:-5
+semisolid x:-115 y:-15 w:235 h:1
+
+hazard x:125 y:34 w:110 h:1
+hazard x:125 y:-10 w:110 h:1
+
+# Moving platforms
+moveable x:70 y:33 w:10 h:2
+-basic_controller dir:right steps:30 pause:0.1
+
+moveable x:70 y:30 w:10 h:2
+-watching_controller dir:up steps:10 pause:0.1
+
+static x:106 y:30 w:2 h:5
+static x:106 y:28 w:2 h:2
+
+# Row of 4 platforms, 25 apart
+moveable x:125 y:32 w:10 h:2
+-basic_controller dir:right steps:25 pause:0.2
+-repeat count:4 dx:25
+
+moveable x:195 y:30 w:10 h:2
+-basic_controller dir:right steps:25 pause:0.2
+
+moveable x:-60 y:23 w:10 h:2
+-basic_controller dir:right steps:10 pause:0.1
+-renderer type:rainbow
+
+moveable x:-40 y:32 w:10 h:2
+-basic_controller dir:up steps:9 pause:0.2
+-renderer type:rainbow
+
+# Two platforms drawn as one connected texture
+moveable x:-60 y:-20 w:10 h:5
+-basic_controller dir:right steps:10 pause:0.2
+-renderer type:connected group:pipes
+
+moveable x:-60 y:-25 w:5 h:5
+-basic_controller dir:right steps:10 pause:0.2
+-renderer type:connected group:pipes
+
+# Gravity fields (up:true pulls the player upward while inside)
+gravity x:-70 y:25 w:10 h:10 up:true
+-basic_controller dir:left steps:20 pause:0.1
+
+gravity x:-120 y:15 w:120 h:3 up:false
+
+# Rainbow static platforms
+static x:-90 y:23 w:30 h:2
+-renderer type:rainbow
+
+static x:-90 y:13 w:30 h:2
+-renderer type:rainbow
+
+static x:-90 y:6 w:30 h:2
+-renderer type:rainbow
+
+bouncy x:20 y:33 w:5 h:2
+bouncy x:-95 y:17 w:5 h:2
+
+# Conveyors
+conveyor x:20 y:-16 w:20 h:1 dir:right speed:10
+conveyor x:40 y:-25 w:1 h:10 dir:up speed:10
+conveyor x:41 y:-25 w:20 h:1 dir:right speed:10
+conveyor x:45 y:-16 w:20 h:1 dir:left speed:10
+
+static x:130 y:-20 w:5 h:1
+static x:135 y:-20 w:5 h:1
+
+ENTITIES
+torch x:30 y:30
+npc x:60 y:34
+
+# Double-jump orbs (6 across, 5 apart) and dash orbs (3 across, 10 apart)
+orb x:28 y:20 kind:double_jump
+-repeat count:6 dx:5
+orb x:28 y:10 kind:dash
+-repeat count:3 dx:10

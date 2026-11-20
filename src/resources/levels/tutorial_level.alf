@@ -1,0 +1,13 @@
+# Tutorial level (empty for now: just the spawn point).
+# See dev_level.alf for the format rules.
+
+META
+format v:1
+origin x:3600 y:1200
+spawn x:5 y:34
+
+POST_SHADERS
+
+WORLD_OBJECTS
+
+ENTITIES

@@ -17,6 +17,10 @@ public abstract class Box extends UIComponent {
         this.setPos(new Vector2(x, y));
     }
 
+    public void setAabb(int x, int y, int w, int h) {
+        this.aabb = new AABB(x, y, w, h);
+    }
+
     public void reset() {
         if (childCount() > selectedChild) {
             getChild(selectedChild).highlighted = false;

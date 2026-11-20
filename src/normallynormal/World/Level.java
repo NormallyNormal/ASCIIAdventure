@@ -91,7 +91,7 @@ public class Level {
      * at the end of each tick. Each entity / worldObject captures its own render-relevant state
      * into its volatile RenderState field via copyForRender() before the snapshot is published.
      */
-    private void publishSnapshot() {
+    public void publishSnapshot() {
         player.copyForRender();
         for (Entity entity : entities) {
             entity.copyForRender();
